@@ -11,11 +11,13 @@
    - Gradually add new helpers to expand the library:
      - `pb_confint()` – compute percentile or BCa confidence intervals.
      - `pb_predict_boot()` – generate predictions with bootstrap uncertainty.
-     - `pb_compare_models()` – evaluate multiple model fits side by side.
-     - `pb_plot_diagnostics()` – visualize residuals or convergence issues.
-     - `pb_resample()` – support custom resampling schemes.
-     - `pb_parallel()` – run replicates in parallel using `future` or `foreach`.
-     - `pb_tidy()` – return results in tidy data frames for use with `broom`.
+   - `pb_compare_models()` – evaluate multiple model fits side by side.
+   - `pb_plot_diagnostics()` – visualize residuals or convergence issues.
+   - `pb_resample()` – support custom resampling schemes.
+   - `pb_parallel()` – run replicates in parallel using `future` or `foreach`.
+   - `pb_tidy()` – return results in tidy data frames for use with `broom`.
+   - `pb_summary_table()` – assemble key statistics into a single summary.
+   - `pb_plot_predictions()` – visualize predictive distributions for new data.
 
 3. **Package Infrastructure**
    - Use `roxygen2` to generate documentation from inline comments.

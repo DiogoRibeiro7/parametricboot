@@ -1,3 +1,7 @@
 export(pb_simulate)
 export(pb_plot_estimates)
 export(pb_key_stats)
+export(pb_confint)
+export(pb_predict_boot)
+export(pb_summary_table)
+export(pb_plot_predictions)

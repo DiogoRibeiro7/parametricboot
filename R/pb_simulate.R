@@ -9,5 +9,18 @@
 #' # pb_simulate(fit, 100)
 #' @export
 pb_simulate <- function(model, n = 100, ...) {
-  stop("pb_simulate() not yet implemented")
+  if (!inherits(model, c("glm", "glmerMod", "coxph"))) {
+    stop("model must be fitted with glm, glmer, or coxph")
+  }
+
+  data <- model.frame(model)
+  resp <- all.vars(formula(model))[1]
+
+  sims <- replicate(n, {
+    y <- stats::simulate(model, nsim = 1)[[1]]
+    data[[resp]] <- y
+    stats::update(model, data = data, ...)
+  }, simplify = FALSE)
+
+  structure(list(original = model, replicates = sims), class = "pb_boot")
 }
