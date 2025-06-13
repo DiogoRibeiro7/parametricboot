@@ -1,0 +1,21 @@
+Package: parametricboot
+Type: Package
+Title: Parametric Bootstrap Utilities
+Version: 0.0.0.9000
+Authors@R: person(given = "Diogo", family = "Ribeiro", email = "diogo.debastos.ribeiro@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0009-0001-2022-7072", affiliation = "ESMAD Instituto Politecnico do Porto"))
+Description: Tools to automate parametric bootstrap for models fitted with 'glm', 'glmer', or 'coxph'.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends:
+    R (>= 3.5.0)
+Imports:
+    ggplot2,
+    stats,
+    lme4,
+    survival,
+    tidyr
+Suggests:
+    testthat

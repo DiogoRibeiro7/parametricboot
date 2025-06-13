@@ -1,0 +1,4 @@
+^.*\.Rproj$
+^\.git/
+^tests$
+^roadmap.md$
