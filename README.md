@@ -15,3 +15,8 @@ This package is under development. You can install the development version from 
 - `pb_predict_boot()` – generate predictions from bootstrap fits.
 - `pb_summary_table()` – summarize statistics and intervals in a tidy table.
 - `pb_plot_predictions()` – visualize predictive distributions for new data.
+- `pb_compare_models()` – bootstrap and compare multiple models.
+- `pb_plot_diagnostics()` – visualize diagnostic traces.
+- `pb_resample()` – helper to resample rows from a data frame.
+- `pb_parallel()` – run simulations in parallel.
+- `pb_tidy()` – convert bootstrap estimates to tidy format.

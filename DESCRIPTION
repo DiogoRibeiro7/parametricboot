@@ -15,6 +15,7 @@ Imports:
     ggplot2,
     stats,
     lme4,
-    survival
+    survival,
+    tidyr
 Suggests:
     testthat

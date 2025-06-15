@@ -23,6 +23,7 @@
    - Use `roxygen2` to generate documentation from inline comments.
    - Include examples and vignettes demonstrating bootstrap workflows.
    - Add a test suite with `testthat` to validate functionality.
+   - Provide an initial test ensuring `pb_simulate()` returns an object of class `pb_boot`.
 
 4. **Quality Assurance**
    - Run `devtools::check()` and `R CMD check` to validate the package locally.
