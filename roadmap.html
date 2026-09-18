@@ -35,63 +35,181 @@
 
 <div id="roadmap" class="section level1">
 
-<p>Status of the package. It is a work in progress: the current focus is on maturing the methods and the interface (sections 2 to 4). A CRAN release is deliberately deferred until the package is judged mature enough. See <code>NEWS.md</code> for what changed in each version.</p>
+<p>parametricboot is a work in progress. This page says where it stands, what comes next and why, and what it deliberately does not do. It is a statement of intent, not a schedule: priorities will move as the package is used on real analyses. <code>NEWS.md</code> records what has changed.</p>
+<p>To influence the roadmap, open an <a href="https://github.com/DiogoRibeiro7/parametricboot/issues" class="external-link">issue</a> describing the analysis you are trying to carry out.</p>
 <div class="section level2">
-<h2 id="id_1-project-setup">1. Project setup<a class="anchor" aria-label="anchor" href="#id_1-project-setup"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox" checked>R package skeleton, MIT licence (<code>MIT + file LICENSE</code>) and <code>DESCRIPTION</code>.</label></li>
+<h2 id="principles">Principles<a class="anchor" aria-label="anchor" href="#principles"></a></h2>
+<p>These have shaped the package so far and decide what gets in.</p>
+<ol style="list-style-type: decimal"><li>
+<strong>Every method is validated against something independent</strong>: an exact result or a reference implementation. The validation is kept as a test.</li>
+<li>
+<strong>Never silently wrong.</strong> A model that cannot be bootstrapped correctly is rejected with the reason, rather than bootstrapped approximately.</li>
+<li>
+<strong>One engine.</strong> Replicates are reproducible from a seed and identical whether they run sequentially or in parallel.</li>
+<li>
+<strong>Few hard dependencies.</strong> Model packages belong in <code>Suggests</code>.</li>
+</ol></div>
+<div class="section level2">
+<h2 id="where-it-stands">Where it stands<a class="anchor" aria-label="anchor" href="#where-it-stands"></a></h2>
+<table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr><th>Capability</th>
+<th>Functions</th>
+<th>Validated against</th>
+</tr></thead><tbody><tr><td>Replicates for <code>lm</code>, <code>glm</code>, <code>lmer</code>, <code>glmer</code>, <code>coxph</code> (with <code>strata()</code>)</td>
+<td>
+<code><a href="reference/pb_simulate.html">pb_simulate()</a></code>, <code><a href="reference/pb_parallel.html">pb_parallel()</a></code>
+</td>
+<td>theoretical standard errors; <code><a href="https://rdrr.io/pkg/lme4/man/bootMer.html" class="external-link">lme4::bootMer()</a></code>, replicate for replicate; <code>survfit()</code> cumulative hazards</td>
+</tr><tr><td>Bias, standard error, MSE, Wald coverage</td>
+<td>
+<code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code>, <code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code>
+</td>
+<td>hand computation</td>
+</tr><tr><td>Percentile, basic, normal and studentised intervals</td>
+<td>
+<code><a href="reference/pb_confint.html">pb_confint()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code>
+</td>
+<td>the exact t interval of the normal linear model</td>
+</tr><tr><td>Variance components of mixed models</td>
+<td>all summaries</td>
+<td><code><a href="https://rdrr.io/pkg/lme4/man/bootMer.html" class="external-link">lme4::bootMer()</a></code></td>
+</tr><tr><td>Likelihood-ratio test for nested models</td>
+<td>
+<code><a href="reference/pb_lrt.html">pb_lrt()</a></code>, <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code>
+</td>
+<td>the exact F test; <code><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova()</a></code>
+</td>
+</tr><tr><td>Predictions with bootstrap uncertainty</td>
+<td>
+<code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code>, <code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code>
+</td>
+<td>
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> on the refits</td>
+</tr><tr><td>Degenerate refits (for example separation)</td>
+<td><code><a href="reference/pb_drop_warned.html">pb_drop_warned()</a></code></td>
+<td></td>
+</tr><tr><td>Comparing models that are not nested</td>
+<td><code><a href="reference/pb_compare_models.html">pb_compare_models()</a></code></td>
+<td></td>
+</tr></tbody></table><p>Infrastructure: <code>R CMD check</code> on Linux, macOS and Windows, about 98% test coverage, a <a href="https://diogoribeiro7.github.io/parametricboot/">documentation site</a> and contribution guidelines.</p>
+</div>
+<div class="section level2">
+<h2 id="now">Now<a class="anchor" aria-label="anchor" href="#now"></a></h2>
+<p>The gaps most likely to be hit in a first real analysis.</p>
+<div class="section level3">
+<h3 id="id_1-bootstrap-any-function-of-the-fitted-model">1. Bootstrap any function of the fitted model<a class="anchor" aria-label="anchor" href="#id_1-bootstrap-any-function-of-the-fitted-model"></a></h3>
+<p>Only coefficients (and variance components) are tracked. The quantity of interest is often something else: the LD50 of a dose-response curve (<code>-b0 / b1</code>), an odds ratio, an intraclass correlation, a difference between two predictions. Today that means looping over <code>res$replicates</code> by hand.</p>
+<ul><li>Proposal: a <code>statistic = function(fit)</code> argument in <code><a href="reference/pb_simulate.html">pb_simulate()</a></code> returning a named numeric vector, tracked like a coefficient so that every summary, interval and plot works unchanged.</li>
+<li>Done when the LD50 of the budworm example has a bootstrap interval in the vignette, and a linear combination of <code>lm</code> coefficients reproduces its exact t interval.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_2-report-monte-carlo-error">2. Report Monte Carlo error<a class="anchor" aria-label="anchor" href="#id_2-report-monte-carlo-error"></a></h3>
+<p>Nothing tells the user whether <code>n</code> was large enough. The only guidance is a rule of thumb in the vignette and the running-mean plot.</p>
+<ul><li>Proposal: Monte Carlo standard errors for the bias, the standard error and the interval limits in <code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_confint.html">pb_confint()</a></code>, and for the p-value of <code><a href="reference/pb_lrt.html">pb_lrt()</a></code>.</li>
+<li>Done when the advice on <code>n</code> in the documentation is backed by these numbers.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_3-make-predictions-affordable-in-memory">3. Make predictions affordable in memory<a class="anchor" aria-label="anchor" href="#id_3-make-predictions-affordable-in-memory"></a></h3>
+<p><code>keep_fits = TRUE</code> is the default and is needed for predictions, but refits are heavy: 200 refits of a <code>glm</code> on 32 rows take 42 MB, and 50 refits on 20 000 rows take 560 MB.</p>
+<ul><li>Proposal: compute predictions while simulating (a <code>newdata</code> argument), or store stripped-down refits, and then reconsider the default.</li>
+<li>Done when predictions are available without keeping the refits and the memory cost is documented.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_4-settle-which-model-classes-are-accepted">4. Settle which model classes are accepted<a class="anchor" aria-label="anchor" href="#id_4-settle-which-model-classes-are-accepted"></a></h3>
+<p>Any class inheriting from <code>lm</code> or <code>glm</code> passes the input check. <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> and <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> fits run, but nothing validates them. This is at odds with principle 2.</p>
+<ul><li>
+<code>glm.nb</code> is a genuine parametric model: validate it and add tests.</li>
+<li>
+<code>gam</code> needs a decision, because refits re-estimate the smoothing parameters: either validate against <code>mgcv</code>’s own intervals or reject.</li>
+<li>Done when every accepted class has tests and all others are rejected with an explanation.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_5-interface-review-after-first-real-use">5. Interface review after first real use<a class="anchor" aria-label="anchor" href="#id_5-interface-review-after-first-real-use"></a></h3>
+<p>Before anything is frozen, the package should be run on real analyses. Known candidates for change:</p>
+<ul><li>
+<code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code> has a redundant suffix; <code>pb_predict()</code> would match the other names.</li>
+<li>
+<code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code> overlap; one may be enough.</li>
+<li>The first argument is <code>results</code> in most functions but <code>test</code> in <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code>; coefficients are selected with <code>parameter</code>, where <code>terms</code> would match the <code>term</code> column of the outputs.</li>
+<li>
+<code>n = 100</code> is a low default for confidence limits.</li>
+</ul></div>
+</div>
+<div class="section level2">
+<h2 id="next">Next<a class="anchor" aria-label="anchor" href="#next"></a></h2>
+<div class="section level3">
+<h3 id="id_6-an-extension-interface-for-new-model-classes">6. An extension interface for new model classes<a class="anchor" aria-label="anchor" href="#id_6-an-extension-interface-for-new-model-classes"></a></h3>
+<p>Simulating a response and refitting the model are two internal functions with one branch per class. Exporting them as generics would let users and other packages add classes without changing this one, with an article on how to do it. Intended first clients:</p>
+<ul><li>
+<code><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survival::survreg()</a></code>: a fully parametric survival model, the most natural target for a parametric bootstrap and the complement of the Cox support;</li>
+<li>
+<code>glmmTMB</code>, <code>ordinal::clm()</code> / <code><a href="https://rdrr.io/pkg/MASS/man/polr.html" class="external-link">MASS::polr()</a></code>, <code><a href="https://rdrr.io/r/stats/nls.html" class="external-link">nls()</a></code>, <code>betareg</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_7-prediction-intervals-for-new-observations">7. Prediction intervals for new observations<a class="anchor" aria-label="anchor" href="#id_7-prediction-intervals-for-new-observations"></a></h3>
+<p><code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code> gives intervals for the <em>expected</em> response. Intervals for a <em>new observation</em> must add the response noise, by simulating from each refit.</p>
+</div>
+<div class="section level3">
+<h3 id="id_8-goodness-of-fit-by-simulation">8. Goodness of fit by simulation<a class="anchor" aria-label="anchor" href="#id_8-goodness-of-fit-by-simulation"></a></h3>
+<p>The bootstrap null distribution of the deviance, the Pearson statistic, the dispersion or the number of zeros, from the engine that <code><a href="reference/pb_lrt.html">pb_lrt()</a></code> already uses. This matters most for sparse binomial and count data, where the chi-squared approximation to the deviance fails.</p>
+</div>
+<div class="section level3">
+<h3 id="id_9-conditional-bootstrap-for-mixed-models">9. Conditional bootstrap for mixed models<a class="anchor" aria-label="anchor" href="#id_9-conditional-bootstrap-for-mixed-models"></a></h3>
+<p>Replicates draw new random effects (a marginal bootstrap, as <code>bootMer()</code> does by default). Holding the estimated random effects fixed (<code>use.u = TRUE</code>) answers a different question: inference for the groups actually observed. Passing <code>use.u</code> through <code>...</code> does not do this today, because <code>...</code> goes to the refit and not to the simulation.</p>
+</div>
+<div class="section level3">
+<h3 id="id_10-ergonomics">10. Ergonomics<a class="anchor" aria-label="anchor" href="#id_10-ergonomics"></a></h3>
+<ul><li>A ‘future’ backend for parallel execution, with progress reporting.</li>
+<li>‘broom’-style <code>tidy()</code> and <code>glance()</code> methods.</li>
+<li>Classed conditions, so that calling code can react to “unsupported model” or “all refits failed” without matching on message text.</li>
+</ul></div>
+</div>
+<div class="section level2">
+<h2 id="later">Later<a class="anchor" aria-label="anchor" href="#later"></a></h2>
+<p>Worth doing, but each needs a design decision or is expensive.</p>
+<ul><li>
+<strong>Better intervals</strong>: bootstrap calibration (double bootstrap) and BCa.</li>
+<li>
+<strong>Separation-aware refits</strong>: detect separated replicates explicitly (as ‘detectseparation’ does) instead of relying on warnings, and offer bias-reduced refits (as ‘brglm2’ does) as an alternative to dropping them.</li>
+<li>
+<strong>More of the Cox model</strong>: counting-process data with time-varying covariates, left truncation, case weights, and censoring that depends on covariates.</li>
+<li>
+<strong>Power and sample size</strong>: simulate from the alternative instead of the null and report rejection rates.</li>
+<li>
+<strong>Speed</strong>: a <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm.fit()</a></code> fast path that skips re-evaluating the call, and a benchmark suite against ‘boot’, ‘pbkrtest’ and <code><a href="https://rdrr.io/pkg/lme4/man/bootMer.html" class="external-link">lme4::bootMer()</a></code>.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_2-core-functionality">2. Core functionality<a class="anchor" aria-label="anchor" href="#id_2-core-functionality"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox" checked><code><a href="reference/pb_simulate.html">pb_simulate()</a></code> – run N parametric bootstrap replicates, for <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">lme4::glmer()</a></code> and <code><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">survival::coxph()</a></code> fits.</label></li>
-<li><label><input type="checkbox" checked>Stratified <code>coxph</code> models, resampled within strata.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_parallel.html">pb_parallel()</a></code> – run the refits in parallel (base ‘parallel’ cluster), reproducibly.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_drop_warned.html">pb_drop_warned()</a></code> – exclude replicates whose refit raised a warning (for example separated logistic regressions).</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> – bias, standard error, MSE and Wald coverage.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_confint.html">pb_confint()</a></code> – percentile, basic, normal and studentised intervals.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code>, <code><a href="reference/pb_tidy.html">pb_tidy()</a></code>, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> and <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> methods.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_plot_estimates.html">pb_plot_estimates()</a></code>, <code><a href="reference/pb_plot_diagnostics.html">pb_plot_diagnostics()</a></code>, <code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code>.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code> – predictions with bootstrap uncertainty.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_compare_models.html">pb_compare_models()</a></code> – bootstrap distribution of a fit criterion.</label></li>
-<li><label><input type="checkbox" checked>Variance components of mixed models tracked alongside the fixed effects.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_lrt.html">pb_lrt()</a></code> and <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code> – bootstrap likelihood-ratio test for nested models, including variance components and <code>coxph</code> fits.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_resample.html">pb_resample()</a></code> – case-resampling helper.</label></li>
-</ul><p>Ideas for later versions:</p>
-<ul class="task-list"><li><label><input type="checkbox">A ‘future’ backend for <code><a href="reference/pb_parallel.html">pb_parallel()</a></code> (clusters, progress reporting).</label></li>
-<li><label><input type="checkbox">‘broom’-style <code>tidy()</code> and <code>glance()</code> methods.</label></li>
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
+<ul><li>An article, “How the package is validated”, collecting the exact benchmarks that are currently scattered over the tests: the F test, the t interval, <code>bootMer()</code> and the cumulative-hazard identity.</li>
+<li>Case studies: a small-sample logistic regression, a mixed model with few groups, a survival analysis.</li>
+<li>Snapshot tests for the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> methods and visual tests for the plots.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_3-package-infrastructure">3. Package infrastructure<a class="anchor" aria-label="anchor" href="#id_3-package-infrastructure"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox" checked>‘roxygen2’ documentation with runnable examples.</label></li>
-<li><label><input type="checkbox" checked>Getting-started vignette.</label></li>
-<li><label><input type="checkbox" checked>‘testthat’ suite covering every exported function and model class.</label></li>
-<li><label><input type="checkbox" checked>‘pkgdown’ configuration.</label></li>
+<h2 id="known-limitations">Known limitations<a class="anchor" aria-label="anchor" href="#known-limitations"></a></h2>
+<p>Things the current version does not do, so that nobody has to find out the hard way.</p>
+<ul><li>Models must be fitted with a <code>data</code> argument.</li>
+<li>Covariates are held fixed, and the fitted model is assumed to be correct: the bootstrap quantifies sampling variability under the model and does not detect misspecification.</li>
+<li>Quasi-likelihood families are not supported, by design: there is no likelihood to simulate from.</li>
+<li>Cox models: right-censored data only; no case weights, <code>tt()</code>, <code>frailty()</code>, penalised terms, <code>cluster()</code> or strata-by-covariate interactions. Censoring is assumed independent of the covariates within each stratum.</li>
+<li>Mixed models: marginal bootstrap only (see item 9). ‘lme4’ gives no standard errors for variance components, so their Wald coverage and studentised limits are <code>NA</code>.</li>
+<li>A warning is the only signal of a degenerate refit, and replicates are never dropped automatically; see <code><a href="reference/pb_drop_warned.html">pb_drop_warned()</a></code>.</li>
+<li>Keeping the refits is expensive in memory (see item 3).</li>
+<li>Parallel workers are fresh R sessions: the package must be installed, and everything the model call needs should be a column of <code>data</code>.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_4-quality-assurance">4. Quality assurance<a class="anchor" aria-label="anchor" href="#id_4-quality-assurance"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox" checked><code>R CMD check --as-cran</code> clean locally.</label></li>
-<li><label><input type="checkbox" checked>GitHub Actions: <code>R CMD check</code> on Linux, macOS and Windows; test coverage; ‘pkgdown’ site.</label></li>
-<li><label><input type="checkbox" checked>Coverage reported to Codecov, with a badge in the README.</label></li>
-<li><label><input type="checkbox" checked>‘pkgdown’ site published with GitHub Pages at <a href="https://diogoribeiro7.github.io/parametricboot/" class="uri">https://diogoribeiro7.github.io/parametricboot/</a>.</label></li>
+<h2 id="not-planned">Not planned<a class="anchor" aria-label="anchor" href="#not-planned"></a></h2>
+<ul><li>A general nonparametric bootstrap. ‘boot’ and ‘rsample’ do this well; <code><a href="reference/pb_resample.html">pb_resample()</a></code> exists only as a point of comparison.</li>
+<li>Bayesian posterior simulation.</li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_5-preparing-for-cran-deferred">5. Preparing for CRAN (deferred)<a class="anchor" aria-label="anchor" href="#id_5-preparing-for-cran-deferred"></a></h2>
-<p>Not planned for now. To be picked up once the package is mature.</p>
-<ul class="task-list"><li><label><input type="checkbox">Choose a release version (<code>0.1.0</code>) and finalise <code>NEWS.md</code>.</label></li>
-<li><label><input type="checkbox">Check on win-builder (<code>devtools::check_win_devel()</code>) and R-hub.</label></li>
-<li><label><input type="checkbox">Write <code>cran-comments.md</code>.</label></li>
-<li><label><input type="checkbox">Ensure all package metadata (title, description, authors, URLs) is complete.</label></li>
-</ul></div>
-<div class="section level2">
-<h2 id="id_6-submitting-to-cran-deferred">6. Submitting to CRAN (deferred)<a class="anchor" aria-label="anchor" href="#id_6-submitting-to-cran-deferred"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox"><code>devtools::release()</code>.</label></li>
-<li><label><input type="checkbox">Respond to CRAN maintainers if revisions are requested.</label></li>
-<li><label><input type="checkbox">Once accepted, tag the release in Git and announce availability.</label></li>
-</ul></div>
-<div class="section level2">
-<h2 id="id_7-maintenance">7. Maintenance<a class="anchor" aria-label="anchor" href="#id_7-maintenance"></a></h2>
-<ul class="task-list"><li><label><input type="checkbox">Monitor issues and update the package as needed.</label></li>
-<li><label><input type="checkbox">Follow semantic versioning once there is a first release.</label></li>
-</ul></div>
+<h2 id="versions-and-releases">Versions and releases<a class="anchor" aria-label="anchor" href="#versions-and-releases"></a></h2>
+<p>The package stays at a development version while the interface can still change. There is no CRAN submission planned. That will be reconsidered by the maintainer when, at least:</p>
+<ul><li>the “Now” items are done and the interface has survived use on real analyses without breaking changes for a few months;</li>
+<li>every accepted model class is validated and tested;</li>
+<li>there are no open correctness issues;</li>
+<li>
+<code>R CMD check --as-cran</code> is clean on all platforms, as it is today.</li>
+</ul><p>Tagging versions on GitHub does not depend on CRAN and would let users pin a version. A first tag, <code>0.1.0</code>, makes sense once the “Now” items are done.</p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
