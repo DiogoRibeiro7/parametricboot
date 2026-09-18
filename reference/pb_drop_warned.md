@@ -14,8 +14,10 @@ pb_drop_warned(results)
 
 - results:
 
-  A `pb_boot` object from [`pb_simulate()`](pb_simulate.md) or
-  [`pb_parallel()`](pb_parallel.md).
+  A `pb_boot` object from
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  or
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md).
 
 ## Value
 
@@ -36,8 +38,10 @@ means, standard errors and histograms.
 Dropping them changes the question being answered: the summaries then
 describe the estimator *conditional on the fit being well behaved*.
 Report the proportion of dropped replicates alongside the results.
-Percentile intervals from [`pb_confint()`](pb_confint.md) are barely
-affected by a few extreme replicates and do not need this treatment.
+Percentile intervals from
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+are barely affected by a few extreme replicates and do not need this
+treatment.
 
 Not every warning signals a useless fit (for mixed models, convergence
 warnings are often false alarms), so replicates are never dropped

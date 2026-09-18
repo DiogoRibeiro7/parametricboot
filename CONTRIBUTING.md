@@ -43,9 +43,10 @@ reference for the method.
     devtools::check()     # must finish with 0 errors, 0 warnings, 0 notes
     ```
 
-    To run the [`pb_parallel()`](reference/pb_parallel.md) tests
-    locally, install the package first with `devtools::install()`: the
-    parallel workers are fresh R sessions.
+    To run the
+    [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
+    tests locally, install the package first with `devtools::install()`:
+    the parallel workers are fresh R sessions.
 
 5.  Add a bullet to the top of `NEWS.md` describing the change from a
     user’s point of view.
@@ -68,5 +69,5 @@ reference for the method.
 ## Code of conduct
 
 This project is released with a [Contributor Code of
-Conduct](../CODE_OF_CONDUCT.md). By participating you agree to abide by
-its terms.
+Conduct](https://diogoribeiro7.github.io/CODE_OF_CONDUCT.md). By
+participating you agree to abide by its terms.

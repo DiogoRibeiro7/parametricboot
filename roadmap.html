@@ -35,7 +35,7 @@
 
 <div id="roadmap" class="section level1">
 
-<p>Status of the path from prototype to a CRAN release. See <code>NEWS.md</code> for what changed in each version.</p>
+<p>Status of the package. It is a work in progress: the current focus is on maturing the methods and the interface (sections 2 to 4). A CRAN release is deliberately deferred until the package is judged mature enough. See <code>NEWS.md</code> for what changed in each version.</p>
 <div class="section level2">
 <h2 id="id_1-project-setup">1. Project setup<a class="anchor" aria-label="anchor" href="#id_1-project-setup"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox" checked>R package skeleton, MIT licence (<code>MIT + file LICENSE</code>) and <code>DESCRIPTION</code>.</label></li>
@@ -51,10 +51,10 @@
 <li><label><input type="checkbox" checked><code><a href="reference/pb_plot_estimates.html">pb_plot_estimates()</a></code>, <code><a href="reference/pb_plot_diagnostics.html">pb_plot_diagnostics()</a></code>, <code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code>.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code> – predictions with bootstrap uncertainty.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_compare_models.html">pb_compare_models()</a></code> – bootstrap distribution of a fit criterion.</label></li>
+<li><label><input type="checkbox" checked><code><a href="reference/pb_lrt.html">pb_lrt()</a></code> and <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code> – bootstrap likelihood-ratio test for nested models, including variance components and <code>coxph</code> fits.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_resample.html">pb_resample()</a></code> – case-resampling helper.</label></li>
 </ul><p>Ideas for later versions:</p>
 <ul class="task-list"><li><label><input type="checkbox">Studentised (bootstrap-t) intervals, using the stored standard errors.</label></li>
-<li><label><input type="checkbox">Bootstrap likelihood-ratio test for nested models, as in <code>pbkrtest::PBmodcomp()</code>.</label></li>
 <li><label><input type="checkbox">Bootstrap distributions of variance components for mixed models.</label></li>
 <li><label><input type="checkbox"><code>coxph</code> models with <code>strata()</code>.</label></li>
 <li><label><input type="checkbox">A ‘future’ backend for <code><a href="reference/pb_parallel.html">pb_parallel()</a></code> (clusters, progress reporting).</label></li>
@@ -71,26 +71,27 @@
 <h2 id="id_4-quality-assurance">4. Quality assurance<a class="anchor" aria-label="anchor" href="#id_4-quality-assurance"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox" checked><code>R CMD check --as-cran</code> clean locally.</label></li>
 <li><label><input type="checkbox" checked>GitHub Actions: <code>R CMD check</code> on Linux, macOS and Windows; test coverage; ‘pkgdown’ site.</label></li>
-<li><label><input type="checkbox">Add the <code>CODECOV_TOKEN</code> secret and a coverage badge.</label></li>
-<li><label><input type="checkbox">Enable GitHub Pages (branch <code>gh-pages</code>), then add the site address as <code>url:</code> in <code>_pkgdown.yml</code> and to <code>URL</code> in <code>DESCRIPTION</code>.</label></li>
+<li><label><input type="checkbox" checked>Coverage reported to Codecov, with a badge in the README.</label></li>
+<li><label><input type="checkbox" checked>‘pkgdown’ site published with GitHub Pages at <a href="https://diogoribeiro7.github.io/parametricboot/" class="uri">https://diogoribeiro7.github.io/parametricboot/</a>.</label></li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_5-preparing-for-cran">5. Preparing for CRAN<a class="anchor" aria-label="anchor" href="#id_5-preparing-for-cran"></a></h2>
+<h2 id="id_5-preparing-for-cran-deferred">5. Preparing for CRAN (deferred)<a class="anchor" aria-label="anchor" href="#id_5-preparing-for-cran-deferred"></a></h2>
+<p>Not planned for now. To be picked up once the package is mature.</p>
 <ul class="task-list"><li><label><input type="checkbox">Choose a release version (<code>0.1.0</code>) and finalise <code>NEWS.md</code>.</label></li>
 <li><label><input type="checkbox">Check on win-builder (<code>devtools::check_win_devel()</code>) and R-hub.</label></li>
 <li><label><input type="checkbox">Write <code>cran-comments.md</code>.</label></li>
 <li><label><input type="checkbox">Ensure all package metadata (title, description, authors, URLs) is complete.</label></li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_6-submitting-to-cran">6. Submitting to CRAN<a class="anchor" aria-label="anchor" href="#id_6-submitting-to-cran"></a></h2>
+<h2 id="id_6-submitting-to-cran-deferred">6. Submitting to CRAN (deferred)<a class="anchor" aria-label="anchor" href="#id_6-submitting-to-cran-deferred"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox"><code>devtools::release()</code>.</label></li>
 <li><label><input type="checkbox">Respond to CRAN maintainers if revisions are requested.</label></li>
 <li><label><input type="checkbox">Once accepted, tag the release in Git and announce availability.</label></li>
 </ul></div>
 <div class="section level2">
-<h2 id="id_7-post-release-maintenance">7. Post-release maintenance<a class="anchor" aria-label="anchor" href="#id_7-post-release-maintenance"></a></h2>
+<h2 id="id_7-maintenance">7. Maintenance<a class="anchor" aria-label="anchor" href="#id_7-maintenance"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox">Monitor issues and update the package as needed.</label></li>
-<li><label><input type="checkbox">Follow semantic versioning for future releases.</label></li>
+<li><label><input type="checkbox">Follow semantic versioning once there is a first release.</label></li>
 </ul></div>
 </div>
 

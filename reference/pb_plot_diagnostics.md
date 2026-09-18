@@ -18,8 +18,10 @@ pb_plot_diagnostics(results, parameter = NULL)
 
 - results:
 
-  A `pb_boot` object from [`pb_simulate()`](pb_simulate.md) or
-  [`pb_parallel()`](pb_parallel.md).
+  A `pb_boot` object from
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  or
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md).
 
 - parameter:
 

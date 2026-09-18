@@ -2,7 +2,7 @@
 
 A small helper for the *nonparametric* (case-resampling) bootstrap,
 useful as a point of comparison for the parametric bootstrap of
-[`pb_simulate()`](pb_simulate.md).
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
 
 ## Usage
 

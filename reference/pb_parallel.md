@@ -1,7 +1,8 @@
 # Run parametric bootstrap replicates in parallel
 
-A drop-in replacement for [`pb_simulate()`](pb_simulate.md) that
-distributes the model refits over a local cluster of R processes.
+A drop-in replacement for
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+that distributes the model refits over a local cluster of R processes.
 
 ## Usage
 
@@ -42,21 +43,24 @@ pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE)
 - keep_fits:
 
   Should the refitted models be stored? They are needed by
-  [`pb_predict_boot()`](pb_predict_boot.md),
-  [`pb_plot_predictions()`](pb_plot_predictions.md) and
-  [`pb_compare_models()`](pb_compare_models.md), but can use a lot of
-  memory for large `n`.
+  [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md),
+  [`pb_plot_predictions()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_predictions.md)
+  and
+  [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md),
+  but can use a lot of memory for large `n`.
 
 ## Value
 
-An object of class `pb_boot`; see [`pb_simulate()`](pb_simulate.md).
+An object of class `pb_boot`; see
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
 
 ## Details
 
 The bootstrap responses are simulated in the calling process and only
 the refits are distributed, so for a given `seed` the result is
-identical to that of [`pb_simulate()`](pb_simulate.md), whatever the
-number of workers.
+identical to that of
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md),
+whatever the number of workers.
 
 The workers are fresh R sessions: 'parametricboot' must be installed
 (not just loaded with `devtools::load_all()`), and everything the model

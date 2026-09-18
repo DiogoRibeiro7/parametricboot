@@ -39,10 +39,11 @@ pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE)
 - keep_fits:
 
   Should the refitted models be stored? They are needed by
-  [`pb_predict_boot()`](pb_predict_boot.md),
-  [`pb_plot_predictions()`](pb_plot_predictions.md) and
-  [`pb_compare_models()`](pb_compare_models.md), but can use a lot of
-  memory for large `n`.
+  [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md),
+  [`pb_plot_predictions()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_predictions.md)
+  and
+  [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md),
+  but can use a lot of memory for large `n`.
 
 ## Value
 
@@ -66,7 +67,7 @@ An object of class `pb_boot`: a list with elements
 
   logical vector flagging the replicates that are excluded from all
   summaries: refits that threw an error, and replicates removed by
-  [`pb_drop_warned()`](pb_drop_warned.md).
+  [`pb_drop_warned()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_drop_warned.md).
 
 - `warned`:
 
@@ -107,8 +108,9 @@ model to it, holding the covariates fixed.
 A refit that throws an error is recorded as failed and dropped from all
 summaries; a single warning reports how many refits failed or produced
 warnings (for example convergence problems). Replicates with warnings
-are kept; see [`pb_drop_warned()`](pb_drop_warned.md) for when and how
-to remove them.
+are kept; see
+[`pb_drop_warned()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_drop_warned.md)
+for when and how to remove them.
 
 ## References
 
@@ -117,10 +119,13 @@ Application*. Cambridge University Press.
 
 ## See also
 
-[`pb_parallel()`](pb_parallel.md) to run the refits on several cores;
-[`pb_summary_table()`](pb_summary_table.md),
-[`pb_confint()`](pb_confint.md) and
-[`pb_plot_estimates()`](pb_plot_estimates.md) to summarise the result.
+[`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
+to run the refits on several cores;
+[`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md),
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+and
+[`pb_plot_estimates()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_estimates.md)
+to summarise the result.
 
 ## Examples
 

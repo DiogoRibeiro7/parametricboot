@@ -24,8 +24,8 @@ pb_compare_models(
 - models:
 
   A non-empty list of fitted models supported by
-  [`pb_simulate()`](pb_simulate.md). Names, if present, are used to
-  label the models.
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
+  Names, if present, are used to label the models.
 
 - n:
 
@@ -48,13 +48,19 @@ pb_compare_models(
 
 - ...:
 
-  Additional arguments passed to [`pb_simulate()`](pb_simulate.md).
+  Additional arguments passed to
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
 
 ## Value
 
 A data frame with one row per model and columns `model`, `observed` (the
 metric of the original fit), `boot_mean`, `boot_sd`, `lower` and `upper`
 (summaries of the metric over the bootstrap refits).
+
+## See also
+
+[`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
+for a formal test when the models are nested.
 
 ## Examples
 

@@ -3,10 +3,12 @@
 [`print()`](https://rdrr.io/r/base/print.html) gives a short overview of
 a parametric bootstrap,
 [`summary()`](https://rdrr.io/r/base/summary.html) returns the table of
-[`pb_summary_table()`](pb_summary_table.md), and
-[`confint()`](https://rdrr.io/r/stats/confint.html) returns the
-intervals of [`pb_confint()`](pb_confint.md) in the matrix layout used
-by [`stats::confint()`](https://rdrr.io/r/stats/confint.html).
+[`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md),
+and [`confint()`](https://rdrr.io/r/stats/confint.html) returns the
+intervals of
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+in the matrix layout used by
+[`stats::confint()`](https://rdrr.io/r/stats/confint.html).
 
 ## Usage
 
@@ -31,14 +33,17 @@ confint(
 
 - x, object:
 
-  A `pb_boot` object from [`pb_simulate()`](pb_simulate.md) or
-  [`pb_parallel()`](pb_parallel.md).
+  A `pb_boot` object from
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  or
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md).
 
 - ...:
 
   For [`summary()`](https://rdrr.io/r/base/summary.html), arguments
-  passed to [`pb_summary_table()`](pb_summary_table.md); otherwise
-  unused.
+  passed to
+  [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md);
+  otherwise unused.
 
 - parm:
 
@@ -51,7 +56,8 @@ confint(
 
 - type:
 
-  Type of interval; see [`pb_confint()`](pb_confint.md).
+  Type of interval; see
+  [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md).
 
 ## Value
 

@@ -4,7 +4,7 @@ parametricboot automates the **parametric bootstrap** for fitted
 regression models. You fit a model as usual; the package simulates new
 responses from it, refits the model to each of them, and turns the
 replicates into bias estimates, standard errors, confidence intervals,
-prediction intervals and diagnostic plots.
+prediction intervals, likelihood-ratio tests and diagnostic plots.
 
 Supported models:
 
@@ -16,8 +16,8 @@ Supported models:
 
 ## Installation
 
-parametricboot is not on CRAN yet. Install the development version from
-GitHub:
+parametricboot is a work in progress: it is not on CRAN, and the
+interface may still change. Install the development version from GitHub:
 
 ``` r
 
@@ -53,10 +53,10 @@ res
 #>   Terms:      (Intercept), sexM, log2(dose)
 ```
 
-[`pb_summary_table()`](reference/pb_summary_table.md) reports, for each
-coefficient, the bootstrap estimates of bias, standard error and mean
-squared error, the actual coverage of the nominal 95% Wald interval, and
-a bootstrap confidence interval:
+[`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md)
+reports, for each coefficient, the bootstrap estimates of bias, standard
+error and mean squared error, the actual coverage of the nominal 95%
+Wald interval, and a bootstrap confidence interval:
 
 ``` r
 
@@ -102,24 +102,31 @@ is widest at low doses.](reference/figures/README-predictions-1.png)
 
 | Task | Functions |
 |----|----|
-| Draw replicates | [`pb_simulate()`](reference/pb_simulate.md), [`pb_parallel()`](reference/pb_parallel.md), [`pb_drop_warned()`](reference/pb_drop_warned.md) |
-| Summarise | [`pb_summary_table()`](reference/pb_summary_table.md), [`pb_key_stats()`](reference/pb_key_stats.md), [`pb_confint()`](reference/pb_confint.md), [`pb_tidy()`](reference/pb_tidy.md), plus [`print()`](https://rdrr.io/r/base/print.html), [`summary()`](https://rdrr.io/r/base/summary.html) and [`confint()`](https://rdrr.io/r/stats/confint.html) methods |
-| Visualise | [`pb_plot_estimates()`](reference/pb_plot_estimates.md), [`pb_plot_diagnostics()`](reference/pb_plot_diagnostics.md), [`pb_plot_predictions()`](reference/pb_plot_predictions.md) |
-| Predict | [`pb_predict_boot()`](reference/pb_predict_boot.md) |
-| Compare models | [`pb_compare_models()`](reference/pb_compare_models.md) |
-| Nonparametric helper | [`pb_resample()`](reference/pb_resample.md) |
+| Draw replicates | [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md), [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md), [`pb_drop_warned()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_drop_warned.md) |
+| Summarise | [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md), [`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md), [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md), [`pb_tidy()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_tidy.md), plus [`print()`](https://rdrr.io/r/base/print.html), [`summary()`](https://rdrr.io/r/base/summary.html) and [`confint()`](https://rdrr.io/r/stats/confint.html) methods |
+| Visualise | [`pb_plot_estimates()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_estimates.md), [`pb_plot_diagnostics()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_diagnostics.md), [`pb_plot_predictions()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_predictions.md) |
+| Predict | [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md) |
+| Test nested models | [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md), [`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md) |
+| Compare other models | [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md) |
+| Nonparametric helper | [`pb_resample()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_resample.md) |
 
-See [`vignette("parametricboot")`](articles/parametricboot.md) for a
-tour that also covers mixed models, Cox models, and what to do when some
-refits misbehave.
+The [getting-started
+article](https://diogoribeiro7.github.io/parametricboot/articles/parametricboot.html)
+([`vignette("parametricboot")`](https://diogoribeiro7.github.io/parametricboot/articles/parametricboot.md))
+is a tour that also covers mixed models, Cox models, bootstrap
+likelihood-ratio tests, and what to do when some refits misbehave. The
+full [function
+reference](https://diogoribeiro7.github.io/parametricboot/reference/) is
+on the package website.
 
 ## Getting help and contributing
 
 Please report bugs and request features on the [issue
 tracker](https://github.com/DiogoRibeiro7/parametricboot/issues).
 Contributions are welcome; see the [contributing
-guide](CONTRIBUTING.md). This project follows a [code of
-conduct](CODE_OF_CONDUCT.md).
+guide](https://diogoribeiro7.github.io/parametricboot/CONTRIBUTING.md).
+This project follows a [code of
+conduct](https://diogoribeiro7.github.io/parametricboot/CODE_OF_CONDUCT.md).
 
 ## Citation
 
@@ -131,4 +138,5 @@ Regression Models_. R package version 0.0.0.9000,
 
 ## License
 
-MIT © Diogo Ribeiro. See [LICENSE.md](LICENSE.md).
+MIT © Diogo Ribeiro. See
+[LICENSE.md](https://diogoribeiro7.github.io/parametricboot/LICENSE.md).

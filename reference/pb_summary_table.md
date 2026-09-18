@@ -1,7 +1,10 @@
 # Summarise bootstrap statistics and confidence intervals
 
-Combines [`pb_key_stats()`](pb_key_stats.md) and
-[`pb_confint()`](pb_confint.md) into a single table.
+Combines
+[`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md)
+and
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+into a single table.
 
 ## Usage
 
@@ -17,8 +20,10 @@ pb_summary_table(
 
 - results:
 
-  A `pb_boot` object from [`pb_simulate()`](pb_simulate.md) or
-  [`pb_parallel()`](pb_parallel.md).
+  A `pb_boot` object from
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  or
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md).
 
 - level:
 
@@ -31,8 +36,9 @@ pb_summary_table(
 ## Value
 
 A data frame with one row per coefficient: the columns of
-[`pb_key_stats()`](pb_key_stats.md) followed by the `lower` and `upper`
-confidence limits of [`pb_confint()`](pb_confint.md).
+[`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md)
+followed by the `lower` and `upper` confidence limits of
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md).
 
 ## Examples
 

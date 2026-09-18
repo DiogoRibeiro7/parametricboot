@@ -48,9 +48,9 @@ budworm <- data.frame(
 fit <- glm(cbind(dead, n - dead) ~ sex + log2(dose), data = budworm, family = binomial())
 ```
 
-[`pb_simulate()`](../reference/pb_simulate.md) draws the replicates.
-With `seed`, the result is reproducible and your session’s random number
-stream is left untouched.
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+draws the replicates. With `seed`, the result is reproducible and your
+session’s random number stream is left untouched.
 
 ``` r
 
@@ -90,8 +90,9 @@ pb_summary_table(res)
 - `lower` and `upper` are bootstrap confidence limits.
 
 Three kinds of interval are available, through
-[`pb_confint()`](../reference/pb_confint.md) or the usual
-[`confint()`](https://rdrr.io/r/stats/confint.html) generic:
+[`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+or the usual [`confint()`](https://rdrr.io/r/stats/confint.html)
+generic:
 
 ``` r
 
@@ -114,8 +115,8 @@ confint(res, level = 0.9, type = "normal")
 
 ### Plots
 
-[`pb_plot_estimates()`](../reference/pb_plot_estimates.md) shows the
-bootstrap distributions:
+[`pb_plot_estimates()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_estimates.md)
+shows the bootstrap distributions:
 
 ``` r
 
@@ -126,9 +127,9 @@ pb_plot_estimates(res)
 original estimate marked by a dashed
 line.](parametricboot_files/figure-html/plot-estimates-1.png)
 
-[`pb_plot_diagnostics()`](../reference/pb_plot_diagnostics.md) helps to
-judge whether `n` is large enough. The running mean should have settled
-down by the right-hand edge of the plot.
+[`pb_plot_diagnostics()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_diagnostics.md)
+helps to judge whether `n` is large enough. The running mean should have
+settled down by the right-hand edge of the plot.
 
 ``` r
 
@@ -141,8 +142,8 @@ the original
 estimate.](parametricboot_files/figure-html/plot-diagnostics-1.png)
 
 All plots are ordinary ‘ggplot2’ objects, and
-[`pb_tidy()`](../reference/pb_tidy.md) returns the replicates in long
-format if you prefer to build your own.
+[`pb_tidy()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_tidy.md)
+returns the replicates in long format if you prefer to build your own.
 
 ``` r
 
@@ -158,8 +159,8 @@ head(pb_tidy(res))
 
 ### Predictions
 
-[`pb_predict_boot()`](../reference/pb_predict_boot.md) returns one
-column of predictions per replicate; extra arguments go to
+[`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
+returns one column of predictions per replicate; extra arguments go to
 [`predict()`](https://rdrr.io/r/stats/predict.html).
 
 ``` r
@@ -174,8 +175,8 @@ t(apply(preds, 1, quantile, probs = c(0.025, 0.5, 0.975)))
 #> 2 0.3161773 0.4301403 0.5545194
 ```
 
-[`pb_plot_predictions()`](../reference/pb_plot_predictions.md) does this
-for a whole grid and plots the result:
+[`pb_plot_predictions()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_predictions.md)
+does this for a whole grid and plots the result:
 
 ``` r
 
@@ -216,8 +217,8 @@ pb_key_stats(res_small)[c("term", "estimate", "bias", "std_error")]
 #> 2         mpg  0.4304135  0.2487127  2.278504
 ```
 
-[`pb_drop_warned()`](../reference/pb_drop_warned.md) excludes the
-replicates that raised warnings:
+[`pb_drop_warned()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_drop_warned.md)
+excludes the replicates that raised warnings:
 
 ``` r
 
@@ -264,10 +265,11 @@ that you can inspect `res$replicates` before deciding.
 
 For ‘lme4’ models, new random effects are drawn for every replicate and
 the summaries refer to the fixed effects. Refitting mixed models is
-slow, so this is where [`pb_parallel()`](../reference/pb_parallel.md)
+slow, so this is where
+[`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
 pays off: it takes the same arguments as
-[`pb_simulate()`](../reference/pb_simulate.md), plus `workers`, and
-returns an identical result for a given `seed`.
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md),
+plus `workers`, and returns an identical result for a given `seed`.
 
 ``` r
 
@@ -278,7 +280,6 @@ gm <- lme4::glmer(
 )
 
 res_gm <- pb_simulate(gm, n = 100, seed = 1)
-#> boundary (singular) fit: see help('isSingular')
 # Equivalent, on two cores: pb_parallel(gm, n = 100, workers = 2, seed = 1)
 
 pb_summary_table(res_gm)
@@ -295,16 +296,17 @@ pb_summary_table(res_gm)
 ```
 
 Pass `re.form = NA` to
-[`pb_predict_boot()`](../reference/pb_predict_boot.md) for
-population-level predictions.
+[`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
+for population-level predictions.
 
 ## Cox models
 
 A Cox model leaves the baseline hazard and the censoring mechanism
 unspecified, so there is no fully parametric model to simulate from. For
-`coxph` fits, [`pb_simulate()`](../reference/pb_simulate.md) uses the
-model-based resampling algorithm of Davison and Hinkley (1997, Algorithm
-7.3):
+`coxph` fits,
+[`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+uses the model-based resampling algorithm of Davison and Hinkley (1997,
+Algorithm 7.3):
 
 - failure times are drawn from the fitted survivor function
   $`\hat S_0(t)^{\exp(x^\top\hat\beta)}`$, with $`\hat S_0`$ based on
@@ -346,35 +348,121 @@ sqrt(diag(vcov(cox)))
 #> 0.009267411 0.167739054 0.113577266
 ```
 
-## Comparing models
+## Testing nested models
 
-[`pb_compare_models()`](../reference/pb_compare_models.md) bootstraps
-several models and reports the sampling variability of a fit criterion
-under each of them. A difference in AIC that is small relative to
-`boot_sd` should not be over-interpreted.
+[`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
+is the parametric bootstrap version of the likelihood-ratio test. It
+simulates from the fitted *null* model, refits both models to every
+simulated response, and compares the observed statistic with the
+resulting reference distribution rather than with a chi-squared
+distribution.
+
+Does the effect of dose differ between the sexes?
 
 ``` r
 
-fits <- list(
-  common_slope = fit,
-  sex_specific_slope = update(fit, . ~ sex * log2(dose))
-)
-pb_compare_models(fits, n = 100, seed = 1)
-#>                model observed boot_mean  boot_sd    lower    upper
-#> 1       common_slope 42.86747  46.59610 4.062564 40.02508 56.10672
-#> 2 sex_specific_slope 43.10413  47.24012 4.027649 40.53773 55.49608
+separate <- update(fit, . ~ sex * log2(dose))
+pb_lrt(fit, separate, n = 500, seed = 2025)
+#> <pb_lrt> Parametric bootstrap likelihood-ratio test
+#>   Null:        cbind(dead, n - dead) ~ sex + log2(dose)
+#>   Alternative: cbind(dead, n - dead) ~ sex + log2(dose) + sex:log2(dose)
+#>   Replicates:  500
+#>   Statistic:   1.76 on 1 df
+#> 
+#>                          p.value
+#> Chi-squared (asymptotic)   0.184
+#> Bartlett-corrected         0.211
+#> Parametric bootstrap        0.23
 ```
+
+With only 12 observations the chi-squared p-value is somewhat too small,
+as is typical, though the conclusion is the same here. For the normal
+linear model, where the exact answer is known, the bootstrap p-value
+converges to that of the F test.
+
+The difference becomes dramatic when the null hypothesis lies on the
+boundary of the parameter space, as when testing whether a variance
+component is zero. The models may be of different classes, so the null
+can simply be the model without the random effect:
+
+``` r
+
+dye <- lme4::Dyestuff
+no_batch <- lm(Yield ~ 1, data = dye)
+batch <- lme4::lmer(Yield ~ 1 + (1 | Batch), data = dye)
+
+test <- pb_lrt(no_batch, batch, n = 500, seed = 2025)
+#> Refitting REML fits by maximum likelihood, as likelihood-ratio tests require.
+test
+#> <pb_lrt> Parametric bootstrap likelihood-ratio test
+#>   Null:        Yield ~ 1
+#>   Alternative: Yield ~ 1 + (1 | Batch)
+#>   Replicates:  500
+#>   Statistic:   5.4 on 1 df
+#> 
+#>                           p.value
+#> Chi-squared (asymptotic)  0.02010
+#> Bartlett-corrected       1.06e-06
+#> Parametric bootstrap      0.00599
+```
+
+REML fits are refitted by maximum likelihood, which likelihood-ratio
+tests require. The chi-squared p-value is more than three times too
+large.
+[`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md)
+shows why: under the null hypothesis the estimated batch variance, and
+with it the statistic, is exactly zero in about two thirds of samples,
+which no chi-squared distribution can reproduce. The Bartlett correction
+only rescales the chi-squared distribution, so it cannot help either,
+and here makes matters worse.
+
+``` r
+
+pb_plot_lrt(test)
+```
+
+![Histogram of the bootstrap likelihood-ratio statistics with a very
+tall bar at zero, more than twice as high as the chi-squared
+approximation drawn in red, and the observed statistic of 5.4 marked far
+in the right tail.](parametricboot_files/figure-html/lrt-plot-1.png)
+
+## Comparing models that are not nested
+
+[`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md)
+bootstraps several models and reports the sampling variability of a fit
+criterion under each of them. Here, three link functions for the
+dose-response curve:
+
+``` r
+
+links <- list(
+  logit = fit,
+  probit = update(fit, family = binomial("probit")),
+  cloglog = update(fit, family = binomial("cloglog"))
+)
+pb_compare_models(links, n = 200, seed = 1)
+#>     model observed boot_mean  boot_sd    lower    upper
+#> 1   logit 42.86747  46.74309 4.048691 39.84039 55.72513
+#> 2  probit 41.67636  46.30737 4.274158 37.89211 53.90810
+#> 3 cloglog 42.93802  45.99350 3.994673 39.22221 55.17857
+```
+
+The AIC differences between the links are about one unit, against a
+sampling standard deviation (`boot_sd`) of about four: these data cannot
+tell the links apart, and a difference in AIC that is small relative to
+`boot_sd` should not be over-interpreted.
 
 ## Practical advice
 
 - Use at least a few hundred replicates for standard errors and 1000 or
   more for confidence limits; check
-  [`pb_plot_diagnostics()`](../reference/pb_plot_diagnostics.md).
+  [`pb_plot_diagnostics()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_diagnostics.md).
 - The parametric bootstrap is only as good as the model. It quantifies
   sampling variability *assuming the fitted model is right*; it does not
   detect misspecification.
-  [`pb_resample()`](../reference/pb_resample.md) offers simple case
-  resampling if you want a nonparametric point of comparison.
+  [`pb_resample()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_resample.md)
+  offers simple case resampling if you want a nonparametric point of
+  comparison.
 - Models must be fitted with a `data` argument so that they can be
   refitted.
 
@@ -384,3 +472,7 @@ Collett, D. (1991) *Modelling Binary Data*. Chapman & Hall.
 
 Davison, A. C. and Hinkley, D. V. (1997) *Bootstrap Methods and their
 Application*. Cambridge University Press.
+
+Halekoh, U. and Hojsgaard, S. (2014) A Kenward-Roger approximation and
+parametric bootstrap methods for tests in linear mixed models: the R
+package pbkrtest. *Journal of Statistical Software*, 59(9), 1-32.
