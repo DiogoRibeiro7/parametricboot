@@ -86,14 +86,20 @@ pb_summary_table(res)
   nominal 95% Wald interval.
 * `lower` and `upper` are bootstrap confidence limits.
 
-Three kinds of interval are available, through `pb_confint()` or the usual
+Four kinds of interval are available, through `pb_confint()` or the usual
 `confint()` generic:
 
 ```{r confint}
 pb_confint(res, type = "percentile")
 pb_confint(res, type = "basic")
+pb_confint(res, type = "student")
 confint(res, level = 0.9, type = "normal")
 ```
+
+The studentised (bootstrap-t) interval, `type = "student"`, scales every
+replicate by its own standard error. It is the most accurate of the four when
+standard errors are estimated reliably; for a normal linear model it
+reproduces the exact t interval, which the percentile interval does not.
 
 ### Plots
 
@@ -180,15 +186,25 @@ pb_confint(res_small)
 pb_confint(clean)
 ```
 
+The studentised interval is even less affected, because a separated refit
+combines a huge estimate with an even larger standard error, so that its
+studentised value is unremarkable:
+
+```{r separation-student}
+pb_confint(res_small, type = "student")
+pb_confint(clean, type = "student")
+```
+
 Replicates are never dropped automatically, because not every warning signals
 a useless fit. `res$warned` flags the affected replicates so that you can
 inspect `res$replicates` before deciding.
 
 ## Mixed models
 
-For 'lme4' models, new random effects are drawn for every replicate and the
-summaries refer to the fixed effects. Refitting mixed models is slow, so this
-is where `pb_parallel()` pays off: it takes the same arguments as
+For 'lme4' models, new random effects are drawn for every replicate, exactly
+as `lme4::bootMer()` does, and the variance components are tracked alongside
+the fixed effects. Refitting mixed models is slow, so this is where
+`pb_parallel()` pays off: it takes the same arguments as
 `pb_simulate()`, plus `workers`, and returns an identical result for a given
 `seed`.
 
@@ -205,6 +221,22 @@ res_gm <- pb_simulate(gm, n = 100, seed = 1)
 pb_summary_table(res_gm)
 ```
 
+The last row is the standard deviation of the herd effects, named as 'lme4'
+names it in `confint(gm, oldNames = FALSE)`; correlations appear as `cor_...`
+and the residual standard deviation of a linear mixed model as `sigma`.
+Variance components are where Wald-type inference is weakest, and 'lme4' does
+not even report standard errors for them. That is why their `coverage` is
+`NA`, and why studentised intervals are not available for these rows. The
+bootstrap shows that the herd standard deviation is underestimated (its
+`bias` is negative; with 1500 replicates instead of the 100 used here to keep
+this vignette fast, it settles at about 10% of the estimate). This is a
+well-known property of maximum likelihood with few groups, here 15 herds:
+
+```{r glmer-variance, eval = has_lme4, fig.alt = "Histogram of the bootstrap estimates of the herd standard deviation, centred slightly below the original estimate marked by a dashed line."}
+pb_plot_estimates(res_gm, parameter = "sd_(Intercept)|herd")
+```
+
+To test whether a variance component is needed at all, see `pb_lrt()` below.
 Pass `re.form = NA` to `pb_predict_boot()` for population-level predictions.
 
 ## Cox models
@@ -221,8 +253,10 @@ Davison and Hinkley (1997, Algorithm 7.3):
   censoring time drawn from the Kaplan-Meier estimate of the censoring
   distribution, conditional on exceeding their observed time.
 
-Only right-censored, unweighted models without `strata()`, `tt()` or penalised
-terms are supported.
+In a model with `strata()`, each stratum has its own baseline hazard,
+censoring distribution and end of follow-up. Only right-censored, unweighted
+models are supported, without `tt()`, penalised or `frailty()` terms,
+strata-by-covariate interactions or `cluster()`.
 
 ```{r coxph, eval = has_survival}
 library(survival)

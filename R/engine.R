@@ -171,10 +171,20 @@ pb_check_coxph <- function(model) {
     pb_abort("Only right-censored `Surv(time, status)` responses are supported for 'coxph' models.")
   }
   specials <- attr(model$terms, "specials")
-  if (inherits(model, "coxph.penal") || length(specials$strata) > 0L || length(specials$tt) > 0L) {
+  if (inherits(model, "coxph.penal") || length(specials$tt) > 0L) {
+    pb_abort("'coxph' models with `tt()`, `frailty()` or penalised terms are not supported.")
+  }
+  labels <- attr(model$terms, "term.labels")
+  if (any(grepl("strata(", labels, fixed = TRUE) & grepl(":", labels, fixed = TRUE))) {
     pb_abort(
-      "'coxph' models with `strata()`, `tt()`, `frailty()` or penalised terms ",
-      "are not supported."
+      "'coxph' models with strata-by-covariate interactions are not supported, ",
+      "because they have no single baseline hazard per stratum."
+    )
+  }
+  if (!is.null(stats::getCall(model)$cluster) || length(specials$cluster) > 0L) {
+    pb_abort(
+      "'coxph' models with `cluster()` are not supported: the observations are ",
+      "resampled independently, which ignores the clustering."
     )
   }
   if (!is.null(model[["weights"]])) {
@@ -188,21 +198,66 @@ pb_check_coxph <- function(model) {
 # function, built from the Breslow baseline hazard. Censoring times are kept for
 # censored subjects and drawn from the Kaplan-Meier estimate of the censoring
 # distribution, conditional on exceeding the observed time, for the others.
+# In a stratified model each stratum has its own baseline hazard, censoring
+# distribution and end of follow-up.
 pb_sim_coxph <- function(model, nsim) {
   y <- model[["y"]]
   time <- as.numeric(y[, 1])
   status <- as.numeric(y[, 2])
-  n_obs <- length(time)
-  t_max <- max(time)
-
-  base <- survival::basehaz(model, centered = TRUE)
   risk <- exp(model$linear.predictors)
+  base <- survival::basehaz(model, centered = TRUE)
 
-  cens <- survival::survfit(survival::Surv(time, 1 - status) ~ 1)
-  g_at_y <- c(1, cens$surv)[findInterval(time, cens$time) + 1L]
-  events <- status == 1
+  strata <- pb_coxph_strata(model)
+  if (is.null(strata)) {
+    groups <- list(seq_along(time))
+    hazards <- list(base)
+  } else {
+    groups <- split(seq_along(time), strata)
+    if (!all(names(groups) %in% levels(base$strata))) {
+      pb_abort("Could not match the strata of the 'coxph' model to its baseline hazards.")
+    }
+    hazards <- lapply(names(groups), function(s) base[base$strata == s, , drop = FALSE])
+  }
+  samplers <- lapply(seq_along(groups), function(g) {
+    rows <- groups[[g]]
+    pb_coxph_sampler(time[rows], status[rows], risk[rows], hazards[[g]])
+  })
 
   lapply(seq_len(nsim), function(i) {
+    out <- cbind(time = time, status = status)
+    for (g in seq_along(groups)) {
+      out[groups[[g]], ] <- samplers[[g]]()
+    }
+    out
+  })
+}
+
+# The stratum of each observation used in the fit, recovered from the model
+# frame exactly as `coxph()` builds it, or `NULL` for an unstratified model.
+pb_coxph_strata <- function(model) {
+  vars <- survival::untangle.specials(model$terms, "strata")$vars
+  if (length(vars) == 0L) {
+    return(NULL)
+  }
+  frame <- stats::model.frame(model)
+  strata <- if (length(vars) == 1L) {
+    frame[[vars]]
+  } else {
+    survival::strata(frame[, vars], shortlabel = TRUE)
+  }
+  droplevels(as.factor(strata))
+}
+
+# A function that draws one bootstrap sample of (time, status) for a group of
+# subjects sharing the baseline hazard `base`.
+pb_coxph_sampler <- function(time, status, risk, base) {
+  n_obs <- length(time)
+  t_max <- max(time)
+  events <- status == 1
+  cens <- survival::survfit(survival::Surv(time, 1 - status) ~ 1)
+  g_at_y <- c(1, cens$surv)[findInterval(time, cens$time) + 1L]
+
+  function() {
     target <- stats::rexp(n_obs) / risk
     k <- findInterval(target, base$hazard, left.open = TRUE) + 1L
     fail <- base$time[k]
@@ -219,7 +274,7 @@ pb_sim_coxph <- function(model, nsim) {
       time = pmin(fail, censor, t_max),
       status = as.numeric(fail <= censor & is.finite(fail))
     )
-  })
+  }
 }
 
 # Step 2: refit ----------------------------------------------------------------

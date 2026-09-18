@@ -20,7 +20,9 @@
 #'   \item{`coverage`}{proportion of replicates whose Wald interval
 #'     (estimate plus or minus a normal quantile times the standard error)
 #'     contains `estimate`. Values far from `level` indicate that the usual
-#'     Wald intervals are unreliable for this model.}
+#'     Wald intervals are unreliable for this model. It is `NA` for parameters
+#'     without a standard error, such as the variance components of mixed
+#'     models.}
 #' }
 #'
 #' @examples
@@ -40,6 +42,8 @@ pb_key_stats <- function(results, level = 0.95) {
   boot_mean <- colMeans(est, na.rm = TRUE)
   z <- stats::qnorm(1 - (1 - level) / 2)
   covered <- abs(centred) <= z * se
+  coverage <- colMeans(covered, na.rm = TRUE)
+  coverage[is.nan(coverage)] <- NA_real_
 
   data.frame(
     term = names(theta),
@@ -48,7 +52,7 @@ pb_key_stats <- function(results, level = 0.95) {
     bias = unname(boot_mean - theta),
     std_error = unname(apply(est, 2, stats::sd, na.rm = TRUE)),
     mse = unname(colMeans(centred^2, na.rm = TRUE)),
-    coverage = unname(colMeans(covered, na.rm = TRUE)),
+    coverage = unname(coverage),
     stringsAsFactors = FALSE
   )
 }

@@ -65,7 +65,7 @@ summary.pb_boot <- function(object, ...) {
 #' @importFrom stats confint
 #' @export
 confint.pb_boot <- function(object, parm, level = 0.95,
-                            type = c("percentile", "basic", "normal"), ...) {
+                            type = c("percentile", "basic", "normal", "student"), ...) {
   ci <- pb_confint(object, level = level, type = type)
   alpha <- (1 - level) / 2
   out <- as.matrix(ci[c("lower", "upper")])

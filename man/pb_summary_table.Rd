@@ -7,7 +7,7 @@
 pb_summary_table(
   results,
   level = 0.95,
-  type = c("percentile", "basic", "normal")
+  type = c("percentile", "basic", "normal", "student")
 )
 }
 \arguments{
@@ -15,7 +15,8 @@ pb_summary_table(
 
 \item{level}{Confidence level, strictly between 0 and 1.}
 
-\item{type}{Type of interval: \code{"percentile"}, \code{"basic"} or \code{"normal"}.}
+\item{type}{Type of interval: \code{"percentile"}, \code{"basic"}, \code{"normal"} or
+\code{"student"}.}
 }
 \value{
 A data frame with one row per coefficient: the columns of

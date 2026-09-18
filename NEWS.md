@@ -1,5 +1,36 @@
 # parametricboot 0.0.0.9000
 
+## Cox models
+
+* `coxph()` models with `strata()` are now supported, in `pb_simulate()` and
+  in `pb_lrt()`. Each stratum is resampled with its own baseline hazard,
+  censoring distribution and end of follow-up. Results for unstratified
+  models are unchanged.
+* Models with `cluster()` are now rejected. They used to be accepted and
+  resampled as if the observations were independent, which ignores the
+  clustering. Strata-by-covariate interactions, for which there is no single
+  baseline hazard per stratum, are rejected as well.
+
+## Mixed models
+
+* For `lmer()` and `glmer()` fits, the variance components are now tracked
+  alongside the fixed effects: random-effect standard deviations and
+  correlations and, where the family has one, the residual standard deviation.
+  They are named as in `confint(model, oldNames = FALSE)`, for example
+  `sd_(Intercept)|Subject` and `sigma`, and appear in every summary and plot.
+  'lme4' provides no standard errors for them, so their Wald `coverage` and
+  studentised limits are `NA`.
+* Replicates are identical to those of `lme4::bootMer()` for the same seed,
+  which is now tested.
+
+## Confidence intervals
+
+* `pb_confint()`, `pb_summary_table()` and `confint()` gain
+  `type = "student"`, the studentised (bootstrap-t) interval, which scales
+  each replicate by its own standard error. It reproduces the exact t interval
+  for normal linear models and is insensitive to degenerate refits such as
+  perfectly separated logistic regressions.
+
 ## Likelihood-ratio tests
 
 * New `pb_lrt()`: parametric bootstrap likelihood-ratio test for nested

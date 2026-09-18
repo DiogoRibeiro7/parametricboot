@@ -25,7 +25,9 @@ A data frame with one row per coefficient and columns
 \item{\code{coverage}}{proportion of replicates whose Wald interval
 (estimate plus or minus a normal quantile times the standard error)
 contains \code{estimate}. Values far from \code{level} indicate that the usual
-Wald intervals are unreliable for this model.}
+Wald intervals are unreliable for this model. It is \code{NA} for parameters
+without a standard error, such as the variance components of mixed
+models.}
 }
 }
 \description{
