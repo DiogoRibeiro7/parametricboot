@@ -1,0 +1,10 @@
+year <- if (is.null(meta$Date)) format(Sys.Date(), "%Y") else substr(meta$Date, 1, 4)
+
+bibentry(
+  bibtype = "Manual",
+  title = "parametricboot: Parametric Bootstrap for Fitted Regression Models",
+  author = person("Diogo", "Ribeiro", comment = c(ORCID = "0009-0001-2022-7072")),
+  year = year,
+  note = paste("R package version", meta$Version),
+  url = "https://github.com/DiogoRibeiro7/parametricboot"
+)

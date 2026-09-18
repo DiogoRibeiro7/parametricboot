@@ -1,0 +1,273 @@
+---
+title: "Getting started with parametricboot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with parametricboot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 3.5,
+  out.width = "100%"
+)
+has_lme4 <- requireNamespace("lme4", quietly = TRUE)
+has_survival <- requireNamespace("survival", quietly = TRUE)
+```
+
+## The idea
+
+Standard errors and confidence intervals for regression models usually rest on
+large-sample approximations. The **parametric bootstrap** checks, and if
+necessary replaces, those approximations by simulation:
+
+1. fit the model to the data;
+2. simulate a new response from the *fitted* model, keeping the covariates
+   fixed;
+3. refit the model to the simulated response;
+4. repeat steps 2 and 3 many times.
+
+Because the data-generating mechanism in step 2 is known exactly (it is the
+fitted model), the spread of the refitted estimates around the original one
+shows how the estimator behaves in samples like yours: whether it is biased,
+how variable it is, and whether the textbook intervals achieve their nominal
+coverage.
+
+parametricboot runs this loop for `lm()`, `glm()`, `lme4::lmer()`,
+`lme4::glmer()` and `survival::coxph()` fits, and provides tools to summarise
+the result.
+
+```{r setup}
+library(parametricboot)
+```
+
+## A dose-response experiment
+
+Collett (1991) describes an experiment in which batches of 20 tobacco budworm
+moths of each sex were exposed to six doses of a pyrethroid. The response is
+the number of moths killed.
+
+```{r fit}
+budworm <- data.frame(
+  sex = rep(c("M", "F"), each = 6),
+  dose = rep(c(1, 2, 4, 8, 16, 32), times = 2),
+  dead = c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16),
+  n = 20
+)
+fit <- glm(cbind(dead, n - dead) ~ sex + log2(dose), data = budworm, family = binomial())
+```
+
+`pb_simulate()` draws the replicates. With `seed`, the result is reproducible
+and your session's random number stream is left untouched.
+
+```{r simulate}
+res <- pb_simulate(fit, n = 500, seed = 2025)
+res
+```
+
+The model is refitted by re-evaluating its call on the original data, so the
+two-column response and the `log2(dose)` term need no special treatment. The
+only requirement is that the model was fitted with a `data` argument.
+
+### Summaries
+
+```{r summary}
+pb_summary_table(res)
+```
+
+* `bias`, `std_error` and `mse` describe the bootstrap distribution around the
+  original estimate.
+* `coverage` is the proportion of replicates whose own Wald interval contains
+  the original estimate, that is, the estimated actual coverage of the
+  nominal 95% Wald interval.
+* `lower` and `upper` are bootstrap confidence limits.
+
+Three kinds of interval are available, through `pb_confint()` or the usual
+`confint()` generic:
+
+```{r confint}
+pb_confint(res, type = "percentile")
+pb_confint(res, type = "basic")
+confint(res, level = 0.9, type = "normal")
+```
+
+### Plots
+
+`pb_plot_estimates()` shows the bootstrap distributions:
+
+```{r plot-estimates, fig.alt = "Histograms of the bootstrap estimates of each coefficient, with the original estimate marked by a dashed line."}
+pb_plot_estimates(res)
+```
+
+`pb_plot_diagnostics()` helps to judge whether `n` is large enough. The running
+mean should have settled down by the right-hand edge of the plot.
+
+```{r plot-diagnostics, fig.alt = "Bootstrap estimates of the log-dose slope plotted against replicate number, with their running mean settling just above the dashed line at the original estimate."}
+pb_plot_diagnostics(res, parameter = "log2(dose)")
+```
+
+All plots are ordinary 'ggplot2' objects, and `pb_tidy()` returns the
+replicates in long format if you prefer to build your own.
+
+```{r tidy}
+head(pb_tidy(res))
+```
+
+### Predictions
+
+`pb_predict_boot()` returns one column of predictions per replicate; extra
+arguments go to `predict()`.
+
+```{r predict}
+new_moths <- data.frame(sex = c("M", "F"), dose = 8)
+preds <- pb_predict_boot(res, new_moths, type = "response")
+dim(preds)
+t(apply(preds, 1, quantile, probs = c(0.025, 0.5, 0.975)))
+```
+
+`pb_plot_predictions()` does this for a whole grid and plots the result:
+
+```{r plot-predictions, fig.alt = "Predicted probability of death for male moths against dose, with a shaded 95 percent bootstrap band."}
+males <- data.frame(sex = "M", dose = seq(1, 32, length.out = 100))
+pb_plot_predictions(res, males, x = "dose", type = "response")
+```
+
+## When refits misbehave
+
+Refits that throw an error are dropped, and refits that raise warnings are
+counted rather than printed one by one. Both are reported in a single warning,
+and the second kind deserves attention. Consider a logistic regression on the
+32 rows of `mtcars`:
+
+```{r separation}
+small <- glm(vs ~ mpg, data = mtcars, family = binomial())
+res_small <- pb_simulate(small, n = 500, seed = 2025)
+```
+
+In a few of the simulated data sets the two groups are perfectly separated by
+`mpg`. The maximum likelihood estimate does not exist for such data, and
+`glm()` returns whatever huge value the iterations stopped at. A handful of
+these replicates dominates every mean and standard deviation:
+
+```{r separation-stats}
+pb_key_stats(res_small)[c("term", "estimate", "bias", "std_error")]
+```
+
+`pb_drop_warned()` excludes the replicates that raised warnings:
+
+```{r separation-dropped}
+clean <- pb_drop_warned(res_small)
+clean
+pb_key_stats(clean)[c("term", "estimate", "bias", "std_error")]
+```
+
+This reveals the genuine, and substantial, small-sample bias of logistic
+regression: both coefficients are overestimated in absolute value by about a
+fifth. Two caveats apply.
+
+* The cleaned summaries are conditional on the fit being well behaved. Report
+  the proportion of dropped replicates with them.
+* Percentile intervals are far less sensitive than means: a quantile registers
+  that a few replicates were extreme, but not by how much. They do not need
+  this treatment, and are arguably more honest without it:
+
+```{r separation-confint}
+pb_confint(res_small)
+pb_confint(clean)
+```
+
+Replicates are never dropped automatically, because not every warning signals
+a useless fit. `res$warned` flags the affected replicates so that you can
+inspect `res$replicates` before deciding.
+
+## Mixed models
+
+For 'lme4' models, new random effects are drawn for every replicate and the
+summaries refer to the fixed effects. Refitting mixed models is slow, so this
+is where `pb_parallel()` pays off: it takes the same arguments as
+`pb_simulate()`, plus `workers`, and returns an identical result for a given
+`seed`.
+
+```{r glmer, eval = has_lme4}
+cbpp <- lme4::cbpp
+gm <- lme4::glmer(
+  cbind(incidence, size - incidence) ~ period + (1 | herd),
+  data = cbpp, family = binomial()
+)
+
+res_gm <- pb_simulate(gm, n = 100, seed = 1)
+# Equivalent, on two cores: pb_parallel(gm, n = 100, workers = 2, seed = 1)
+
+pb_summary_table(res_gm)
+```
+
+Pass `re.form = NA` to `pb_predict_boot()` for population-level predictions.
+
+## Cox models
+
+A Cox model leaves the baseline hazard and the censoring mechanism
+unspecified, so there is no fully parametric model to simulate from. For
+`coxph` fits, `pb_simulate()` uses the model-based resampling algorithm of
+Davison and Hinkley (1997, Algorithm 7.3):
+
+* failure times are drawn from the fitted survivor function
+  $\hat S_0(t)^{\exp(x^\top\hat\beta)}$, with $\hat S_0$ based on the Breslow
+  estimate of the baseline hazard;
+* subjects who were censored keep their censoring time, and the others get a
+  censoring time drawn from the Kaplan-Meier estimate of the censoring
+  distribution, conditional on exceeding their observed time.
+
+Only right-censored, unweighted models without `strata()`, `tt()` or penalised
+terms are supported.
+
+```{r coxph, eval = has_survival}
+library(survival)
+cox <- coxph(Surv(time, status) ~ age + sex + ph.ecog, data = lung)
+
+res_cox <- pb_simulate(cox, n = 200, seed = 1, keep_fits = FALSE)
+pb_summary_table(res_cox)
+```
+
+Here the bootstrap standard errors are close to the partial-likelihood ones,
+shown below, and the Wald intervals have close to nominal coverage, which is
+reassuring. `keep_fits = FALSE` stores only the estimates, which saves memory
+when you do not need predictions.
+
+```{r coxph-se, eval = has_survival}
+sqrt(diag(vcov(cox)))
+```
+
+## Comparing models
+
+`pb_compare_models()` bootstraps several models and reports the sampling
+variability of a fit criterion under each of them. A difference in AIC that is
+small relative to `boot_sd` should not be over-interpreted.
+
+```{r compare}
+fits <- list(
+  common_slope = fit,
+  sex_specific_slope = update(fit, . ~ sex * log2(dose))
+)
+pb_compare_models(fits, n = 100, seed = 1)
+```
+
+## Practical advice
+
+* Use at least a few hundred replicates for standard errors and 1000 or more
+  for confidence limits; check `pb_plot_diagnostics()`.
+* The parametric bootstrap is only as good as the model. It quantifies
+  sampling variability *assuming the fitted model is right*; it does not
+  detect misspecification. `pb_resample()` offers simple case resampling if
+  you want a nonparametric point of comparison.
+* Models must be fitted with a `data` argument so that they can be refitted.
+
+## References
+
+Collett, D. (1991) *Modelling Binary Data*. Chapman & Hall.
+
+Davison, A. C. and Hinkley, D. V. (1997) *Bootstrap Methods and their
+Application*. Cambridge University Press.

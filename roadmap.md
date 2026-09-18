@@ -1,45 +1,70 @@
-1. **Project Setup**
-   - Initialize an R package using `devtools::create("parametricboot")`.
-   - Adopt MIT License (see `LICENSE`) and create a `DESCRIPTION` file.
+# Roadmap
 
-2. **Core Functionality**
-   - Implement the three functions described in the README:
-     - `pb_simulate()` – run N parametric bootstrap replicates.
-     - `pb_plot_estimates()` – compare empirical vs. bootstrap distributions.
-     - `pb_key_stats()` – compute bias, MSE, and coverage.
-   - Ensure compatibility with `stats::glm()`, `lme4::glmer()`, and `survival::coxph()` models.
-   - Gradually add new helpers to expand the library:
-     - `pb_confint()` – compute percentile or BCa confidence intervals.
-     - `pb_predict_boot()` – generate predictions with bootstrap uncertainty.
-   - `pb_compare_models()` – evaluate multiple model fits side by side.
-   - `pb_plot_diagnostics()` – visualize residuals or convergence issues.
-   - `pb_resample()` – support custom resampling schemes.
-   - `pb_parallel()` – run replicates in parallel using `future` or `foreach`.
-   - `pb_tidy()` – return results in tidy data frames for use with `broom`.
-   - `pb_summary_table()` – assemble key statistics into a single summary.
-   - `pb_plot_predictions()` – visualize predictive distributions for new data.
+Status of the path from prototype to a CRAN release. See `NEWS.md` for what
+changed in each version.
 
-3. **Package Infrastructure**
-   - Use `roxygen2` to generate documentation from inline comments.
-   - Include examples and vignettes demonstrating bootstrap workflows.
-   - Add a test suite with `testthat` to validate functionality.
-   - Provide an initial test ensuring `pb_simulate()` returns an object of class `pb_boot`.
+## 1. Project setup
 
-4. **Quality Assurance**
-   - Run `devtools::check()` and `R CMD check` to validate the package locally.
-   - Configure continuous integration (e.g., GitHub Actions) to automate checks on each commit.
-   - Address warnings or notes to comply with CRAN policies.
+- [x] R package skeleton, MIT licence (`MIT + file LICENSE`) and `DESCRIPTION`.
 
-5. **Preparing for CRAN**
-   - Update `NEWS.md` with changes and increment the version number in `DESCRIPTION`.
-   - Verify `devtools::check(--as-cran)` runs cleanly.
-   - Ensure all package metadata (title, description, authors, URLs) is complete.
+## 2. Core functionality
 
-6. **Submitting to CRAN**
-   - Use `devtools::release()` to run final tests and submit.
-   - Respond to CRAN maintainers if revisions are requested.
-   - Once accepted, tag the release in Git and announce availability.
+- [x] `pb_simulate()` – run N parametric bootstrap replicates, for `lm()`,
+  `glm()`, `lme4::lmer()`, `lme4::glmer()` and `survival::coxph()` fits.
+- [x] `pb_parallel()` – run the refits in parallel (base 'parallel' cluster),
+  reproducibly.
+- [x] `pb_drop_warned()` – exclude replicates whose refit raised a warning
+  (for example separated logistic regressions).
+- [x] `pb_key_stats()` – bias, standard error, MSE and Wald coverage.
+- [x] `pb_confint()` – percentile, basic and normal intervals.
+- [x] `pb_summary_table()`, `pb_tidy()`, and `print()`, `summary()` and
+  `confint()` methods.
+- [x] `pb_plot_estimates()`, `pb_plot_diagnostics()`, `pb_plot_predictions()`.
+- [x] `pb_predict_boot()` – predictions with bootstrap uncertainty.
+- [x] `pb_compare_models()` – bootstrap distribution of a fit criterion.
+- [x] `pb_resample()` – case-resampling helper.
 
-7. **Post-release Maintenance**
-   - Monitor issues and update the package as needed.
-   - Follow semantic versioning for future releases.
+Ideas for later versions:
+
+- [ ] Studentised (bootstrap-t) intervals, using the stored standard errors.
+- [ ] Bootstrap likelihood-ratio test for nested models, as in
+  `pbkrtest::PBmodcomp()`.
+- [ ] Bootstrap distributions of variance components for mixed models.
+- [ ] `coxph` models with `strata()`.
+- [ ] A 'future' backend for `pb_parallel()` (clusters, progress reporting).
+- [ ] 'broom'-style `tidy()` and `glance()` methods.
+
+## 3. Package infrastructure
+
+- [x] 'roxygen2' documentation with runnable examples.
+- [x] Getting-started vignette.
+- [x] 'testthat' suite covering every exported function and model class.
+- [x] 'pkgdown' configuration.
+
+## 4. Quality assurance
+
+- [x] `R CMD check --as-cran` clean locally.
+- [x] GitHub Actions: `R CMD check` on Linux, macOS and Windows; test
+  coverage; 'pkgdown' site.
+- [ ] Add the `CODECOV_TOKEN` secret and a coverage badge.
+- [ ] Enable GitHub Pages (branch `gh-pages`), then add the site address as
+  `url:` in `_pkgdown.yml` and to `URL` in `DESCRIPTION`.
+
+## 5. Preparing for CRAN
+
+- [ ] Choose a release version (`0.1.0`) and finalise `NEWS.md`.
+- [ ] Check on win-builder (`devtools::check_win_devel()`) and R-hub.
+- [ ] Write `cran-comments.md`.
+- [ ] Ensure all package metadata (title, description, authors, URLs) is
+  complete.
+
+## 6. Submitting to CRAN
+
+- [ ] `devtools::release()`.
+- [ ] Respond to CRAN maintainers if revisions are requested.
+- [ ] Once accepted, tag the release in Git and announce availability.
+
+## 7. Post-release maintenance
+
+- [ ] Monitor issues and update the package as needed.
+- [ ] Follow semantic versioning for future releases.

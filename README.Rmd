@@ -1,0 +1,126 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file and run devtools::build_readme(). -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  fig.width = 7,
+  fig.height = 3.5,
+  dpi = 150,
+  out.width = "100%"
+)
+```
+
+# parametricboot
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+<!-- badges: end -->
+
+parametricboot automates the **parametric bootstrap** for fitted regression
+models. You fit a model as usual; the package simulates new responses from it,
+refits the model to each of them, and turns the replicates into bias
+estimates, standard errors, confidence intervals, prediction intervals and
+diagnostic plots.
+
+Supported models:
+
+| Model | Fitted with | How replicates are generated |
+|---|---|---|
+| Linear and generalised linear models | `lm()`, `glm()` | `simulate()`, then the original call is re-evaluated |
+| Linear and generalised linear mixed models | `lme4::lmer()`, `lme4::glmer()` | `simulate()`, then `lme4::refit()` |
+| Cox proportional hazards models | `survival::coxph()` | model-based resampling (Davison & Hinkley, 1997, Algorithm 7.3) |
+
+## Installation
+
+parametricboot is not on CRAN yet. Install the development version from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("DiogoRibeiro7/parametricboot")
+```
+
+## Example
+
+A classic dose-response experiment (Collett, 1991): batches of 20 tobacco
+budworm moths of each sex were exposed to six doses of a pyrethroid, and the
+number killed was recorded. That is only 12 binomial observations, so how far
+can the large-sample theory behind `summary(fit)` be trusted?
+
+```{r example}
+library(parametricboot)
+
+budworm <- data.frame(
+  sex = rep(c("M", "F"), each = 6),
+  dose = rep(c(1, 2, 4, 8, 16, 32), times = 2),
+  dead = c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16),
+  n = 20
+)
+fit <- glm(cbind(dead, n - dead) ~ sex + log2(dose), data = budworm, family = binomial())
+
+res <- pb_simulate(fit, n = 1000, seed = 2025)
+res
+```
+
+`pb_summary_table()` reports, for each coefficient, the bootstrap estimates of
+bias, standard error and mean squared error, the actual coverage of the
+nominal 95% Wald interval, and a bootstrap confidence interval:
+
+```{r summary}
+pb_summary_table(res)
+```
+
+Here the news is good: the slope is overestimated by about 2%, a small
+fraction of its standard error, and the Wald intervals cover as advertised.
+The bootstrap distributions are close to normal:
+
+```{r estimates, fig.alt = "Histograms of 1000 bootstrap estimates of the intercept, the sex effect and the log-dose slope. Each is roughly symmetric and centred near the original estimate, which is marked by a dashed line."}
+pb_plot_estimates(res)
+```
+
+The same replicates give intervals for any prediction, here the dose-response
+curve for male moths:
+
+```{r predictions, fig.alt = "Predicted probability of death for male moths rising from about 0.1 at dose 1 to 0.95 at dose 32, with a shaded 95 percent bootstrap band that is widest at low doses."}
+males <- data.frame(sex = "M", dose = seq(1, 32, length.out = 100))
+pb_plot_predictions(res, males, x = "dose", type = "response")
+```
+
+## Functions
+
+| Task | Functions |
+|---|---|
+| Draw replicates | `pb_simulate()`, `pb_parallel()`, `pb_drop_warned()` |
+| Summarise | `pb_summary_table()`, `pb_key_stats()`, `pb_confint()`, `pb_tidy()`, plus `print()`, `summary()` and `confint()` methods |
+| Visualise | `pb_plot_estimates()`, `pb_plot_diagnostics()`, `pb_plot_predictions()` |
+| Predict | `pb_predict_boot()` |
+| Compare models | `pb_compare_models()` |
+| Nonparametric helper | `pb_resample()` |
+
+See `vignette("parametricboot")` for a tour that also covers mixed models, Cox
+models, and what to do when some refits misbehave.
+
+## Getting help and contributing
+
+Please report bugs and request features on the
+[issue tracker](https://github.com/DiogoRibeiro7/parametricboot/issues).
+Contributions are welcome; see the
+[contributing guide](.github/CONTRIBUTING.md). This project follows a
+[code of conduct](CODE_OF_CONDUCT.md).
+
+## Citation
+
+```{r citation, echo = FALSE, comment = ""}
+print(citation("parametricboot"), style = "text")
+```
+
+## License
+
+MIT &copy; Diogo Ribeiro. See [LICENSE.md](LICENSE.md).

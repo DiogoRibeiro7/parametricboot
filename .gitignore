@@ -1,0 +1,20 @@
+# R session and RStudio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Build and check artefacts
+*.tar.gz
+*.Rcheck/
+/doc/
+/Meta/
+inst/doc
+
+# pkgdown site (built and deployed by CI)
+docs/
+
+# Tooling
+.benchmarks/
+.vscode/
+.DS_Store
