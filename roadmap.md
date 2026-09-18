@@ -1,7 +1,9 @@
 # Roadmap
 
-Status of the path from prototype to a CRAN release. See `NEWS.md` for what
-changed in each version.
+Status of the package. It is a work in progress: the current focus is on
+maturing the methods and the interface (sections 2 to 4). A CRAN release is
+deliberately deferred until the package is judged mature enough. See `NEWS.md`
+for what changed in each version.
 
 ## 1. Project setup
 
@@ -46,11 +48,13 @@ Ideas for later versions:
 - [x] `R CMD check --as-cran` clean locally.
 - [x] GitHub Actions: `R CMD check` on Linux, macOS and Windows; test
   coverage; 'pkgdown' site.
-- [ ] Add the `CODECOV_TOKEN` secret and a coverage badge.
-- [ ] Enable GitHub Pages (branch `gh-pages`), then add the site address as
-  `url:` in `_pkgdown.yml` and to `URL` in `DESCRIPTION`.
+- [x] Coverage reported to Codecov, with a badge in the README.
+- [x] 'pkgdown' site published with GitHub Pages at
+  <https://diogoribeiro7.github.io/parametricboot/>.
 
-## 5. Preparing for CRAN
+## 5. Preparing for CRAN (deferred)
+
+Not planned for now. To be picked up once the package is mature.
 
 - [ ] Choose a release version (`0.1.0`) and finalise `NEWS.md`.
 - [ ] Check on win-builder (`devtools::check_win_devel()`) and R-hub.
@@ -58,13 +62,13 @@ Ideas for later versions:
 - [ ] Ensure all package metadata (title, description, authors, URLs) is
   complete.
 
-## 6. Submitting to CRAN
+## 6. Submitting to CRAN (deferred)
 
 - [ ] `devtools::release()`.
 - [ ] Respond to CRAN maintainers if revisions are requested.
 - [ ] Once accepted, tag the release in Git and announce availability.
 
-## 7. Post-release maintenance
+## 7. Maintenance
 
 - [ ] Monitor issues and update the package as needed.
-- [ ] Follow semantic versioning for future releases.
+- [ ] Follow semantic versioning once there is a first release.

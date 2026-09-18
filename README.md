@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/DiogoRibeiro7/parametricboot/graph/badge.svg)](https://app.codecov.io/gh/DiogoRibeiro7/parametricboot)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -28,8 +30,8 @@ Supported models:
 
 ## Installation
 
-parametricboot is not on CRAN yet. Install the development version from
-GitHub:
+parametricboot is a work in progress: it is not on CRAN, and the
+interface may still change. Install the development version from GitHub:
 
 ``` r
 # install.packages("pak")
@@ -111,8 +113,13 @@ pb_plot_predictions(res, males, x = "dose", type = "response")
 | Compare models | `pb_compare_models()` |
 | Nonparametric helper | `pb_resample()` |
 
-See `vignette("parametricboot")` for a tour that also covers mixed
-models, Cox models, and what to do when some refits misbehave.
+The [getting-started
+article](https://diogoribeiro7.github.io/parametricboot/articles/parametricboot.html)
+(`vignette("parametricboot")`) is a tour that also covers mixed models,
+Cox models, and what to do when some refits misbehave. The full
+[function
+reference](https://diogoribeiro7.github.io/parametricboot/reference/) is
+on the package website.
 
 ## Getting help and contributing
 

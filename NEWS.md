@@ -64,4 +64,5 @@
 * Added a 'testthat' suite (the `tests` directory used to be excluded from the
   build), a vignette, a `CITATION` file, 'pkgdown' configuration and GitHub
   Actions workflows for `R CMD check`, test coverage and the website.
+* The documentation website is <https://diogoribeiro7.github.io/parametricboot/>.
 * The licence is declared as `MIT + file LICENSE`, as CRAN requires.

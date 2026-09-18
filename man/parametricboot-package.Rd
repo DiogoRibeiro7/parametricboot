@@ -28,6 +28,7 @@ and \code{\link[=pb_tidy]{pb_tidy()}} for tables; \code{\link[=pb_plot_estimates
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://diogoribeiro7.github.io/parametricboot/}
   \item \url{https://github.com/DiogoRibeiro7/parametricboot}
   \item Report bugs at \url{https://github.com/DiogoRibeiro7/parametricboot/issues}
 }
