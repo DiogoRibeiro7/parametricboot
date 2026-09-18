@@ -25,7 +25,9 @@
 #' separated logistic regressions, whose huge estimates come with huge
 #' standard errors. It is not invariant to reparametrisation, and it needs
 #' more replicates than the percentile interval because it relies on the tails
-#' of a ratio.
+#' of a ratio. It is not available for parameters without a standard error,
+#' such as the variance components of mixed models: their limits are `NA`,
+#' with a warning.
 #'
 #' @param results A `pb_boot` object from [pb_simulate()] or [pb_parallel()].
 #' @param level Confidence level, strictly between 0 and 1.
@@ -74,12 +76,22 @@ pb_confint <- function(results, level = 0.95,
   } else {
     z <- sweep(est, 2, theta) / results$std_errors[!results$failed, , drop = FALSE]
     z[!is.finite(z)] <- NA_real_
-    if (any(colSums(!is.na(z)) < 2L)) {
+    se <- pb_se(results$original)
+    missing <- colSums(!is.na(z)) < 2L | is.na(se)
+    if (all(missing)) {
       pb_abort("Studentised intervals need the standard errors of the bootstrap refits.")
     }
-    se <- pb_se(results$original)
-    lower <- theta - se * pb_col_quantile(z, 1 - alpha)
-    upper <- theta - se * pb_col_quantile(z, alpha)
+    if (any(missing)) {
+      warning(
+        "Studentised limits are `NA` for parameters without a standard error: ",
+        paste(names(theta)[missing], collapse = ", "), ".",
+        call. = FALSE
+      )
+    }
+    lower <- upper <- rep(NA_real_, length(theta))
+    ok <- which(!missing)
+    lower[ok] <- theta[ok] - se[ok] * pb_col_quantile(z[, ok, drop = FALSE], 1 - alpha)
+    upper[ok] <- theta[ok] - se[ok] * pb_col_quantile(z[, ok, drop = FALSE], alpha)
   }
 
   data.frame(

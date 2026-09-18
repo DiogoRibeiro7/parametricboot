@@ -24,13 +24,13 @@ for what changed in each version.
 - [x] `pb_plot_estimates()`, `pb_plot_diagnostics()`, `pb_plot_predictions()`.
 - [x] `pb_predict_boot()` – predictions with bootstrap uncertainty.
 - [x] `pb_compare_models()` – bootstrap distribution of a fit criterion.
+- [x] Variance components of mixed models tracked alongside the fixed effects.
 - [x] `pb_lrt()` and `pb_plot_lrt()` – bootstrap likelihood-ratio test for
   nested models, including variance components and `coxph` fits.
 - [x] `pb_resample()` – case-resampling helper.
 
 Ideas for later versions:
 
-- [ ] Bootstrap distributions of variance components for mixed models.
 - [ ] `coxph` models with `strata()`.
 - [ ] A 'future' backend for `pb_parallel()` (clusters, progress reporting).
 - [ ] 'broom'-style `tidy()` and `glance()` methods.

@@ -30,8 +30,10 @@ An object of class \code{pb_boot}: a list with elements
 \item{\code{original}}{the fitted model.}
 \item{\code{replicates}}{list of \code{n} refitted models (\code{NULL} for failed
 refits), or \code{NULL} if \code{keep_fits = FALSE}.}
-\item{\code{estimates}, \code{std_errors}}{\code{n} by \code{p} matrices of coefficient
-estimates and their standard errors (fixed effects for mixed models).}
+\item{\code{estimates}, \code{std_errors}}{\code{n} by \code{p} matrices of parameter
+estimates and their standard errors. For mixed models the parameters
+are the fixed effects followed by the variance components, whose
+standard errors are \code{NA}.}
 \item{\code{failed}}{logical vector flagging the replicates that are excluded
 from all summaries: refits that threw an error, and replicates removed
 by \code{\link[=pb_drop_warned]{pb_drop_warned()}}.}
@@ -57,7 +59,14 @@ transformed terms (\code{log(x)}, \code{poly(x, 2)}), \code{offset()}, \code{wei
 must have been fitted with a \code{data} argument.
 \item For \code{lmer} and \code{glmer} models the response is drawn with the 'lme4'
 \code{simulate()} method (new random effects are drawn for every replicate)
-and the model is refitted with \code{\link[lme4:refit]{lme4::refit()}}.
+and the model is refitted with \code{\link[lme4:refit]{lme4::refit()}}, exactly as
+\code{\link[lme4:bootMer]{lme4::bootMer()}} does. Besides the fixed effects, the variance
+components are tracked: the random-effect standard deviations and
+correlations and, if the family has one, the residual standard deviation.
+They are named as in \code{confint(model, oldNames = FALSE)}, for example
+\code{sd_(Intercept)|Subject}, \code{cor_Days.(Intercept)|Subject} and \code{sigma}.
+'lme4' provides no standard errors for them, so summaries that need one
+(the Wald \code{coverage} and studentised intervals) are \code{NA} for these rows.
 \item For \code{coxph} models there is no fully parametric model to simulate from, so
 the model-based resampling scheme of Davison and Hinkley (1997,
 Algorithm 7.3) is used: failure times are drawn from the fitted survivor

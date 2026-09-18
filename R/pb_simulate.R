@@ -15,7 +15,14 @@
 #'   must have been fitted with a `data` argument.
 #' * For `lmer` and `glmer` models the response is drawn with the 'lme4'
 #'   `simulate()` method (new random effects are drawn for every replicate)
-#'   and the model is refitted with [lme4::refit()].
+#'   and the model is refitted with [lme4::refit()], exactly as
+#'   [lme4::bootMer()] does. Besides the fixed effects, the variance
+#'   components are tracked: the random-effect standard deviations and
+#'   correlations and, if the family has one, the residual standard deviation.
+#'   They are named as in `confint(model, oldNames = FALSE)`, for example
+#'   `sd_(Intercept)|Subject`, `cor_Days.(Intercept)|Subject` and `sigma`.
+#'   'lme4' provides no standard errors for them, so summaries that need one
+#'   (the Wald `coverage` and studentised intervals) are `NA` for these rows.
 #' * For `coxph` models there is no fully parametric model to simulate from, so
 #'   the model-based resampling scheme of Davison and Hinkley (1997,
 #'   Algorithm 7.3) is used: failure times are drawn from the fitted survivor
@@ -47,8 +54,10 @@
 #'   \item{`original`}{the fitted model.}
 #'   \item{`replicates`}{list of `n` refitted models (`NULL` for failed
 #'     refits), or `NULL` if `keep_fits = FALSE`.}
-#'   \item{`estimates`, `std_errors`}{`n` by `p` matrices of coefficient
-#'     estimates and their standard errors (fixed effects for mixed models).}
+#'   \item{`estimates`, `std_errors`}{`n` by `p` matrices of parameter
+#'     estimates and their standard errors. For mixed models the parameters
+#'     are the fixed effects followed by the variance components, whose
+#'     standard errors are `NA`.}
 #'   \item{`failed`}{logical vector flagging the replicates that are excluded
 #'     from all summaries: refits that threw an error, and replicates removed
 #'     by [pb_drop_warned()].}

@@ -1,5 +1,17 @@
 # parametricboot 0.0.0.9000
 
+## Mixed models
+
+* For `lmer()` and `glmer()` fits, the variance components are now tracked
+  alongside the fixed effects: random-effect standard deviations and
+  correlations and, where the family has one, the residual standard deviation.
+  They are named as in `confint(model, oldNames = FALSE)`, for example
+  `sd_(Intercept)|Subject` and `sigma`, and appear in every summary and plot.
+  'lme4' provides no standard errors for them, so their Wald `coverage` and
+  studentised limits are `NA`.
+* Replicates are identical to those of `lme4::bootMer()` for the same seed,
+  which is now tested.
+
 ## Confidence intervals
 
 * `pb_confint()`, `pb_summary_table()` and `confint()` gain

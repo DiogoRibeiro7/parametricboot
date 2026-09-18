@@ -62,16 +62,32 @@ pb_with_seed <- function(seed, code) {
   }
 }
 
-# Fixed-effect (population-level) coefficients of a fitted model.
+# Parameters of a fitted model that are tracked across replicates: the
+# coefficients, followed for mixed models by the variance components.
 pb_coef <- function(fit) {
   if (inherits(fit, "merMod")) {
-    lme4::fixef(fit)
+    c(lme4::fixef(fit), pb_ran_pars(fit))
   } else {
     stats::coef(fit)
   }
 }
 
-# Standard errors aligned with `pb_coef()`; aliased coefficients give `NA`.
+# Random-effect standard deviations and correlations, and the residual
+# standard deviation if the family has one, named as 'lme4' names them in
+# `confint(fit, oldNames = FALSE)`.
+pb_ran_pars <- function(fit) {
+  vc <- as.data.frame(lme4::VarCorr(fit))
+  labels <- ifelse(
+    is.na(vc$var2),
+    paste0("sd_", vc$var1, "|", vc$grp),
+    paste0("cor_", vc$var2, ".", vc$var1, "|", vc$grp)
+  )
+  labels[vc$grp == "Residual" & is.na(vc$var1)] <- "sigma"
+  stats::setNames(vc$sdcor, labels)
+}
+
+# Standard errors aligned with `pb_coef()`. Aliased coefficients and variance
+# components, for which the fit provides no standard error, give `NA`.
 pb_se <- function(fit) {
   co <- pb_coef(fit)
   se <- stats::setNames(rep(NA_real_, length(co)), names(co))

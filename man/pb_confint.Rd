@@ -51,7 +51,9 @@ error also makes it insensitive to degenerate refits, such as perfectly
 separated logistic regressions, whose huge estimates come with huge
 standard errors. It is not invariant to reparametrisation, and it needs
 more replicates than the percentile interval because it relies on the tails
-of a ratio.
+of a ratio. It is not available for parameters without a standard error,
+such as the variance components of mixed models: their limits are \code{NA},
+with a warning.
 }
 \examples{
 fit <- glm(vs ~ mpg, data = mtcars, family = binomial())
