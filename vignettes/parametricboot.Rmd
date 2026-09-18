@@ -86,14 +86,20 @@ pb_summary_table(res)
   nominal 95% Wald interval.
 * `lower` and `upper` are bootstrap confidence limits.
 
-Three kinds of interval are available, through `pb_confint()` or the usual
+Four kinds of interval are available, through `pb_confint()` or the usual
 `confint()` generic:
 
 ```{r confint}
 pb_confint(res, type = "percentile")
 pb_confint(res, type = "basic")
+pb_confint(res, type = "student")
 confint(res, level = 0.9, type = "normal")
 ```
+
+The studentised (bootstrap-t) interval, `type = "student"`, scales every
+replicate by its own standard error. It is the most accurate of the four when
+standard errors are estimated reliably; for a normal linear model it
+reproduces the exact t interval, which the percentile interval does not.
 
 ### Plots
 
@@ -178,6 +184,15 @@ fifth. Two caveats apply.
 ```{r separation-confint}
 pb_confint(res_small)
 pb_confint(clean)
+```
+
+The studentised interval is even less affected, because a separated refit
+combines a huge estimate with an even larger standard error, so that its
+studentised value is unremarkable:
+
+```{r separation-student}
+pb_confint(res_small, type = "student")
+pb_confint(clean, type = "student")
 ```
 
 Replicates are never dropped automatically, because not every warning signals

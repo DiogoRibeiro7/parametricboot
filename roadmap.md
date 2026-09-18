@@ -18,7 +18,7 @@ for what changed in each version.
 - [x] `pb_drop_warned()` – exclude replicates whose refit raised a warning
   (for example separated logistic regressions).
 - [x] `pb_key_stats()` – bias, standard error, MSE and Wald coverage.
-- [x] `pb_confint()` – percentile, basic and normal intervals.
+- [x] `pb_confint()` – percentile, basic, normal and studentised intervals.
 - [x] `pb_summary_table()`, `pb_tidy()`, and `print()`, `summary()` and
   `confint()` methods.
 - [x] `pb_plot_estimates()`, `pb_plot_diagnostics()`, `pb_plot_predictions()`.
@@ -30,7 +30,6 @@ for what changed in each version.
 
 Ideas for later versions:
 
-- [ ] Studentised (bootstrap-t) intervals, using the stored standard errors.
 - [ ] Bootstrap distributions of variance components for mixed models.
 - [ ] `coxph` models with `strata()`.
 - [ ] A 'future' backend for `pb_parallel()` (clusters, progress reporting).

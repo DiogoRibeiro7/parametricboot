@@ -4,14 +4,19 @@
 \alias{pb_confint}
 \title{Bootstrap confidence intervals}
 \usage{
-pb_confint(results, level = 0.95, type = c("percentile", "basic", "normal"))
+pb_confint(
+  results,
+  level = 0.95,
+  type = c("percentile", "basic", "normal", "student")
+)
 }
 \arguments{
 \item{results}{A \code{pb_boot} object from \code{\link[=pb_simulate]{pb_simulate()}} or \code{\link[=pb_parallel]{pb_parallel()}}.}
 
 \item{level}{Confidence level, strictly between 0 and 1.}
 
-\item{type}{Type of interval: \code{"percentile"}, \code{"basic"} or \code{"normal"}.}
+\item{type}{Type of interval: \code{"percentile"}, \code{"basic"}, \code{"normal"} or
+\code{"student"}.}
 }
 \value{
 A data frame with one row per coefficient and columns \code{term},
@@ -28,8 +33,25 @@ the bootstrap estimates, the intervals are
 \eqn{\theta^*};
 \item \code{"basic"}: \eqn{2\hat\theta} minus the upper and lower percentile limits;
 \item \code{"normal"}: \eqn{\hat\theta - b \pm z_{1 - \alpha/2} s}, where \eqn{b} and
-\eqn{s} are the bootstrap estimates of bias and standard error.
+\eqn{s} are the bootstrap estimates of bias and standard error;
+\item \code{"student"}: the studentised or bootstrap-t interval,
+\eqn{(\hat\theta - \hat s\, q_{1 - \alpha/2},\ \hat\theta - \hat s\, q_{\alpha/2})},
+where \eqn{\hat s} is the standard error of the original fit and
+\eqn{q} are quantiles of the studentised bootstrap estimates
+\eqn{(\theta^* - \hat\theta) / s^*}, each replicate being scaled by its own
+standard error \eqn{s^*}.
 }
+
+The studentised interval replaces the normal quantiles of the Wald interval
+by bootstrap ones. It is the most accurate of the four when the standard
+error is estimated reliably (its coverage error is of smaller order in the
+sample size), and it is exact for the normal linear model, where it
+reproduces the usual t interval. Scaling each replicate by its own standard
+error also makes it insensitive to degenerate refits, such as perfectly
+separated logistic regressions, whose huge estimates come with huge
+standard errors. It is not invariant to reparametrisation, and it needs
+more replicates than the percentile interval because it relies on the tails
+of a ratio.
 }
 \examples{
 fit <- glm(vs ~ mpg, data = mtcars, family = binomial())
@@ -37,6 +59,7 @@ res <- pb_simulate(fit, n = 50, seed = 1)
 
 pb_confint(res)
 pb_confint(res, level = 0.9, type = "basic")
+pb_confint(res, type = "student")
 }
 \references{
 Davison, A. C. and Hinkley, D. V. (1997) \emph{Bootstrap Methods and their

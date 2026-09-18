@@ -1,5 +1,13 @@
 # parametricboot 0.0.0.9000
 
+## Confidence intervals
+
+* `pb_confint()`, `pb_summary_table()` and `confint()` gain
+  `type = "student"`, the studentised (bootstrap-t) interval, which scales
+  each replicate by its own standard error. It reproduces the exact t interval
+  for normal linear models and is insensitive to degenerate refits such as
+  perfectly separated logistic regressions.
+
 ## Likelihood-ratio tests
 
 * New `pb_lrt()`: parametric bootstrap likelihood-ratio test for nested

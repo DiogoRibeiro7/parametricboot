@@ -13,7 +13,8 @@
 #' res <- pb_simulate(fit, n = 50, seed = 1)
 #' pb_summary_table(res)
 #' @export
-pb_summary_table <- function(results, level = 0.95, type = c("percentile", "basic", "normal")) {
+pb_summary_table <- function(results, level = 0.95,
+                             type = c("percentile", "basic", "normal", "student")) {
   key_stats <- pb_key_stats(results, level = level)
   ci <- pb_confint(results, level = level, type = type)
   cbind(key_stats, ci[c("lower", "upper")])
