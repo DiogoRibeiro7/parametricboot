@@ -12,8 +12,9 @@
 #'    [pb_plot_diagnostics()] for plots. If some refits misbehaved, see
 #'    [pb_drop_warned()].
 #' 4. Propagate the uncertainty to predictions with [pb_predict_boot()] and
-#'    [pb_plot_predictions()], or to model comparisons with
-#'    [pb_compare_models()].
+#'    [pb_plot_predictions()].
+#' 5. Test nested models with the bootstrap likelihood-ratio test [pb_lrt()],
+#'    and compare models that are not nested with [pb_compare_models()].
 #'
 #' @keywords internal
 #' @importFrom ggplot2 .data

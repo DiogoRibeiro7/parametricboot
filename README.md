@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/parametricboot/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/DiogoRibeiro7/parametricboot/graph/badge.svg)](https://app.codecov.io/gh/DiogoRibeiro7/parametricboot)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -16,7 +18,7 @@ parametricboot automates the **parametric bootstrap** for fitted
 regression models. You fit a model as usual; the package simulates new
 responses from it, refits the model to each of them, and turns the
 replicates into bias estimates, standard errors, confidence intervals,
-prediction intervals and diagnostic plots.
+prediction intervals, likelihood-ratio tests and diagnostic plots.
 
 Supported models:
 
@@ -28,8 +30,8 @@ Supported models:
 
 ## Installation
 
-parametricboot is not on CRAN yet. Install the development version from
-GitHub:
+parametricboot is a work in progress: it is not on CRAN, and the
+interface may still change. Install the development version from GitHub:
 
 ``` r
 # install.packages("pak")
@@ -108,11 +110,17 @@ pb_plot_predictions(res, males, x = "dose", type = "response")
 | Summarise | `pb_summary_table()`, `pb_key_stats()`, `pb_confint()`, `pb_tidy()`, plus `print()`, `summary()` and `confint()` methods |
 | Visualise | `pb_plot_estimates()`, `pb_plot_diagnostics()`, `pb_plot_predictions()` |
 | Predict | `pb_predict_boot()` |
-| Compare models | `pb_compare_models()` |
+| Test nested models | `pb_lrt()`, `pb_plot_lrt()` |
+| Compare other models | `pb_compare_models()` |
 | Nonparametric helper | `pb_resample()` |
 
-See `vignette("parametricboot")` for a tour that also covers mixed
-models, Cox models, and what to do when some refits misbehave.
+The [getting-started
+article](https://diogoribeiro7.github.io/parametricboot/articles/parametricboot.html)
+(`vignette("parametricboot")`) is a tour that also covers mixed models,
+Cox models, bootstrap likelihood-ratio tests, and what to do when some
+refits misbehave. The full [function
+reference](https://diogoribeiro7.github.io/parametricboot/reference/) is
+on the package website.
 
 ## Getting help and contributing
 

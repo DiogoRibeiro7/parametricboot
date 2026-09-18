@@ -20,14 +20,16 @@ and \code{\link[=pb_tidy]{pb_tidy()}} for tables; \code{\link[=pb_plot_estimates
 \code{\link[=pb_plot_diagnostics]{pb_plot_diagnostics()}} for plots. If some refits misbehaved, see
 \code{\link[=pb_drop_warned]{pb_drop_warned()}}.
 \item Propagate the uncertainty to predictions with \code{\link[=pb_predict_boot]{pb_predict_boot()}} and
-\code{\link[=pb_plot_predictions]{pb_plot_predictions()}}, or to model comparisons with
-\code{\link[=pb_compare_models]{pb_compare_models()}}.
+\code{\link[=pb_plot_predictions]{pb_plot_predictions()}}.
+\item Test nested models with the bootstrap likelihood-ratio test \code{\link[=pb_lrt]{pb_lrt()}},
+and compare models that are not nested with \code{\link[=pb_compare_models]{pb_compare_models()}}.
 }
 }
 
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://diogoribeiro7.github.io/parametricboot/}
   \item \url{https://github.com/DiogoRibeiro7/parametricboot}
   \item Report bugs at \url{https://github.com/DiogoRibeiro7/parametricboot/issues}
 }

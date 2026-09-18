@@ -16,7 +16,8 @@ Description: Automates the parametric bootstrap for models fitted with
     model-based resampling algorithm of Davison and Hinkley (1997,
     ISBN:9780521574716).
 License: MIT + file LICENSE
-URL: https://github.com/DiogoRibeiro7/parametricboot
+URL: https://diogoribeiro7.github.io/parametricboot/,
+    https://github.com/DiogoRibeiro7/parametricboot
 BugReports: https://github.com/DiogoRibeiro7/parametricboot/issues
 Depends:
     R (>= 4.1.0)
@@ -30,7 +31,7 @@ Suggests:
     lme4,
     rmarkdown,
     survival,
-    testthat (>= 3.0.0)
+    testthat (>= 3.1.5)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8

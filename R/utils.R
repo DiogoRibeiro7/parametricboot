@@ -25,6 +25,13 @@ pb_check_count <- function(x, arg) {
   as.integer(x)
 }
 
+pb_check_seed <- function(seed) {
+  if (!is.null(seed) && (!is.numeric(seed) || length(seed) != 1L || is.na(seed))) {
+    pb_abort("`seed` must be `NULL` or a single number.")
+  }
+  invisible(seed)
+}
+
 pb_check_level <- function(level) {
   if (!is.numeric(level) || length(level) != 1L || is.na(level) || level <= 0 || level >= 1) {
     pb_abort("`level` must be a single number strictly between 0 and 1.")
