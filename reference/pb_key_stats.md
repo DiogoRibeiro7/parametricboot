@@ -56,7 +56,8 @@ A data frame with one row per coefficient and columns
   proportion of replicates whose Wald interval (estimate plus or minus a
   normal quantile times the standard error) contains `estimate`. Values
   far from `level` indicate that the usual Wald intervals are unreliable
-  for this model.
+  for this model. It is `NA` for parameters without a standard error,
+  such as the variance components of mixed models.
 
 ## Examples
 

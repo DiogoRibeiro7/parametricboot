@@ -12,7 +12,7 @@ into a single table.
 pb_summary_table(
   results,
   level = 0.95,
-  type = c("percentile", "basic", "normal")
+  type = c("percentile", "basic", "normal", "student")
 )
 ```
 
@@ -31,7 +31,8 @@ pb_summary_table(
 
 - type:
 
-  Type of interval: `"percentile"`, `"basic"` or `"normal"`.
+  Type of interval: `"percentile"`, `"basic"`, `"normal"` or
+  `"student"`.
 
 ## Value
 

@@ -139,7 +139,7 @@ coverage of the nominal 95% Wald interval.</li>
 <code>lower</code> and <code>upper</code> are bootstrap confidence
 limits.</li>
 </ul>
-<p>Three kinds of interval are available, through
+<p>Four kinds of interval are available, through
 <code><a href="../reference/pb_confint.html">pb_confint()</a></code> or the usual <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code>
 generic:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -153,11 +153,21 @@ generic:</p>
 <span><span class="co">#&gt; 1 (Intercept) -3.473155 -4.3020679 -2.368905</span></span>
 <span><span class="co">#&gt; 2        sexM  1.100743  0.3454951  1.788622</span></span>
 <span><span class="co">#&gt; 3  log2(dose)  1.064214  0.7197803  1.283491</span></span>
+<span><span class="fu"><a href="../reference/pb_confint.html">pb_confint</a></span><span class="op">(</span><span class="va">res</span>, type <span class="op">=</span> <span class="st">"student"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          term  estimate      lower     upper</span></span>
+<span><span class="co">#&gt; 1 (Intercept) -3.473155 -4.4667746 -2.611654</span></span>
+<span><span class="co">#&gt; 2        sexM  1.100743  0.4337107  1.828804</span></span>
+<span><span class="co">#&gt; 3  log2(dose)  1.064214  0.8009168  1.324353</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">res</span>, level <span class="op">=</span> <span class="fl">0.9</span>, type <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    5 %      95 %</span></span>
 <span><span class="co">#&gt; (Intercept) -4.1815471 -2.582743</span></span>
 <span><span class="co">#&gt; sexM         0.4530536  1.702833</span></span>
 <span><span class="co">#&gt; log2(dose)   0.8114861  1.259904</span></span></code></pre></div>
+<p>The studentised (bootstrap-t) interval,
+<code>type = "student"</code>, scales every replicate by its own
+standard error. It is the most accurate of the four when standard errors
+are estimated reliably; for a normal linear model it reproduces the
+exact t interval, which the percentile interval does not.</p>
 </div>
 <div class="section level3">
 <h3 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
@@ -263,6 +273,18 @@ it:</li>
 <span><span class="co">#&gt;          term   estimate       lower     upper</span></span>
 <span><span class="co">#&gt; 1 (Intercept) -8.8330726 -23.1226342 -4.823974</span></span>
 <span><span class="co">#&gt; 2         mpg  0.4304135   0.2388539  1.131722</span></span></code></pre></div>
+<p>The studentised interval is even less affected, because a separated
+refit combines a huge estimate with an even larger standard error, so
+that its studentised value is unremarkable:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pb_confint.html">pb_confint</a></span><span class="op">(</span><span class="va">res_small</span>, type <span class="op">=</span> <span class="st">"student"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          term   estimate       lower      upper</span></span>
+<span><span class="co">#&gt; 1 (Intercept) -8.8330726 -15.3430659 -4.3564960</span></span>
+<span><span class="co">#&gt; 2         mpg  0.4304135   0.2003446  0.7405796</span></span>
+<span><span class="fu"><a href="../reference/pb_confint.html">pb_confint</a></span><span class="op">(</span><span class="va">clean</span>, type <span class="op">=</span> <span class="st">"student"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          term   estimate       lower      upper</span></span>
+<span><span class="co">#&gt; 1 (Intercept) -8.8330726 -15.3572589 -4.3549009</span></span>
+<span><span class="co">#&gt; 2         mpg  0.4304135   0.2002567  0.7418482</span></span></code></pre></div>
 <p>Replicates are never dropped automatically, because not every warning
 signals a useless fit. <code>res$warned</code> flags the affected
 replicates so that you can inspect <code>res$replicates</code> before
@@ -271,12 +293,14 @@ deciding.</p>
 <div class="section level2">
 <h2 id="mixed-models">Mixed models<a class="anchor" aria-label="anchor" href="#mixed-models"></a>
 </h2>
-<p>For ‘lme4’ models, new random effects are drawn for every replicate
-and the summaries refer to the fixed effects. Refitting mixed models is
-slow, so this is where <code><a href="../reference/pb_parallel.html">pb_parallel()</a></code> pays off: it takes the
-same arguments as <code><a href="../reference/pb_simulate.html">pb_simulate()</a></code>, plus <code>workers</code>,
-and returns an identical result for a given <code>seed</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>For ‘lme4’ models, new random effects are drawn for every replicate,
+exactly as <code><a href="https://rdrr.io/pkg/lme4/man/bootMer.html" class="external-link">lme4::bootMer()</a></code> does, and the variance
+components are tracked alongside the fixed effects. Refitting mixed
+models is slow, so this is where <code><a href="../reference/pb_parallel.html">pb_parallel()</a></code> pays off: it
+takes the same arguments as <code><a href="../reference/pb_simulate.html">pb_simulate()</a></code>, plus
+<code>workers</code>, and returns an identical result for a given
+<code>seed</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cbpp</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/lme4/man/cbpp.html" class="external-link">cbpp</a></span></span>
 <span><span class="va">gm</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">glmer</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">incidence</span>, <span class="va">size</span> <span class="op">-</span> <span class="va">incidence</span><span class="op">)</span> <span class="op">~</span> <span class="va">period</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">herd</span><span class="op">)</span>,</span>
@@ -287,18 +311,36 @@ and returns an identical result for a given <code>seed</code>.</p>
 <span><span class="co"># Equivalent, on two cores: pb_parallel(gm, n = 100, workers = 2, seed = 1)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/pb_summary_table.html">pb_summary_table</a></span><span class="op">(</span><span class="va">res_gm</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          term  estimate  boot_mean          bias std_error        mse coverage</span></span>
-<span><span class="co">#&gt; 1 (Intercept) -1.398343 -1.4082260 -0.0098830876 0.2281372 0.05162379     0.96</span></span>
-<span><span class="co">#&gt; 2     period2 -0.991925 -0.9926646 -0.0007395901 0.2867139 0.08138338     0.97</span></span>
-<span><span class="co">#&gt; 3     period3 -1.128216 -1.1266335  0.0015827549 0.3720195 0.13701701     0.94</span></span>
-<span><span class="co">#&gt; 4     period4 -1.579745 -1.6396247 -0.0598793034 0.4260859 0.18331925     0.96</span></span>
-<span><span class="co">#&gt;       lower      upper</span></span>
-<span><span class="co">#&gt; 1 -1.831125 -0.9797858</span></span>
-<span><span class="co">#&gt; 2 -1.612817 -0.5969268</span></span>
-<span><span class="co">#&gt; 3 -1.920486 -0.5743643</span></span>
-<span><span class="co">#&gt; 4 -2.608564 -0.9305711</span></span></code></pre></div>
-<p>Pass <code>re.form = NA</code> to <code><a href="../reference/pb_predict_boot.html">pb_predict_boot()</a></code> for
-population-level predictions.</p>
+<span><span class="co">#&gt;                  term   estimate  boot_mean          bias std_error        mse</span></span>
+<span><span class="co">#&gt; 1         (Intercept) -1.3983429 -1.4082260 -0.0098830876 0.2281372 0.05162379</span></span>
+<span><span class="co">#&gt; 2             period2 -0.9919250 -0.9926646 -0.0007395901 0.2867139 0.08138338</span></span>
+<span><span class="co">#&gt; 3             period3 -1.1282162 -1.1266335  0.0015827549 0.3720195 0.13701701</span></span>
+<span><span class="co">#&gt; 4             period4 -1.5797454 -1.6396247 -0.0598793034 0.4260859 0.18331925</span></span>
+<span><span class="co">#&gt; 5 sd_(Intercept)|herd  0.6420699  0.6107782 -0.0312917202 0.2034181 0.04194432</span></span>
+<span><span class="co">#&gt;   coverage     lower      upper</span></span>
+<span><span class="co">#&gt; 1     0.96 -1.831125 -0.9797858</span></span>
+<span><span class="co">#&gt; 2     0.97 -1.612817 -0.5969268</span></span>
+<span><span class="co">#&gt; 3     0.94 -1.920486 -0.5743643</span></span>
+<span><span class="co">#&gt; 4     0.96 -2.608564 -0.9305711</span></span>
+<span><span class="co">#&gt; 5       NA  0.303524  1.1167249</span></span></code></pre></div>
+<p>The last row is the standard deviation of the herd effects, named as
+‘lme4’ names it in <code>confint(gm, oldNames = FALSE)</code>;
+correlations appear as <code>cor_...</code> and the residual standard
+deviation of a linear mixed model as <code>sigma</code>. Variance
+components are where Wald-type inference is weakest, and ‘lme4’ does not
+even report standard errors for them. That is why their
+<code>coverage</code> is <code>NA</code>, and why studentised intervals
+are not available for these rows. The bootstrap shows that the herd
+standard deviation is underestimated (its <code>bias</code> is negative;
+with 1500 replicates instead of the 100 used here to keep this vignette
+fast, it settles at about 10% of the estimate). This is a well-known
+property of maximum likelihood with few groups, here 15 herds:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pb_plot_estimates.html">pb_plot_estimates</a></span><span class="op">(</span><span class="va">res_gm</span>, parameter <span class="op">=</span> <span class="st">"sd_(Intercept)|herd"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="parametricboot_files/figure-html/glmer-variance-1.png" class="r-plt" alt="Histogram of the bootstrap estimates of the herd standard deviation, centred slightly below the original estimate marked by a dashed line." width="100%"></p>
+<p>To test whether a variance component is needed at all, see
+<code><a href="../reference/pb_lrt.html">pb_lrt()</a></code> below. Pass <code>re.form = NA</code> to
+<code><a href="../reference/pb_predict_boot.html">pb_predict_boot()</a></code> for population-level predictions.</p>
 </div>
 <div class="section level2">
 <h2 id="cox-models">Cox models<a class="anchor" aria-label="anchor" href="#cox-models"></a>
@@ -318,9 +360,12 @@ get a censoring time drawn from the Kaplan-Meier estimate of the
 censoring distribution, conditional on exceeding their observed
 time.</li>
 </ul>
-<p>Only right-censored, unweighted models without <code><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata()</a></code>,
-<code>tt()</code> or penalised terms are supported.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>In a model with <code><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata()</a></code>, each stratum has its own
+baseline hazard, censoring distribution and end of follow-up. Only
+right-censored, unweighted models are supported, without
+<code>tt()</code>, penalised or <code><a href="https://rdrr.io/pkg/survival/man/frailty.html" class="external-link">frailty()</a></code> terms,
+strata-by-covariate interactions or <code><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster()</a></code>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
 <span><span class="va">cox</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ph.ecog</span>, data <span class="op">=</span> <span class="va">lung</span><span class="op">)</span></span>
 <span></span>
@@ -339,7 +384,7 @@ partial-likelihood ones, shown below, and the Wald intervals have close
 to nominal coverage, which is reassuring. <code>keep_fits = FALSE</code>
 stores only the estimates, which saves memory when you do not need
 predictions.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">cox</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         age         sex     ph.ecog </span></span>
 <span><span class="co">#&gt; 0.009267411 0.167739054 0.113577266</span></span></code></pre></div>
@@ -353,7 +398,7 @@ refits both models to every simulated response, and compares the
 observed statistic with the resulting reference distribution rather than
 with a chi-squared distribution.</p>
 <p>Does the effect of dose differ between the sexes?</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">separate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">.</span> <span class="op">~</span> <span class="va">sex</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">dose</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/pb_lrt.html">pb_lrt</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">separate</span>, n <span class="op">=</span> <span class="fl">500</span>, seed <span class="op">=</span> <span class="fl">2025</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;pb_lrt&gt; Parametric bootstrap likelihood-ratio test</span></span>
@@ -374,7 +419,7 @@ p-value converges to that of the F test.</p>
 boundary of the parameter space, as when testing whether a variance
 component is zero. The models may be of different classes, so the null
 can simply be the model without the random effect:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dye</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/lme4/man/Dyestuff.html" class="external-link">Dyestuff</a></span></span>
 <span><span class="va">no_batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Yield</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dye</span><span class="op">)</span></span>
 <span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lmer</a></span><span class="op">(</span><span class="va">Yield</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">Batch</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dye</span><span class="op">)</span></span>
@@ -400,7 +445,7 @@ in about two thirds of samples, which no chi-squared distribution can
 reproduce. The Bartlett correction only rescales the chi-squared
 distribution, so it cannot help either, and here makes matters
 worse.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pb_plot_lrt.html">pb_plot_lrt</a></span><span class="op">(</span><span class="va">test</span><span class="op">)</span></span></code></pre></div>
 <p><img src="parametricboot_files/figure-html/lrt-plot-1.png" class="r-plt" alt="Histogram of the bootstrap likelihood-ratio statistics with a very tall bar at zero, more than twice as high as the chi-squared approximation drawn in red, and the observed statistic of 5.4 marked far in the right tail." width="100%"></p>
 </div>
@@ -410,7 +455,7 @@ worse.</p>
 <p><code><a href="../reference/pb_compare_models.html">pb_compare_models()</a></code> bootstraps several models and
 reports the sampling variability of a fit criterion under each of them.
 Here, three link functions for the dose-response curve:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">links</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  logit <span class="op">=</span> <span class="va">fit</span>,</span>
 <span>  probit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">fit</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="st">"probit"</span><span class="op">)</span><span class="op">)</span>,</span>

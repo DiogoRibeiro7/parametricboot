@@ -89,7 +89,7 @@ pb_summary_table(res)
   of the nominal 95% Wald interval.
 - `lower` and `upper` are bootstrap confidence limits.
 
-Three kinds of interval are available, through
+Four kinds of interval are available, through
 [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
 or the usual [`confint()`](https://rdrr.io/r/stats/confint.html)
 generic:
@@ -106,12 +106,23 @@ pb_confint(res, type = "basic")
 #> 1 (Intercept) -3.473155 -4.3020679 -2.368905
 #> 2        sexM  1.100743  0.3454951  1.788622
 #> 3  log2(dose)  1.064214  0.7197803  1.283491
+pb_confint(res, type = "student")
+#>          term  estimate      lower     upper
+#> 1 (Intercept) -3.473155 -4.4667746 -2.611654
+#> 2        sexM  1.100743  0.4337107  1.828804
+#> 3  log2(dose)  1.064214  0.8009168  1.324353
 confint(res, level = 0.9, type = "normal")
 #>                    5 %      95 %
 #> (Intercept) -4.1815471 -2.582743
 #> sexM         0.4530536  1.702833
 #> log2(dose)   0.8114861  1.259904
 ```
+
+The studentised (bootstrap-t) interval, `type = "student"`, scales every
+replicate by its own standard error. It is the most accurate of the four
+when standard errors are estimated reliably; for a normal linear model
+it reproduces the exact t interval, which the percentile interval does
+not.
 
 ### Plots
 
@@ -257,15 +268,33 @@ pb_confint(clean)
 #> 2         mpg  0.4304135   0.2388539  1.131722
 ```
 
+The studentised interval is even less affected, because a separated
+refit combines a huge estimate with an even larger standard error, so
+that its studentised value is unremarkable:
+
+``` r
+
+pb_confint(res_small, type = "student")
+#>          term   estimate       lower      upper
+#> 1 (Intercept) -8.8330726 -15.3430659 -4.3564960
+#> 2         mpg  0.4304135   0.2003446  0.7405796
+pb_confint(clean, type = "student")
+#>          term   estimate       lower      upper
+#> 1 (Intercept) -8.8330726 -15.3572589 -4.3549009
+#> 2         mpg  0.4304135   0.2002567  0.7418482
+```
+
 Replicates are never dropped automatically, because not every warning
 signals a useless fit. `res$warned` flags the affected replicates so
 that you can inspect `res$replicates` before deciding.
 
 ## Mixed models
 
-For ‘lme4’ models, new random effects are drawn for every replicate and
-the summaries refer to the fixed effects. Refitting mixed models is
-slow, so this is where
+For ‘lme4’ models, new random effects are drawn for every replicate,
+exactly as
+[`lme4::bootMer()`](https://rdrr.io/pkg/lme4/man/bootMer.html) does, and
+the variance components are tracked alongside the fixed effects.
+Refitting mixed models is slow, so this is where
 [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
 pays off: it takes the same arguments as
 [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md),
@@ -283,19 +312,44 @@ res_gm <- pb_simulate(gm, n = 100, seed = 1)
 # Equivalent, on two cores: pb_parallel(gm, n = 100, workers = 2, seed = 1)
 
 pb_summary_table(res_gm)
-#>          term  estimate  boot_mean          bias std_error        mse coverage
-#> 1 (Intercept) -1.398343 -1.4082260 -0.0098830876 0.2281372 0.05162379     0.96
-#> 2     period2 -0.991925 -0.9926646 -0.0007395901 0.2867139 0.08138338     0.97
-#> 3     period3 -1.128216 -1.1266335  0.0015827549 0.3720195 0.13701701     0.94
-#> 4     period4 -1.579745 -1.6396247 -0.0598793034 0.4260859 0.18331925     0.96
-#>       lower      upper
-#> 1 -1.831125 -0.9797858
-#> 2 -1.612817 -0.5969268
-#> 3 -1.920486 -0.5743643
-#> 4 -2.608564 -0.9305711
+#>                  term   estimate  boot_mean          bias std_error        mse
+#> 1         (Intercept) -1.3983429 -1.4082260 -0.0098830876 0.2281372 0.05162379
+#> 2             period2 -0.9919250 -0.9926646 -0.0007395901 0.2867139 0.08138338
+#> 3             period3 -1.1282162 -1.1266335  0.0015827549 0.3720195 0.13701701
+#> 4             period4 -1.5797454 -1.6396247 -0.0598793034 0.4260859 0.18331925
+#> 5 sd_(Intercept)|herd  0.6420699  0.6107782 -0.0312917202 0.2034181 0.04194432
+#>   coverage     lower      upper
+#> 1     0.96 -1.831125 -0.9797858
+#> 2     0.97 -1.612817 -0.5969268
+#> 3     0.94 -1.920486 -0.5743643
+#> 4     0.96 -2.608564 -0.9305711
+#> 5       NA  0.303524  1.1167249
 ```
 
-Pass `re.form = NA` to
+The last row is the standard deviation of the herd effects, named as
+‘lme4’ names it in `confint(gm, oldNames = FALSE)`; correlations appear
+as `cor_...` and the residual standard deviation of a linear mixed model
+as `sigma`. Variance components are where Wald-type inference is
+weakest, and ‘lme4’ does not even report standard errors for them. That
+is why their `coverage` is `NA`, and why studentised intervals are not
+available for these rows. The bootstrap shows that the herd standard
+deviation is underestimated (its `bias` is negative; with 1500
+replicates instead of the 100 used here to keep this vignette fast, it
+settles at about 10% of the estimate). This is a well-known property of
+maximum likelihood with few groups, here 15 herds:
+
+``` r
+
+pb_plot_estimates(res_gm, parameter = "sd_(Intercept)|herd")
+```
+
+![Histogram of the bootstrap estimates of the herd standard deviation,
+centred slightly below the original estimate marked by a dashed
+line.](parametricboot_files/figure-html/glmer-variance-1.png)
+
+To test whether a variance component is needed at all, see
+[`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
+below. Pass `re.form = NA` to
 [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
 for population-level predictions.
 
@@ -315,9 +369,14 @@ Algorithm 7.3):
   get a censoring time drawn from the Kaplan-Meier estimate of the
   censoring distribution, conditional on exceeding their observed time.
 
-Only right-censored, unweighted models without
-[`strata()`](https://rdrr.io/pkg/survival/man/strata.html), `tt()` or
-penalised terms are supported.
+In a model with
+[`strata()`](https://rdrr.io/pkg/survival/man/strata.html), each stratum
+has its own baseline hazard, censoring distribution and end of
+follow-up. Only right-censored, unweighted models are supported, without
+`tt()`, penalised or
+[`frailty()`](https://rdrr.io/pkg/survival/man/frailty.html) terms,
+strata-by-covariate interactions or
+[`cluster()`](https://rdrr.io/pkg/survival/man/cluster.html).
 
 ``` r
 

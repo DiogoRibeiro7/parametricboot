@@ -87,7 +87,9 @@ estimated.</p></dd>
 <dd><p>proportion of replicates whose Wald interval
 (estimate plus or minus a normal quantile times the standard error)
 contains <code>estimate</code>. Values far from <code>level</code> indicate that the usual
-Wald intervals are unreliable for this model.</p></dd>
+Wald intervals are unreliable for this model. It is <code>NA</code> for parameters
+without a standard error, such as the variance components of mixed
+models.</p></dd>
 
 
 </dl></div>

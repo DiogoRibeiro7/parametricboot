@@ -20,6 +20,8 @@ R package skeleton, MIT licence (`MIT + file LICENSE`) and
 [`lme4::glmer()`](https://rdrr.io/pkg/lme4/man/glmer.html) and
 [`survival::coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) fits.
 
+Stratified `coxph` models, resampled within strata.
+
 [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
 – run the refits in parallel (base ‘parallel’ cluster), reproducibly.
 
@@ -31,7 +33,7 @@ logistic regressions).
 – bias, standard error, MSE and Wald coverage.
 
 [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
-– percentile, basic and normal intervals.
+– percentile, basic, normal and studentised intervals.
 
 [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md),
 [`pb_tidy()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_tidy.md),
@@ -49,6 +51,8 @@ and [`print()`](https://rdrr.io/r/base/print.html),
 [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md)
 – bootstrap distribution of a fit criterion.
 
+Variance components of mixed models tracked alongside the fixed effects.
+
 [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
 and
 [`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md)
@@ -59,12 +63,6 @@ components and `coxph` fits.
 – case-resampling helper.
 
 Ideas for later versions:
-
-Studentised (bootstrap-t) intervals, using the stored standard errors.
-
-Bootstrap distributions of variance components for mixed models.
-
-`coxph` models with `strata()`.
 
 A ‘future’ backend for
 [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)

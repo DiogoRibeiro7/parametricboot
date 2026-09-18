@@ -115,8 +115,9 @@ are comparable, so a random intercept can be tested with an
 [`glm()`](https://rdrr.io/r/stats/glm.html) fit as the null and an
 `lmer()` or `glmer()` fit as the alternative. Mixed models fitted by
 REML are refitted by maximum likelihood first, with a message. For
-`coxph` models the partial likelihood is used, and the null may be the
-model without covariates, `Surv(time, status) ~ 1`.
+`coxph` models the partial likelihood is used, the null may be the model
+without covariates, `Surv(time, status) ~ 1`, and both models must be
+stratified in the same way.
 
 Whether the models are nested cannot be checked in general; it is only
 verified that they were fitted to the same response, that `alternative`

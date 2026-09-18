@@ -40,7 +40,11 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pb_confint</span><span class="op">(</span><span class="va">results</span>, level <span class="op">=</span> <span class="fl">0.95</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"percentile"</span>, <span class="st">"basic"</span>, <span class="st">"normal"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pb_confint</span><span class="op">(</span></span>
+<span>  <span class="va">results</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"percentile"</span>, <span class="st">"basic"</span>, <span class="st">"normal"</span>, <span class="st">"student"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,7 +60,8 @@
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Type of interval: <code>"percentile"</code>, <code>"basic"</code> or <code>"normal"</code>.</p></dd>
+<dd><p>Type of interval: <code>"percentile"</code>, <code>"basic"</code>, <code>"normal"</code> or
+<code>"student"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -71,8 +76,26 @@ the bootstrap estimates, the intervals are</p><ul><li><p><code>"percentile"</cod
 \(\theta^*\);</p></li>
 <li><p><code>"basic"</code>: \(2\hat\theta\) minus the upper and lower percentile limits;</p></li>
 <li><p><code>"normal"</code>: \(\hat\theta - b \pm z_{1 - \alpha/2} s\), where \(b\) and
-\(s\) are the bootstrap estimates of bias and standard error.</p></li>
-</ul></div>
+\(s\) are the bootstrap estimates of bias and standard error;</p></li>
+<li><p><code>"student"</code>: the studentised or bootstrap-t interval,
+\((\hat\theta - \hat s\, q_{1 - \alpha/2},\ \hat\theta - \hat s\, q_{\alpha/2})\),
+where \(\hat s\) is the standard error of the original fit and
+\(q\) are quantiles of the studentised bootstrap estimates
+\((\theta^* - \hat\theta) / s^*\), each replicate being scaled by its own
+standard error \(s^*\).</p></li>
+</ul><p>The studentised interval replaces the normal quantiles of the Wald interval
+by bootstrap ones. It is the most accurate of the four when the standard
+error is estimated reliably (its coverage error is of smaller order in the
+sample size), and it is exact for the normal linear model, where it
+reproduces the usual t interval. Scaling each replicate by its own standard
+error also makes it insensitive to degenerate refits, such as perfectly
+separated logistic regressions, whose huge estimates come with huge
+standard errors. It is not invariant to reparametrisation, and it needs
+more replicates than the percentile interval because it relies on the tails
+of a ratio. It is not available for parameters without a standard error,
+such as the variance components of mixed models: their limits are <code>NA</code>,
+with a warning.</p>
+    </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Davison, A. C. and Hinkley, D. V. (1997) <em>Bootstrap Methods and their
@@ -93,6 +116,10 @@ Application</em>, chapter 5. Cambridge University Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          term   estimate       lower     upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 (Intercept) -8.8330726 -11.7866311 5.7633983</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         mpg  0.4304135  -0.3120883 0.5856325</span>
+<span class="r-in"><span><span class="fu">pb_confint</span><span class="op">(</span><span class="va">res</span>, type <span class="op">=</span> <span class="st">"student"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          term   estimate       lower      upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (Intercept) -8.8330726 -13.3798395 -4.1682381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         mpg  0.4304135   0.1930526  0.6800896</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -24,7 +24,7 @@ confint(
   object,
   parm,
   level = 0.95,
-  type = c("percentile", "basic", "normal"),
+  type = c("percentile", "basic", "normal", "student"),
   ...
 )
 ```

@@ -43,21 +43,20 @@
 <div class="section level2">
 <h2 id="id_2-core-functionality">2. Core functionality<a class="anchor" aria-label="anchor" href="#id_2-core-functionality"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox" checked><code><a href="reference/pb_simulate.html">pb_simulate()</a></code> – run N parametric bootstrap replicates, for <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">lme4::glmer()</a></code> and <code><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">survival::coxph()</a></code> fits.</label></li>
+<li><label><input type="checkbox" checked>Stratified <code>coxph</code> models, resampled within strata.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_parallel.html">pb_parallel()</a></code> – run the refits in parallel (base ‘parallel’ cluster), reproducibly.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_drop_warned.html">pb_drop_warned()</a></code> – exclude replicates whose refit raised a warning (for example separated logistic regressions).</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> – bias, standard error, MSE and Wald coverage.</label></li>
-<li><label><input type="checkbox" checked><code><a href="reference/pb_confint.html">pb_confint()</a></code> – percentile, basic and normal intervals.</label></li>
+<li><label><input type="checkbox" checked><code><a href="reference/pb_confint.html">pb_confint()</a></code> – percentile, basic, normal and studentised intervals.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code>, <code><a href="reference/pb_tidy.html">pb_tidy()</a></code>, and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> and <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> methods.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_plot_estimates.html">pb_plot_estimates()</a></code>, <code><a href="reference/pb_plot_diagnostics.html">pb_plot_diagnostics()</a></code>, <code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code>.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code> – predictions with bootstrap uncertainty.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_compare_models.html">pb_compare_models()</a></code> – bootstrap distribution of a fit criterion.</label></li>
+<li><label><input type="checkbox" checked>Variance components of mixed models tracked alongside the fixed effects.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_lrt.html">pb_lrt()</a></code> and <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code> – bootstrap likelihood-ratio test for nested models, including variance components and <code>coxph</code> fits.</label></li>
 <li><label><input type="checkbox" checked><code><a href="reference/pb_resample.html">pb_resample()</a></code> – case-resampling helper.</label></li>
 </ul><p>Ideas for later versions:</p>
-<ul class="task-list"><li><label><input type="checkbox">Studentised (bootstrap-t) intervals, using the stored standard errors.</label></li>
-<li><label><input type="checkbox">Bootstrap distributions of variance components for mixed models.</label></li>
-<li><label><input type="checkbox"><code>coxph</code> models with <code>strata()</code>.</label></li>
-<li><label><input type="checkbox">A ‘future’ backend for <code><a href="reference/pb_parallel.html">pb_parallel()</a></code> (clusters, progress reporting).</label></li>
+<ul class="task-list"><li><label><input type="checkbox">A ‘future’ backend for <code><a href="reference/pb_parallel.html">pb_parallel()</a></code> (clusters, progress reporting).</label></li>
 <li><label><input type="checkbox">‘broom’-style <code>tidy()</code> and <code>glance()</code> methods.</label></li>
 </ul></div>
 <div class="section level2">
