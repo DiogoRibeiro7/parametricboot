@@ -18,6 +18,8 @@
 #'   `observed` (the metric of the original fit), `boot_mean`, `boot_sd`,
 #'   `lower` and `upper` (summaries of the metric over the bootstrap refits).
 #'
+#' @seealso [pb_lrt()] for a formal test when the models are nested.
+#'
 #' @examples
 #' fits <- list(
 #'   mpg = glm(vs ~ mpg, data = mtcars, family = binomial()),

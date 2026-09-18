@@ -241,19 +241,70 @@ when you do not need predictions.
 sqrt(diag(vcov(cox)))
 ```
 
-## Comparing models
+## Testing nested models
+
+`pb_lrt()` is the parametric bootstrap version of the likelihood-ratio test.
+It simulates from the fitted *null* model, refits both models to every
+simulated response, and compares the observed statistic with the resulting
+reference distribution rather than with a chi-squared distribution.
+
+Does the effect of dose differ between the sexes?
+
+```{r lrt}
+separate <- update(fit, . ~ sex * log2(dose))
+pb_lrt(fit, separate, n = 500, seed = 2025)
+```
+
+With only 12 observations the chi-squared p-value is somewhat too small, as
+is typical, though the conclusion is the same here. For the normal linear
+model, where the exact answer is known, the bootstrap p-value converges to
+that of the F test.
+
+The difference becomes dramatic when the null hypothesis lies on the boundary
+of the parameter space, as when testing whether a variance component is zero.
+The models may be of different classes, so the null can simply be the model
+without the random effect:
+
+```{r lrt-boundary, eval = has_lme4}
+dye <- lme4::Dyestuff
+no_batch <- lm(Yield ~ 1, data = dye)
+batch <- lme4::lmer(Yield ~ 1 + (1 | Batch), data = dye)
+
+test <- pb_lrt(no_batch, batch, n = 500, seed = 2025)
+test
+```
+
+REML fits are refitted by maximum likelihood, which likelihood-ratio tests
+require. The chi-squared p-value is more than three times too large.
+`pb_plot_lrt()` shows why: under the null hypothesis the estimated batch
+variance, and with it the statistic, is exactly zero in about two thirds of
+samples, which no chi-squared distribution can reproduce. The Bartlett
+correction only rescales the chi-squared distribution, so it cannot help
+either, and here makes matters worse.
+
+```{r lrt-plot, eval = has_lme4, fig.alt = "Histogram of the bootstrap likelihood-ratio statistics with a very tall bar at zero, more than twice as high as the chi-squared approximation drawn in red, and the observed statistic of 5.4 marked far in the right tail."}
+pb_plot_lrt(test)
+```
+
+## Comparing models that are not nested
 
 `pb_compare_models()` bootstraps several models and reports the sampling
-variability of a fit criterion under each of them. A difference in AIC that is
-small relative to `boot_sd` should not be over-interpreted.
+variability of a fit criterion under each of them. Here, three link functions
+for the dose-response curve:
 
 ```{r compare}
-fits <- list(
-  common_slope = fit,
-  sex_specific_slope = update(fit, . ~ sex * log2(dose))
+links <- list(
+  logit = fit,
+  probit = update(fit, family = binomial("probit")),
+  cloglog = update(fit, family = binomial("cloglog"))
 )
-pb_compare_models(fits, n = 100, seed = 1)
+pb_compare_models(links, n = 200, seed = 1)
 ```
+
+The AIC differences between the links are about one unit, against a sampling
+standard deviation (`boot_sd`) of about four: these data cannot tell the links
+apart, and a difference in AIC that is small relative to `boot_sd` should not
+be over-interpreted.
 
 ## Practical advice
 
@@ -271,3 +322,7 @@ Collett, D. (1991) *Modelling Binary Data*. Chapman & Hall.
 
 Davison, A. C. and Hinkley, D. V. (1997) *Bootstrap Methods and their
 Application*. Cambridge University Press.
+
+Halekoh, U. and Hojsgaard, S. (2014) A Kenward-Roger approximation and
+parametric bootstrap methods for tests in linear mixed models: the R package
+pbkrtest. *Journal of Statistical Software*, 59(9), 1-32.

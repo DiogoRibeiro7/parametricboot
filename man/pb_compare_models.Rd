@@ -46,3 +46,6 @@ fits <- list(
 )
 pb_compare_models(fits, n = 25, seed = 1)
 }
+\seealso{
+\code{\link[=pb_lrt]{pb_lrt()}} for a formal test when the models are nested.
+}

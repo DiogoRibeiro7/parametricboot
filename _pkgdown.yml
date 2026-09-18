@@ -21,10 +21,14 @@ reference:
       - pb_plot_estimates
       - pb_plot_diagnostics
       - pb_plot_predictions
-  - title: Predict and compare
+  - title: Test and compare models
+    contents:
+      - pb_lrt
+      - pb_plot_lrt
+      - pb_compare_models
+  - title: Predict
     contents:
       - pb_predict_boot
-      - pb_compare_models
   - title: Helpers
     contents:
       - pb_resample
