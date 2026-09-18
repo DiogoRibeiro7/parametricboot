@@ -1,0 +1,134 @@
+# parametricboot
+
+parametricboot automates the **parametric bootstrap** for fitted
+regression models. You fit a model as usual; the package simulates new
+responses from it, refits the model to each of them, and turns the
+replicates into bias estimates, standard errors, confidence intervals,
+prediction intervals and diagnostic plots.
+
+Supported models:
+
+| Model | Fitted with | How replicates are generated |
+|----|----|----|
+| Linear and generalised linear models | [`lm()`](https://rdrr.io/r/stats/lm.html), [`glm()`](https://rdrr.io/r/stats/glm.html) | [`simulate()`](https://rdrr.io/r/stats/simulate.html), then the original call is re-evaluated |
+| Linear and generalised linear mixed models | [`lme4::lmer()`](https://rdrr.io/pkg/lme4/man/lmer.html), [`lme4::glmer()`](https://rdrr.io/pkg/lme4/man/glmer.html) | [`simulate()`](https://rdrr.io/r/stats/simulate.html), then [`lme4::refit()`](https://rdrr.io/pkg/lme4/man/refit.html) |
+| Cox proportional hazards models | [`survival::coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) | model-based resampling (Davison & Hinkley, 1997, Algorithm 7.3) |
+
+## Installation
+
+parametricboot is not on CRAN yet. Install the development version from
+GitHub:
+
+``` r
+
+# install.packages("pak")
+pak::pak("DiogoRibeiro7/parametricboot")
+```
+
+## Example
+
+A classic dose-response experiment (Collett, 1991): batches of 20
+tobacco budworm moths of each sex were exposed to six doses of a
+pyrethroid, and the number killed was recorded. That is only 12 binomial
+observations, so how far can the large-sample theory behind
+`summary(fit)` be trusted?
+
+``` r
+
+library(parametricboot)
+
+budworm <- data.frame(
+  sex = rep(c("M", "F"), each = 6),
+  dose = rep(c(1, 2, 4, 8, 16, 32), times = 2),
+  dead = c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16),
+  n = 20
+)
+fit <- glm(cbind(dead, n - dead) ~ sex + log2(dose), data = budworm, family = binomial())
+
+res <- pb_simulate(fit, n = 1000, seed = 2025)
+res
+#> <pb_boot> Parametric bootstrap
+#>   Model:      glm (binomial)
+#>   Replicates: 1000
+#>   Terms:      (Intercept), sexM, log2(dose)
+```
+
+[`pb_summary_table()`](reference/pb_summary_table.md) reports, for each
+coefficient, the bootstrap estimates of bias, standard error and mean
+squared error, the actual coverage of the nominal 95% Wald interval, and
+a bootstrap confidence interval:
+
+``` r
+
+pb_summary_table(res)
+#>          term  estimate boot_mean        bias std_error        mse coverage
+#> 1 (Intercept) -3.473155 -3.552493 -0.07933778 0.4839494 0.24026729    0.954
+#> 2        sexM  1.100743  1.117377  0.01663401 0.3784177 0.14333343    0.945
+#> 3  log2(dose)  1.064214  1.088388  0.02417447 0.1352250 0.01885192    0.946
+#>        lower     upper
+#> 1 -4.5809602 -2.702189
+#> 2  0.4015961  1.856280
+#> 3  0.8444751  1.401441
+```
+
+Here the news is good: the slope is overestimated by about 2%, a small
+fraction of its standard error, and the Wald intervals cover as
+advertised. The bootstrap distributions are close to normal:
+
+``` r
+
+pb_plot_estimates(res)
+```
+
+![Histograms of 1000 bootstrap estimates of the intercept, the sex
+effect and the log-dose slope. Each is roughly symmetric and centred
+near the original estimate, which is marked by a dashed
+line.](reference/figures/README-estimates-1.png)
+
+The same replicates give intervals for any prediction, here the
+dose-response curve for male moths:
+
+``` r
+
+males <- data.frame(sex = "M", dose = seq(1, 32, length.out = 100))
+pb_plot_predictions(res, males, x = "dose", type = "response")
+```
+
+![Predicted probability of death for male moths rising from about 0.1 at
+dose 1 to 0.95 at dose 32, with a shaded 95 percent bootstrap band that
+is widest at low doses.](reference/figures/README-predictions-1.png)
+
+## Functions
+
+| Task | Functions |
+|----|----|
+| Draw replicates | [`pb_simulate()`](reference/pb_simulate.md), [`pb_parallel()`](reference/pb_parallel.md), [`pb_drop_warned()`](reference/pb_drop_warned.md) |
+| Summarise | [`pb_summary_table()`](reference/pb_summary_table.md), [`pb_key_stats()`](reference/pb_key_stats.md), [`pb_confint()`](reference/pb_confint.md), [`pb_tidy()`](reference/pb_tidy.md), plus [`print()`](https://rdrr.io/r/base/print.html), [`summary()`](https://rdrr.io/r/base/summary.html) and [`confint()`](https://rdrr.io/r/stats/confint.html) methods |
+| Visualise | [`pb_plot_estimates()`](reference/pb_plot_estimates.md), [`pb_plot_diagnostics()`](reference/pb_plot_diagnostics.md), [`pb_plot_predictions()`](reference/pb_plot_predictions.md) |
+| Predict | [`pb_predict_boot()`](reference/pb_predict_boot.md) |
+| Compare models | [`pb_compare_models()`](reference/pb_compare_models.md) |
+| Nonparametric helper | [`pb_resample()`](reference/pb_resample.md) |
+
+See [`vignette("parametricboot")`](articles/parametricboot.md) for a
+tour that also covers mixed models, Cox models, and what to do when some
+refits misbehave.
+
+## Getting help and contributing
+
+Please report bugs and request features on the [issue
+tracker](https://github.com/DiogoRibeiro7/parametricboot/issues).
+Contributions are welcome; see the [contributing
+guide](CONTRIBUTING.md). This project follows a [code of
+conduct](CODE_OF_CONDUCT.md).
+
+## Citation
+
+``` R
+Ribeiro D (2026). _parametricboot: Parametric Bootstrap for Fitted
+Regression Models_. R package version 0.0.0.9000,
+<https://github.com/DiogoRibeiro7/parametricboot>.
+```
+
+## License
+
+MIT © Diogo Ribeiro. See [LICENSE.md](LICENSE.md).
