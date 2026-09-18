@@ -28,8 +28,11 @@
 #'   Algorithm 7.3) is used: failure times are drawn from the fitted survivor
 #'   function based on the Breslow baseline hazard, and censoring times from
 #'   the Kaplan-Meier estimate of the censoring distribution, conditional on
-#'   the observed censoring pattern. Only right-censored, unweighted models
-#'   without `strata()`, `tt()` or penalised terms are supported.
+#'   the observed censoring pattern. In a model with `strata()`, each stratum
+#'   has its own baseline hazard, censoring distribution and end of follow-up.
+#'   Only right-censored, unweighted models are supported, without `tt()`,
+#'   penalised or `frailty()` terms, strata-by-covariate interactions or
+#'   `cluster()` (the observations are resampled independently).
 #'
 #' A refit that throws an error is recorded as failed and dropped from all
 #' summaries; a single warning reports how many refits failed or produced

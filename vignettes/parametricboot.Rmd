@@ -253,8 +253,10 @@ Davison and Hinkley (1997, Algorithm 7.3):
   censoring time drawn from the Kaplan-Meier estimate of the censoring
   distribution, conditional on exceeding their observed time.
 
-Only right-censored, unweighted models without `strata()`, `tt()` or penalised
-terms are supported.
+In a model with `strata()`, each stratum has its own baseline hazard,
+censoring distribution and end of follow-up. Only right-censored, unweighted
+models are supported, without `tt()`, penalised or `frailty()` terms,
+strata-by-covariate interactions or `cluster()`.
 
 ```{r coxph, eval = has_survival}
 library(survival)

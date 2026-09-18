@@ -1,5 +1,16 @@
 # parametricboot 0.0.0.9000
 
+## Cox models
+
+* `coxph()` models with `strata()` are now supported, in `pb_simulate()` and
+  in `pb_lrt()`. Each stratum is resampled with its own baseline hazard,
+  censoring distribution and end of follow-up. Results for unstratified
+  models are unchanged.
+* Models with `cluster()` are now rejected. They used to be accepted and
+  resampled as if the observations were independent, which ignores the
+  clustering. Strata-by-covariate interactions, for which there is no single
+  baseline hazard per stratum, are rejected as well.
+
 ## Mixed models
 
 * For `lmer()` and `glmer()` fits, the variance components are now tracked

@@ -72,8 +72,11 @@ the model-based resampling scheme of Davison and Hinkley (1997,
 Algorithm 7.3) is used: failure times are drawn from the fitted survivor
 function based on the Breslow baseline hazard, and censoring times from
 the Kaplan-Meier estimate of the censoring distribution, conditional on
-the observed censoring pattern. Only right-censored, unweighted models
-without \code{strata()}, \code{tt()} or penalised terms are supported.
+the observed censoring pattern. In a model with \code{strata()}, each stratum
+has its own baseline hazard, censoring distribution and end of follow-up.
+Only right-censored, unweighted models are supported, without \code{tt()},
+penalised or \code{frailty()} terms, strata-by-covariate interactions or
+\code{cluster()} (the observations are resampled independently).
 }
 
 A refit that throws an error is recorded as failed and dropped from all

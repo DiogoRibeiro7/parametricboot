@@ -13,6 +13,7 @@ for what changed in each version.
 
 - [x] `pb_simulate()` – run N parametric bootstrap replicates, for `lm()`,
   `glm()`, `lme4::lmer()`, `lme4::glmer()` and `survival::coxph()` fits.
+- [x] Stratified `coxph` models, resampled within strata.
 - [x] `pb_parallel()` – run the refits in parallel (base 'parallel' cluster),
   reproducibly.
 - [x] `pb_drop_warned()` – exclude replicates whose refit raised a warning
@@ -31,7 +32,6 @@ for what changed in each version.
 
 Ideas for later versions:
 
-- [ ] `coxph` models with `strata()`.
 - [ ] A 'future' backend for `pb_parallel()` (clusters, progress reporting).
 - [ ] 'broom'-style `tidy()` and `glance()` methods.
 

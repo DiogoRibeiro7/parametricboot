@@ -144,6 +144,28 @@ test_that("coxph models are tested on the partial likelihood", {
   expect_equal(from_empty$df, 1)
 })
 
+test_that("stratified coxph models are tested within their strata", {
+  skip_if_not_installed("survival")
+  lung <- survival::lung
+  age <- survival::coxph(survival::Surv(time, status) ~ age + survival::strata(sex), data = lung)
+  age_wt <- survival::coxph(
+    survival::Surv(time, status) ~ age + pat.karno + survival::strata(sex),
+    data = lung[!is.na(lung$pat.karno), ]
+  )
+  age <- stats::update(age, data = lung[!is.na(lung$pat.karno), ])
+
+  test <- pb_lrt(age, age_wt, n = 20, seed = 1)
+  expect_equal(test$statistic, 2 * diff(c(age$loglik[2], age_wt$loglik[2])))
+  expect_false(any(test$failed))
+
+  # Partial likelihoods built on different risk sets are not comparable.
+  unstratified <- survival::coxph(
+    survival::Surv(time, status) ~ age,
+    data = lung[!is.na(lung$pat.karno), ]
+  )
+  expect_error(pb_lrt(unstratified, age_wt), "stratified in the same way")
+})
+
 test_that("pb_lrt() rejects models that cannot be compared", {
   models <- nested_lms()
   expect_error(pb_lrt(models$alternative, models$null), "Are the arguments swapped")
