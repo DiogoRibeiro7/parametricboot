@@ -1,21 +1,39 @@
 Package: parametricboot
-Type: Package
-Title: Parametric Bootstrap Utilities
+Title: Parametric Bootstrap for Fitted Regression Models
 Version: 0.0.0.9000
-Authors@R: person(given = "Diogo", family = "Ribeiro", email = "diogo.debastos.ribeiro@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0009-0001-2022-7072", affiliation = "ESMAD Instituto Politecnico do Porto"))
-Description: Tools to automate parametric bootstrap for models fitted with 'glm', 'glmer', or 'coxph'.
-License: MIT
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+Authors@R:
+    person(given = "Diogo", family = "Ribeiro",
+           email = "diogo.debastos.ribeiro@gmail.com",
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0009-0001-2022-7072",
+                       affiliation = "ESMAD, Instituto Politecnico do Porto"))
+Description: Automates the parametric bootstrap for models fitted with
+    'lm()', 'glm()', 'lme4::lmer()', 'lme4::glmer()' and 'survival::coxph()'.
+    New responses are simulated from the fitted model, the model is refitted
+    to each of them, and the replicates are summarised as bias, standard
+    error, mean squared error, coverage and confidence intervals, propagated
+    to predictions, and visualised with 'ggplot2'. Cox models use the
+    model-based resampling algorithm of Davison and Hinkley (1997,
+    ISBN:9780521574716).
+License: MIT + file LICENSE
+URL: https://github.com/DiogoRibeiro7/parametricboot
+BugReports: https://github.com/DiogoRibeiro7/parametricboot/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
-    ggplot2,
+    ggplot2 (>= 3.4.0),
+    parallel,
     stats,
-    lme4,
-    survival,
-    tidyr
+    withr
 Suggests:
-    testthat
+    knitr,
+    lme4,
+    rmarkdown,
+    survival,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

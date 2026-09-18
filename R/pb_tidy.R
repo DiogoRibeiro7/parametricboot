@@ -1,17 +1,23 @@
-#' Convert bootstrap results to tidy format
+#' Convert bootstrap estimates to long format
 #'
-#' @param results Output from `pb_simulate()`.
-#' @return A tidy data frame with estimates for each replicate.
+#' @inheritParams pb_confint
+#'
+#' @return A data frame with one row per successful replicate and coefficient,
+#'   and columns `replicate`, `term` and `estimate`. It is ready for use with
+#'   'ggplot2' or 'dplyr'.
+#'
+#' @examples
+#' fit <- glm(vs ~ mpg, data = mtcars, family = binomial())
+#' res <- pb_simulate(fit, n = 50, seed = 1)
+#' head(pb_tidy(res))
 #' @export
 pb_tidy <- function(results) {
-  if (!inherits(results, "pb_boot")) {
-    stop("results must come from pb_simulate()")
-  }
-  boot_mat <- sapply(results$replicates, stats::coef)
-  if (is.null(dim(boot_mat))) {
-    boot_mat <- matrix(boot_mat, nrow = length(boot_mat))
-  }
-  df <- as.data.frame(t(boot_mat))
-  df$replicate <- seq_len(nrow(df))
-  tidyr::pivot_longer(df, -replicate, names_to = "term", values_to = "estimate")
+  pb_check_boot(results)
+  est <- pb_estimates(results)
+  data.frame(
+    replicate = rep(which(!results$failed), each = ncol(est)),
+    term = rep(colnames(est), times = nrow(est)),
+    estimate = as.vector(t(est)),
+    stringsAsFactors = FALSE
+  )
 }
