@@ -28,9 +28,7 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
   type <- pb_model_type(model)
   n <- pb_check_count(n, "n")
   workers <- pb_check_count(workers, "workers")
-  if (!is.null(seed) && (!is.numeric(seed) || length(seed) != 1L || is.na(seed))) {
-    pb_abort("`seed` must be `NULL` or a single number.")
-  }
+  pb_check_seed(seed)
   if (!is.logical(keep_fits) || length(keep_fits) != 1L || is.na(keep_fits)) {
     pb_abort("`keep_fits` must be `TRUE` or `FALSE`.")
   }
@@ -38,23 +36,11 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
   aux <- if (type == "merMod") NULL else pb_refit_data(model)
   responses <- pb_with_seed(seed, pb_sim_response(model, type, n))
 
-  if (workers > 1L) {
-    cl <- parallel::makeCluster(workers)
-    on.exit(parallel::stopCluster(cl), add = TRUE)
-    loaded <- unlist(parallel::clusterCall(cl, requireNamespace, "parametricboot", quietly = TRUE))
-    if (!all(loaded)) {
-      pb_abort("Parallel workers could not load 'parametricboot'. Is the package installed?")
-    }
-    out <- parallel::parLapply(
-      cl, responses, pb_refit_one,
-      model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits
-    )
-  } else {
-    out <- lapply(
-      responses, pb_refit_one,
-      model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits
-    )
-  }
+  out <- pb_lapply(
+    responses, pb_refit_one,
+    model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits,
+    workers = workers
+  )
 
   failed <- vapply(out, function(o) !is.null(o$error), logical(1))
   warned <- vapply(out, function(o) o$warned, logical(1))
@@ -71,20 +57,7 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
     std_errors[i, common] <- out[[i]]$se[common]
   }
 
-  if (any(failed)) {
-    warning(
-      sum(failed), " of ", n, " bootstrap refits failed and were dropped. First error: ",
-      out[[which(failed)[1]]]$error,
-      call. = FALSE
-    )
-  }
-  if (any(warned)) {
-    warning(
-      sum(warned), " of ", n, " bootstrap refits produced warnings ",
-      "(for example convergence problems).",
-      call. = FALSE
-    )
-  }
+  pb_warn_replicates(failed, warned, out)
 
   structure(
     list(
@@ -102,29 +75,80 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
   )
 }
 
-# Refit to one simulated response, capturing errors and warnings so that a
-# single bad replicate never aborts the whole bootstrap.
-pb_refit_one <- function(response, model, type, aux, dots, keep_fit) {
+# Run `fun` over `x`, on a local cluster if `workers > 1`. The workers are fresh
+# R sessions, so they must be able to load the installed package.
+pb_lapply <- function(x, fun, ..., workers = 1L) {
+  if (workers <= 1L) {
+    return(lapply(x, fun, ...))
+  }
+  cl <- parallel::makeCluster(workers)
+  on.exit(parallel::stopCluster(cl), add = TRUE)
+  loaded <- unlist(parallel::clusterCall(cl, requireNamespace, "parametricboot", quietly = TRUE))
+  if (!all(loaded)) {
+    pb_abort("Parallel workers could not load 'parametricboot'. Is the package installed?")
+  }
+  parallel::parLapply(cl, x, fun, ...)
+}
+
+# Evaluate `fun()`, capturing an error and recording (but muffling) warnings,
+# so that a single bad replicate never aborts the whole bootstrap. Messages,
+# such as the "boundary (singular) fit" note of 'lme4', are muffled too: they
+# are informative for one fit but only noise when repeated for every replicate.
+pb_safely <- function(fun) {
   warned <- FALSE
-  fit <- tryCatch(
+  value <- tryCatch(
     withCallingHandlers(
-      pb_refit(model, type, response, aux, dots),
+      fun(),
       warning = function(w) {
         warned <<- TRUE
         invokeRestart("muffleWarning")
+      },
+      message = function(m) {
+        invokeRestart("muffleMessage")
       }
     ),
     error = function(e) e
   )
-  if (inherits(fit, "error")) {
-    return(list(coef = NULL, se = NULL, fit = NULL, warned = warned, error = conditionMessage(fit)))
+  if (inherits(value, "error")) {
+    return(list(value = NULL, warned = warned, error = conditionMessage(value)))
   }
+  list(value = value, warned = warned, error = NULL)
+}
+
+# One warning for the replicates that failed and one for those that warned.
+# `out` is the list of per-replicate results, each with an `error` element.
+pb_warn_replicates <- function(failed, warned, out) {
+  n <- length(failed)
+  if (any(failed)) {
+    errors <- unlist(lapply(out[failed], function(o) o$error))
+    warning(
+      sum(failed), " of ", n, " bootstrap refits failed and were dropped. First error: ",
+      errors[1],
+      call. = FALSE
+    )
+  }
+  if (any(warned)) {
+    warning(
+      sum(warned), " of ", n, " bootstrap refits produced warnings ",
+      "(for example convergence problems).",
+      call. = FALSE
+    )
+  }
+  invisible(NULL)
+}
+
+# Refit to one simulated response and extract what the summaries need.
+pb_refit_one <- function(response, model, type, aux, dots, keep_fit) {
+  out <- pb_safely(function() {
+    fit <- pb_refit(model, type, response, aux, dots)
+    list(coef = pb_coef(fit), se = pb_se(fit), fit = if (keep_fit) fit)
+  })
   list(
-    coef = pb_coef(fit),
-    se = pb_se(fit),
-    fit = if (keep_fit) fit,
-    warned = warned,
-    error = NULL
+    coef = out$value$coef,
+    se = out$value$se,
+    fit = out$value$fit,
+    warned = out$warned,
+    error = out$error
   )
 }
 
