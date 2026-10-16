@@ -28,12 +28,11 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = N
   if (!is.null(statistic) && !is.function(statistic)) {
     pb_abort_validation("`statistic` must be NULL or a function of the fitted model.")
   }
-  observed <- if (is.null(statistic)) pb_coef(model) else pb_eval_statistic(statistic, model)
-
   type <- pb_model_type(model)
   n <- pb_check_count(n, "n")
   workers <- pb_check_count(workers, "workers")
   pb_check_seed(seed)
+  observed <- if (is.null(statistic)) pb_coef(model) else pb_eval_statistic(statistic, model)
   if (!is.logical(keep_fits) || length(keep_fits) != 1L || is.na(keep_fits)) {
     pb_abort("`keep_fits` must be `TRUE` or `FALSE`.")
   }
