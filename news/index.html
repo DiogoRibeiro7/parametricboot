@@ -36,6 +36,12 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="monte-carlo-precision-of-bootstrap-summaries-0-0-0-9000">Monte Carlo precision of bootstrap summaries<a class="anchor" aria-label="anchor" href="#monte-carlo-precision-of-bootstrap-summaries-0-0-0-9000"></a></h3>
+<ul><li>Add <code><a href="../reference/pb_mc_error.html">pb_mc_error()</a></code> reporting conditional simulation error in bootstrap bias and standard deviation, based on finite successful refits and a first-order fourth-moment estimate where supported.</li>
+<li>Add <code><a href="../reference/pb_confint_mc_error.html">pb_confint_mc_error()</a></code> with exact binomial rank-based precision bounds for percentile, basic, and studentised interval endpoints. Unbounded limits indicate insufficient replicates for finite tail-quantile bounds.</li>
+<li>Keep <code><a href="../reference/pb_confint.html">pb_confint()</a></code> and <code><a href="../reference/pb_key_stats.html">pb_key_stats()</a></code> outputs unchanged, and distinguish simulation precision from model uncertainty and selective refit failures.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="monte-carlo-uncertainty-0-0-0-9000">Monte Carlo uncertainty<a class="anchor" aria-label="anchor" href="#monte-carlo-uncertainty-0-0-0-9000"></a></h3>
 <ul><li>Add <code><a href="../reference/pb_lrt_mc_error.html">pb_lrt_mc_error()</a></code> for a standard error and exact binomial interval for the estimated bootstrap tail probability, conditional on valid refits. The existing add-one corrected p-value and <code><a href="../reference/pb_lrt.html">pb_lrt()</a></code> output are unchanged.</li>
 <li>Report the number of valid and failed refits; document the zero-exceedance case and distinguish simulation uncertainty from statistical/model uncertainty.</li>

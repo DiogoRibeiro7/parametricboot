@@ -25,6 +25,28 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Monte Carlo precision of bootstrap summaries
+
+The functions
+[`pb_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_mc_error.md)
+and
+[`pb_confint_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint_mc_error.md)
+quantify how much a finite number of successful bootstrap replicates
+affects the estimated bias, bootstrap standard error and the limits of
+percentile, basic or studentised confidence intervals. Interval limit
+diagnostics use conservative binomial order-statistic ranks; they may be
+unbounded when the number of simulations is too small. These are
+per-endpoint Monte Carlo bounds, not confidence intervals for the
+unknown model parameter.
+
+``` r
+
+model <- lm(mpg ~ wt, data = mtcars)
+sim <- pb_simulate(model, n = 100, seed = 42, keep_fits = FALSE)
+pb_mc_error(sim)
+pb_confint_mc_error(sim, level = 0.8, mc_level = 0.9)
+```
+
 ## Monte Carlo precision for bootstrap tests
 
 A bootstrap p-value depends on how many successful refits were
@@ -205,6 +227,12 @@ MIT © Diogo Ribeiro. See
 
 - [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
   : Bootstrap confidence intervals
+
+- [`pb_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_mc_error.md)
+  : Monte Carlo errors of bootstrap bias and standard error
+
+- [`pb_confint_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint_mc_error.md)
+  : Monte Carlo precision of bootstrap confidence interval limits
 
 - [`pb_tidy()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_tidy.md)
   : Convert bootstrap estimates to long format

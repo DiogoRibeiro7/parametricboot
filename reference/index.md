@@ -20,6 +20,12 @@
 - [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
   : Bootstrap confidence intervals
 
+- [`pb_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_mc_error.md)
+  : Monte Carlo errors of bootstrap bias and standard error
+
+- [`pb_confint_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint_mc_error.md)
+  : Monte Carlo precision of bootstrap confidence interval limits
+
 - [`pb_tidy()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_tidy.md)
   : Convert bootstrap estimates to long format
 
