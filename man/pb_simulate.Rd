@@ -22,7 +22,9 @@ untouched.}
 
 \item{statistic}{Optional function of the fitted model returning a finite, uniquely named numeric vector in stable order. Derived statistics replace coefficients in bootstrap summaries. Studentised intervals for derived statistics require matching standard errors.}
 
-\item{statistic_se}{Optional function supplying strictly positive, finite, named standard errors with names and order matching \code{statistic}, for the original and each bootstrap fit. Required for studentised intervals of derived quantities; statistical validity of the errors is the caller's responsibility.}\n\n\item{keep_fits}{Should the refitted models be stored? They are needed by
+\item{statistic_se}{Optional function supplying strictly positive, finite, named standard errors with names and order matching \code{statistic}, for the original and each bootstrap fit. Required for studentised intervals of derived quantities; statistical validity of the errors is the caller's responsibility.}
+
+\item{keep_fits}{Should the refitted models be stored? They are needed by
 \code{\link[=pb_predict_boot]{pb_predict_boot()}}, \code{\link[=pb_plot_predictions]{pb_plot_predictions()}} and \code{\link[=pb_compare_models]{pb_compare_models()}},
 but can use a lot of memory for large \code{n}.}
 }
