@@ -56,7 +56,7 @@ pb_confint <- function(results, level = 0.95,
   type <- match.arg(type)
 
   est <- pb_estimates(results)
-  theta <- pb_coef(results$original)
+  theta <- pb_reference_estimate(results)
   alpha <- (1 - level) / 2
 
   q_low <- pb_col_quantile(est, alpha)
@@ -74,6 +74,7 @@ pb_confint <- function(results, level = 0.95,
     lower <- centre - half
     upper <- centre + half
   } else {
+    if (!is.null(results$statistic_estimate)) pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
     z <- sweep(est, 2, theta) / results$std_errors[!results$failed, , drop = FALSE]
     z[!is.finite(z)] <- NA_real_
     se <- pb_se(results$original)
