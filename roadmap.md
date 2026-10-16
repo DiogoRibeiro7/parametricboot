@@ -46,8 +46,7 @@ The gaps most likely to be hit in a first real analysis.
 
 Initial support now accepts `statistic = function(fit)` in sequential and
 parallel bootstraps. Derived statistics retain names and support percentile,
-basic and normal intervals. Studentised intervals and fully general
-standard-error propagation remain deferred.
+basic and normal intervals. Studentised intervals are now available when a supplied `statistic_se(fit)`\nreturns mathematically justified standard errors on the original and refitted\nmodels. Automatic standard-error propagation remains deferred.
 
 Only coefficients (and variance components) are tracked. The quantity of
 interest is often something else: the LD50 of a dose-response curve
