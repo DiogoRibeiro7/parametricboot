@@ -29,7 +29,7 @@ pb_plot_diagnostics <- function(results, parameter = NULL) {
   )
   observed <- data.frame(
     term = factor(parameter, levels = parameter),
-    estimate = unname(pb_coef(results$original)[parameter])
+    estimate = unname(pb_reference_estimate(results)[parameter])
   )
 
   ggplot2::ggplot(boot, ggplot2::aes(x = .data$replicate)) +
