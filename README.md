@@ -38,6 +38,23 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Derived statistics
+
+You can bootstrap a named statistic of any supported fitted model, such as an
+odds ratio, slope contrast or threshold. The same summaries and non-studentised
+intervals apply. The default coefficient workflow is unchanged.
+
+```r
+model <- glm(vs ~ mpg, data = mtcars, family = binomial())
+boot <- pb_simulate(model, n = 200, seed = 1, keep_fits = FALSE,
+                    statistic = function(fit) c(odds_ratio = exp(coef(fit)[[2L]])))
+pb_confint(boot, type = "percentile")
+pb_mc_error(boot)
+```
+
+Studentised intervals require standard errors for the derived statistic and
+are therefore rejected rather than silently returning misleading results.
+
 ## Monte Carlo precision of bootstrap summaries
 
 The functions `pb_mc_error()` and `pb_confint_mc_error()` quantify how much
