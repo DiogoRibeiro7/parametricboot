@@ -48,6 +48,7 @@ as permanently non-retryable. This does not change the simulation algorithms,
 statistical results, or how refit failures and warnings are handled.
 
 ```r
+fit <- stats::lm(mpg ~ wt, data = mtcars)
 error <- tryCatch(pb_simulate(fit, n = 0), error = identity)
 inherits(error, "parametricboot_validation_error") # TRUE
 dataexcept::is_retryable(error)                  # FALSE
