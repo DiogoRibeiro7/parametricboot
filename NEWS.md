@@ -1,5 +1,13 @@
 # parametricboot 0.0.0.9000
 
+## Monte Carlo uncertainty
+
+* Add `pb_lrt_mc_error()` for a standard error and exact binomial interval
+  for the estimated bootstrap tail probability, conditional on valid refits.
+  The existing add-one corrected p-value and `pb_lrt()` output are unchanged.
+* Report the number of valid and failed refits; document the zero-exceedance
+  case and distinguish simulation uncertainty from statistical/model uncertainty.
+
 ## Structured input validation
 
 * Shared argument guards now return native R `dataexcept` ValidationError
