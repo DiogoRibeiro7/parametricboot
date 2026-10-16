@@ -22,10 +22,13 @@ BugReports: https://github.com/DiogoRibeiro7/parametricboot/issues
 Depends:
     R (>= 4.1.0)
 Imports:
+    dataexcept,
     ggplot2 (>= 3.4.0),
     parallel,
     stats,
     withr
+Remotes:
+    dataexcept=github::DiogoRibeiro7/r-dataexcept@2f756ceec314fd26cbce3baf91add3e4202ae6c7
 Suggests:
     knitr,
     lme4,

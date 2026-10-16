@@ -38,6 +38,25 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Structured input validation
+
+Shared argument checks for bootstrap counts, seeds, confidence levels, bootstrap
+results and parameter selection now raise native R `dataexcept` conditions.
+They retain their existing error messages, gain a
+`parametricboot_validation_error` class, and classify invalid unchanged inputs
+as permanently non-retryable. This does not change the simulation algorithms,
+statistical results, or how refit failures and warnings are handled.
+
+```r
+fit <- stats::lm(mpg ~ wt, data = mtcars)
+error <- tryCatch(pb_simulate(fit, n = 0), error = identity)
+inherits(error, "parametricboot_validation_error") # TRUE
+dataexcept::is_retryable(error)                  # FALSE
+```
+
+Until `dataexcept` is published to a package repository, the development
+installation resolves its exact pinned GitHub revision via `DESCRIPTION`.
+
 ## Example
 
 A classic dose-response experiment (Collett, 1991): batches of 20
