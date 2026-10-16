@@ -48,6 +48,11 @@
 #' @param seed Optional single number. If supplied, the replicates are
 #'   reproducible and the state of the global random number generator is left
 #'   untouched.
+#' @param statistic Optional function taking one fitted model and returning a
+#'   finite named numeric vector. Its names and order must be stable across
+#'   refits. When supplied, these values replace coefficients in bootstrap
+#'   summaries. Studentised intervals are unavailable because analytic
+#'   standard errors for derived statistics are not supplied.
 #' @param keep_fits Should the refitted models be stored? They are needed by
 #'   [pb_predict_boot()], [pb_plot_predictions()] and [pb_compare_models()],
 #'   but can use a lot of memory for large `n`.
@@ -85,10 +90,11 @@
 #'
 #' pb_summary_table(res)
 #' @export
-pb_simulate <- function(model, n = 100, ..., seed = NULL, keep_fits = TRUE) {
+pb_simulate <- function(model, n = 100, ..., seed = NULL, keep_fits = TRUE,
+                        statistic = NULL) {
   pb_run(
     model,
     n = n, dots = list(...), seed = seed, keep_fits = keep_fits,
-    workers = 1L, call = match.call()
+    workers = 1L, call = match.call(), statistic = statistic
   )
 }
