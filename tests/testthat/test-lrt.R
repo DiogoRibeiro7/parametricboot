@@ -250,7 +250,8 @@ test_that("Monte Carlo report retains the bootstrap p-value and exact binomial l
   expect_identical(mc$p_value, result$table$p_value[3])
   expect_equal(mc$exceedance_probability, k / 19)
   expect_equal(mc$mc_standard_error, sqrt((k / 19) * (1 - k / 19) / 19))
-  expect_equal(c(mc$lower, mc$upper), unname(exact))
+  # binom.test() attaches conf.level; compare the numeric endpoints only.
+  expect_equal(c(mc$lower, mc$upper), as.numeric(exact))
   expect_identical(mc$valid_replicates, 19L)
   expect_identical(mc$failed_replicates, 0L)
 })
