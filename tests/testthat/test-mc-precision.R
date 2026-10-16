@@ -84,6 +84,6 @@ test_that("studentised Monte Carlo limits use finite bootstrap pivots", {
 test_that("invalid levels and unsupported interval families fail explicitly", {
   res <- pb_simulate(fit_gaussian(), n = 8, seed = 20, keep_fits = FALSE)
   expect_error(pb_confint_mc_error(res, mc_level = 1), "level")
-  expect_error(pb_confint_mc_error(res, type = "normal"), "arg should be one of")
+  expect_error(pb_confint_mc_error(res, type = "normal"), "should be one of")
   expect_error(pb_mc_error(list()), "pb_boot")
 })
