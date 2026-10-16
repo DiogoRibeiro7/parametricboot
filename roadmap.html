@@ -97,6 +97,7 @@
 <p>The gaps most likely to be hit in a first real analysis.</p>
 <div class="section level3">
 <h3 id="id_1-bootstrap-any-function-of-the-fitted-model">1. Bootstrap any function of the fitted model<a class="anchor" aria-label="anchor" href="#id_1-bootstrap-any-function-of-the-fitted-model"></a></h3>
+<p>Initial support now accepts <code>statistic = function(fit)</code> in sequential and parallel bootstraps. Derived statistics retain names and support percentile, basic and normal intervals. Studentised intervals and fully general standard-error propagation remain deferred.</p>
 <p>Only coefficients (and variance components) are tracked. The quantity of interest is often something else: the LD50 of a dose-response curve (<code>-b0 / b1</code>), an odds ratio, an intraclass correlation, a difference between two predictions. Today that means looping over <code>res$replicates</code> by hand.</p>
 <ul><li>Proposal: a <code>statistic = function(fit)</code> argument in <code><a href="reference/pb_simulate.html">pb_simulate()</a></code> returning a named numeric vector, tracked like a coefficient so that every summary, interval and plot works unchanged.</li>
 <li>Done when the LD50 of the budworm example has a bootstrap interval in the vignette, and a linear combination of <code>lm</code> coefficients reproduces its exact t interval.</li>

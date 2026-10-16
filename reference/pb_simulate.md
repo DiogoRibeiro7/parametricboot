@@ -7,7 +7,7 @@ standard errors.
 ## Usage
 
 ``` r
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE)
+pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL)
 ```
 
 ## Arguments
@@ -35,6 +35,13 @@ pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE)
 
   Optional single number. If supplied, the replicates are reproducible
   and the state of the global random number generator is left untouched.
+
+- statistic:
+
+  Optional function of the fitted model returning a finite, uniquely
+  named numeric vector in stable order. Derived statistics replace
+  coefficients in bootstrap summaries. Studentised intervals for derived
+  statistics are unavailable without analytic standard errors.
 
 - keep_fits:
 

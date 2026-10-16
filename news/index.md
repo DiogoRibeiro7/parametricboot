@@ -2,6 +2,19 @@
 
 ## parametricboot 0.0.0.9000
 
+### Custom bootstrap statistics
+
+- Add a `statistic = function(fit)` argument to
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  and
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md).
+  A stable named numeric result is tracked across refits, allowing
+  inference for derived effects without storing fitted models.
+- Preserve default coefficient behaviour and existing summaries, plots
+  and Monte Carlo diagnostics. Studentised derived-statistic intervals
+  are explicitly unsupported until analytic standard errors can be
+  supplied.
+
 ### Monte Carlo precision of bootstrap summaries
 
 - Add

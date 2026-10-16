@@ -36,6 +36,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="custom-bootstrap-statistics-0-0-0-9000">Custom bootstrap statistics<a class="anchor" aria-label="anchor" href="#custom-bootstrap-statistics-0-0-0-9000"></a></h3>
+<ul><li>Add a <code>statistic = function(fit)</code> argument to <code><a href="../reference/pb_simulate.html">pb_simulate()</a></code> and <code><a href="../reference/pb_parallel.html">pb_parallel()</a></code>. A stable named numeric result is tracked across refits, allowing inference for derived effects without storing fitted models.</li>
+<li>Preserve default coefficient behaviour and existing summaries, plots and Monte Carlo diagnostics. Studentised derived-statistic intervals are explicitly unsupported until analytic standard errors can be supplied.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="monte-carlo-precision-of-bootstrap-summaries-0-0-0-9000">Monte Carlo precision of bootstrap summaries<a class="anchor" aria-label="anchor" href="#monte-carlo-precision-of-bootstrap-summaries-0-0-0-9000"></a></h3>
 <ul><li>Add <code><a href="../reference/pb_mc_error.html">pb_mc_error()</a></code> reporting conditional simulation error in bootstrap bias and standard deviation, based on finite successful refits and a first-order fourth-moment estimate where supported.</li>
 <li>Add <code><a href="../reference/pb_confint_mc_error.html">pb_confint_mc_error()</a></code> with exact binomial rank-based precision bounds for percentile, basic, and studentised interval endpoints. Unbounded limits indicate insufficient replicates for finite tail-quantile bounds.</li>
