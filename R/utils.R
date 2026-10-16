@@ -108,6 +108,23 @@ pb_se <- function(fit) {
   se
 }
 
+# Named finite numeric statistics are required to keep a stable matrix layout.
+pb_eval_statistic <- function(statistic, fit, expected_names = NULL) {
+  x <- statistic(fit)
+  valid <- is.numeric(x) && is.null(dim(x)) && !is.object(x) &&
+    length(x) > 0L && !is.null(names(x)) &&
+    !anyNA(names(x)) && all(nzchar(names(x))) &&
+    !anyDuplicated(names(x)) && all(is.finite(x))
+  if (!valid || (!is.null(expected_names) && !identical(names(x), expected_names))) {
+    pb_abort_validation("`statistic` must return a finite named numeric vector with consistent names and order.")
+  }
+  x
+}
+
+pb_reference_estimate <- function(results) {
+  if (is.null(results$statistic_estimate)) pb_coef(results$original) else results$statistic_estimate
+}
+
 # Bootstrap estimates of the successful replicates only.
 pb_estimates <- function(results) {
   results$estimates[!results$failed, , drop = FALSE]

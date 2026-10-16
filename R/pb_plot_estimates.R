@@ -26,7 +26,7 @@ pb_plot_estimates <- function(results, parameter = NULL, bins = 30) {
   boot$term <- factor(boot$term, levels = parameter)
   observed <- data.frame(
     term = factor(parameter, levels = parameter),
-    estimate = unname(pb_coef(results$original)[parameter])
+    estimate = unname(pb_reference_estimate(results)[parameter])
   )
 
   ggplot2::ggplot(boot, ggplot2::aes(x = .data$estimate)) +

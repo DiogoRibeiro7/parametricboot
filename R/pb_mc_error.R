@@ -42,7 +42,7 @@
 #' @export
 pb_mc_error <- function(results) {
   x <- .pb_mc_estimates(results)
-  theta <- pb_coef(results$original)
+  theta <- pb_reference_estimate(results)
   if (!identical(colnames(x), names(theta))) {
     pb_abort_validation("Bootstrap parameter names do not match the fitted model.")
   }
@@ -141,7 +141,7 @@ pb_confint_mc_error <- function(
   level <- pb_check_level(level)
   mc_level <- pb_check_level(mc_level)
   type <- match.arg(type)
-  theta <- pb_coef(results$original)
+  theta <- pb_reference_estimate(results)
   if (!identical(colnames(x), names(theta))) {
     pb_abort_validation("Bootstrap parameter names do not match the fitted model.")
   }
@@ -149,6 +149,7 @@ pb_confint_mc_error <- function(
   n_terms <- ncol(x)
   pivot_scale <- NULL
   if (type == "student") {
+    if (!is.null(results$statistic_estimate)) pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
     se <- results$std_errors
     if (!is.matrix(se) || !identical(dim(se), dim(results$estimates))) {
       pb_abort_validation("Malformed bootstrap standard errors.")

@@ -36,7 +36,7 @@ pb_key_stats <- function(results, level = 0.95) {
 
   est <- pb_estimates(results)
   se <- results$std_errors[!results$failed, , drop = FALSE]
-  theta <- pb_coef(results$original)
+  theta <- pb_reference_estimate(results)
   centred <- sweep(est, 2, theta)
 
   boot_mean <- colMeans(est, na.rm = TRUE)

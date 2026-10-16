@@ -1,0 +1,40 @@
+test_that("named statistics integrate with the bootstrap summaries", {
+  fit <- stats::lm(mpg ~ wt + hp, data = mtcars)
+  custom <- function(model) c(contrast = unname(sum(stats::coef(model)[2:3])))
+  result <- pb_simulate(fit, n = 20, seed = 15, keep_fits = FALSE,
+                        statistic = custom)
+  expect_named(result$statistic_estimate, "contrast")
+  expect_identical(colnames(result$estimates), "contrast")
+  expect_equal(pb_key_stats(result)$estimate, unname(custom(fit)))
+  expect_equal(pb_confint(result)$estimate, unname(custom(fit)))
+  expect_equal(pb_mc_error(result)$term, "contrast")
+  expect_equal(pb_tidy(result)$term, rep("contrast", 20))
+  expect_s3_class(pb_plot_estimates(result), "ggplot")
+  expect_s3_class(pb_plot_diagnostics(result), "ggplot")
+  expect_error(pb_confint(result, type = "student"), "standard errors")
+  expect_error(pb_confint_mc_error(result, type = "student"), "standard errors")
+})
+
+test_that("custom statistic errors and inconsistent names are not silently accepted", {
+  fit <- stats::lm(mpg ~ wt, data = mtcars)
+  expect_error(pb_simulate(fit, n = 2, statistic = 1), "statistic")
+  expect_error(pb_simulate(fit, n = 2, statistic = function(fit) 1), "named")
+  expect_error(pb_simulate(fit, n = 2,
+    statistic = function(fit) c(s = NA_real_)), "finite")
+  original <- stats::coef(fit)
+  result <- pb_simulate(fit, n = 3, seed = 1, keep_fits = FALSE)
+  expect_null(result$statistic_estimate)
+  expect_identical(colnames(result$estimates), names(original))
+  expect_equal(pb_key_stats(result)$estimate, unname(original))
+})
+
+test_that("serial and parallel custom statistic results agree", {
+  skip_on_cran()
+  skip_if_not("parametricboot" %in% rownames(utils::installed.packages()))
+  fit <- stats::lm(mpg ~ wt, data = mtcars)
+  statistic <- function(model) c(odds = unname(exp(stats::coef(model)[2L])))
+  x <- pb_simulate(fit, n = 8, seed = 40, statistic = statistic)
+  y <- pb_parallel(fit, n = 8, workers = 2, seed = 40, statistic = statistic)
+  expect_equal(x$estimates, y$estimates)
+  expect_equal(x$statistic_estimate, y$statistic_estimate)
+})

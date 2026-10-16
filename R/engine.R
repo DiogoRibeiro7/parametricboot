@@ -24,11 +24,15 @@ pb_model_type <- function(model) {
   }
 }
 
-pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
+pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = NULL) {
+  if (!is.null(statistic) && !is.function(statistic)) {
+    pb_abort_validation("`statistic` must be NULL or a function of the fitted model.")
+  }
   type <- pb_model_type(model)
   n <- pb_check_count(n, "n")
   workers <- pb_check_count(workers, "workers")
   pb_check_seed(seed)
+  observed <- if (is.null(statistic)) pb_coef(model) else pb_eval_statistic(statistic, model)
   if (!is.logical(keep_fits) || length(keep_fits) != 1L || is.na(keep_fits)) {
     pb_abort("`keep_fits` must be `TRUE` or `FALSE`.")
   }
@@ -39,7 +43,7 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
   out <- pb_lapply(
     responses, pb_refit_one,
     model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits,
-    workers = workers
+    workers = workers, statistic = statistic, expected_names = names(observed)
   )
 
   failed <- vapply(out, function(o) !is.null(o$error), logical(1))
@@ -48,7 +52,7 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
     pb_abort("All ", n, " bootstrap refits failed. First error: ", out[[1]]$error)
   }
 
-  terms <- names(pb_coef(model))
+  terms <- names(observed)
   estimates <- matrix(NA_real_, n, length(terms), dimnames = list(NULL, terms))
   std_errors <- estimates
   for (i in which(!failed)) {
@@ -62,6 +66,8 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call) {
   structure(
     list(
       original = model,
+      statistic_estimate = if (is.null(statistic)) NULL else observed,
+      statistic_function = statistic,
       replicates = if (keep_fits) lapply(out, function(o) o$fit),
       estimates = estimates,
       std_errors = std_errors,
@@ -138,10 +144,13 @@ pb_warn_replicates <- function(failed, warned, out) {
 }
 
 # Refit to one simulated response and extract what the summaries need.
-pb_refit_one <- function(response, model, type, aux, dots, keep_fit) {
+pb_refit_one <- function(response, model, type, aux, dots, keep_fit,
+                         statistic = NULL, expected_names = NULL) {
   out <- pb_safely(function() {
     fit <- pb_refit(model, type, response, aux, dots)
-    list(coef = pb_coef(fit), se = pb_se(fit), fit = if (keep_fit) fit)
+    coef <- if (is.null(statistic)) pb_coef(fit) else pb_eval_statistic(statistic, fit, expected_names)
+    se <- if (is.null(statistic)) pb_se(fit) else stats::setNames(rep(NA_real_, length(coef)), names(coef))
+    list(coef = coef, se = se, fit = if (keep_fit) fit)
   })
   list(
     coef = out$value$coef,

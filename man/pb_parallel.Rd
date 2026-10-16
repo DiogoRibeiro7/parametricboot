@@ -4,7 +4,7 @@
 \alias{pb_parallel}
 \title{Run parametric bootstrap replicates in parallel}
 \usage{
-pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE)
+pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL)
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
@@ -21,6 +21,8 @@ passed to \code{\link[lme4:refit]{lme4::refit()}} for mixed models.}
 \item{seed}{Optional single number. If supplied, the replicates are
 reproducible and the state of the global random number generator is left
 untouched.}
+
+\item{statistic}{Optional function of the fitted model returning a finite, uniquely named numeric vector in stable order; see \code{\link{pb_simulate}}.}
 
 \item{keep_fits}{Should the refitted models be stored? They are needed by
 \code{\link[=pb_predict_boot]{pb_predict_boot()}}, \code{\link[=pb_plot_predictions]{pb_plot_predictions()}} and \code{\link[=pb_compare_models]{pb_compare_models()}},
