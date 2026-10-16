@@ -60,8 +60,10 @@ two predictions. Today that means looping over `res$replicates` by hand.
 
 The first component, `pb_lrt_mc_error()`, now reports conditional
 Monte Carlo uncertainty for the bootstrap likelihood-ratio p-value.
-Bias, bootstrap standard errors and confidence-limit Monte Carlo errors
-remain to be implemented; this item is not yet complete.
+`pb_mc_error()` now estimates Monte Carlo precision of bias and bootstrap
+standard errors, while `pb_confint_mc_error()` gives exact rank-based bounds
+for percentile, basic and studentised confidence limits. Normal-approximation
+interval endpoint precision and broader diagnostics remain future work.
 
 Nothing tells the user whether `n` was large enough. The only guidance is a
 rule of thumb in the vignette and the running-mean plot.

@@ -1,5 +1,16 @@
 # parametricboot 0.0.0.9000
 
+## Monte Carlo precision of bootstrap summaries
+
+* Add `pb_mc_error()` reporting conditional simulation error in bootstrap
+  bias and standard deviation, based on finite successful refits and a
+  first-order fourth-moment estimate where supported.
+* Add `pb_confint_mc_error()` with exact binomial rank-based precision bounds
+  for percentile, basic, and studentised interval endpoints. Unbounded
+  limits indicate insufficient replicates for finite tail-quantile bounds.
+* Keep `pb_confint()` and `pb_key_stats()` outputs unchanged, and distinguish
+  simulation precision from model uncertainty and selective refit failures.
+
 ## Monte Carlo uncertainty
 
 * Add `pb_lrt_mc_error()` for a standard error and exact binomial interval

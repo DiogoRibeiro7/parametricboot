@@ -14,6 +14,8 @@ reference:
       - pb_summary_table
       - pb_key_stats
       - pb_confint
+      - pb_mc_error
+      - pb_confint_mc_error
       - pb_tidy
       - pb_boot-methods
   - title: Visualise
