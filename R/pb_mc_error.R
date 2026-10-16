@@ -149,14 +149,18 @@ pb_confint_mc_error <- function(
   n_terms <- ncol(x)
   pivot_scale <- NULL
   if (type == "student") {
-    if (!is.null(results$statistic_estimate)) pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
+    if (!is.null(results$statistic_estimate) &&
+        is.null(results$statistic_se_estimate)) {
+      pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
+    }
     se <- results$std_errors
     if (!is.matrix(se) || !identical(dim(se), dim(results$estimates))) {
       pb_abort_validation("Malformed bootstrap standard errors.")
     }
     x <- sweep(x, 2, theta) / se[!results$failed, , drop = FALSE]
     x[!is.finite(x)] <- NA_real_
-    pivot_scale <- pb_se(results$original)
+    pivot_scale <- if (is.null(results$statistic_estimate)) pb_se(results$original) else
+      results$statistic_se_estimate
   }
   out <- data.frame(
     term = ci$term,

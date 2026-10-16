@@ -74,10 +74,14 @@ pb_confint <- function(results, level = 0.95,
     lower <- centre - half
     upper <- centre + half
   } else {
-    if (!is.null(results$statistic_estimate)) pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
+    if (!is.null(results$statistic_estimate) &&
+        is.null(results$statistic_se_estimate)) {
+      pb_abort_validation("Studentised intervals require analytic standard errors for custom statistics.")
+    }
     z <- sweep(est, 2, theta) / results$std_errors[!results$failed, , drop = FALSE]
     z[!is.finite(z)] <- NA_real_
-    se <- pb_se(results$original)
+    se <- if (is.null(results$statistic_estimate)) pb_se(results$original) else
+      results$statistic_se_estimate
     missing <- colSums(!is.na(z)) < 2L | is.na(se)
     if (all(missing)) {
       pb_abort("Studentised intervals need the standard errors of the bootstrap refits.")

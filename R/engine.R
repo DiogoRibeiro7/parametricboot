@@ -24,15 +24,21 @@ pb_model_type <- function(model) {
   }
 }
 
-pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = NULL) {
+pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
+                   statistic = NULL, statistic_se = NULL) {
   if (!is.null(statistic) && !is.function(statistic)) {
     pb_abort_validation("`statistic` must be NULL or a function of the fitted model.")
+  }
+  if (!is.null(statistic_se) && (is.null(statistic) || !is.function(statistic_se))) {
+    pb_abort_validation("`statistic_se` requires `statistic` and must be a function of the fitted model.")
   }
   type <- pb_model_type(model)
   n <- pb_check_count(n, "n")
   workers <- pb_check_count(workers, "workers")
   pb_check_seed(seed)
   observed <- if (is.null(statistic)) pb_coef(model) else pb_eval_statistic(statistic, model)
+  observed_se <- if (is.null(statistic_se)) NULL else
+    pb_eval_statistic_se(statistic_se, model, names(observed))
   if (!is.logical(keep_fits) || length(keep_fits) != 1L || is.na(keep_fits)) {
     pb_abort("`keep_fits` must be `TRUE` or `FALSE`.")
   }
@@ -43,7 +49,8 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = N
   out <- pb_lapply(
     responses, pb_refit_one,
     model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits,
-    workers = workers, statistic = statistic, expected_names = names(observed)
+    workers = workers, statistic = statistic, statistic_se = statistic_se,
+    expected_names = names(observed)
   )
 
   failed <- vapply(out, function(o) !is.null(o$error), logical(1))
@@ -63,8 +70,7 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = N
 
   pb_warn_replicates(failed, warned, out)
 
-  structure(
-    list(
+  boot <- list(
       original = model,
       statistic_estimate = if (is.null(statistic)) NULL else observed,
       statistic_function = statistic,
@@ -76,9 +82,10 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call, statistic = N
       warned = warned,
       seed = seed,
       call = call
-    ),
-    class = "pb_boot"
   )
+  # Do not modify the legacy result layout when no callback was supplied.
+  if (!is.null(statistic_se)) boot$statistic_se_estimate <- observed_se
+  structure(boot, class = "pb_boot")
 }
 
 # Run `fun` over `x`, on a local cluster if `workers > 1`. The workers are fresh
@@ -145,11 +152,18 @@ pb_warn_replicates <- function(failed, warned, out) {
 
 # Refit to one simulated response and extract what the summaries need.
 pb_refit_one <- function(response, model, type, aux, dots, keep_fit,
-                         statistic = NULL, expected_names = NULL) {
+                         statistic = NULL, statistic_se = NULL,
+                         expected_names = NULL) {
   out <- pb_safely(function() {
     fit <- pb_refit(model, type, response, aux, dots)
     coef <- if (is.null(statistic)) pb_coef(fit) else pb_eval_statistic(statistic, fit, expected_names)
-    se <- if (is.null(statistic)) pb_se(fit) else stats::setNames(rep(NA_real_, length(coef)), names(coef))
+    se <- if (is.null(statistic)) {
+      pb_se(fit)
+    } else if (is.null(statistic_se)) {
+      stats::setNames(rep(NA_real_, length(coef)), names(coef))
+    } else {
+      pb_eval_statistic_se(statistic_se, fit, expected_names)
+    }
     list(coef = coef, se = se, fit = if (keep_fit) fit)
   })
   list(

@@ -121,6 +121,23 @@ pb_eval_statistic <- function(statistic, fit, expected_names = NULL) {
   x
 }
 
+# The caller supplies a model-specific uncertainty calculation (for example,
+# the delta method). Validate shape/units, not statistical correctness.
+pb_eval_statistic_se <- function(statistic_se, fit, expected_names) {
+  se <- statistic_se(fit)
+  valid <- is.numeric(se) && is.null(dim(se)) && !is.object(se) &&
+    identical(names(se), expected_names) &&
+    length(se) == length(expected_names) &&
+    all(is.finite(se)) && all(se > 0)
+  if (!isTRUE(valid)) {
+    pb_abort_validation(paste0(
+      "`statistic_se` must return a strictly positive finite named numeric ",
+      "vector with the same names and order as `statistic`."
+    ))
+  }
+  se
+}
+
 pb_reference_estimate <- function(results) {
   if (is.null(results$statistic_estimate)) pb_coef(results$original) else results$statistic_estimate
 }
