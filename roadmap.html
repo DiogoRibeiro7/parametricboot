@@ -103,6 +103,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="id_2-report-monte-carlo-error">2. Report Monte Carlo error<a class="anchor" aria-label="anchor" href="#id_2-report-monte-carlo-error"></a></h3>
+<p>The first component, <code><a href="reference/pb_lrt_mc_error.html">pb_lrt_mc_error()</a></code>, now reports conditional Monte Carlo uncertainty for the bootstrap likelihood-ratio p-value. Bias, bootstrap standard errors and confidence-limit Monte Carlo errors remain to be implemented; this item is not yet complete.</p>
 <p>Nothing tells the user whether <code>n</code> was large enough. The only guidance is a rule of thumb in the vignette and the running-mean plot.</p>
 <ul><li>Proposal: Monte Carlo standard errors for the bias, the standard error and the interval limits in <code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_confint.html">pb_confint()</a></code>, and for the p-value of <code><a href="reference/pb_lrt.html">pb_lrt()</a></code>.</li>
 <li>Done when the advice on <code>n</code> in the documentation is backed by these numbers.</li>

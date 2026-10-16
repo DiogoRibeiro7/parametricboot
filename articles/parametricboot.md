@@ -452,6 +452,8 @@ batch <- lme4::lmer(Yield ~ 1 + (1 | Batch), data = dye)
 
 test <- pb_lrt(no_batch, batch, n = 500, seed = 2025)
 #> Refitting REML fits by maximum likelihood, as likelihood-ratio tests require.
+#> Warning: 1 of 500 bootstrap refits produced warnings (for example convergence
+#> problems).
 test
 #> <pb_lrt> Parametric bootstrap likelihood-ratio test
 #>   Null:        Yield ~ 1

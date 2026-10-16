@@ -25,6 +25,27 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Monte Carlo precision for bootstrap tests
+
+A bootstrap p-value depends on how many successful refits were
+simulated.
+[`pb_lrt_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt_mc_error.md)
+reports its binomial Monte Carlo standard error and an exact interval
+for the bootstrap exceedance probability. It retains the add-one
+corrected p-value reported by
+[`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md);
+the interval refers to simulation variability, not model uncertainty.
+Failed refits are counted and excluded, so selective refit failure
+remains a potential source of bias.
+
+``` r
+
+null <- lm(mpg ~ wt, data = mtcars)
+alternative <- update(null, . ~ . + hp)
+test <- pb_lrt(null, alternative, n = 199, seed = 1)
+pb_lrt_mc_error(test)
+```
+
 ## Structured input validation
 
 Shared argument checks for bootstrap counts, seeds, confidence levels,
@@ -209,6 +230,9 @@ MIT © Diogo Ribeiro. See
 - [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   [`print(`*`<pb_lrt>`*`)`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   : Parametric bootstrap likelihood-ratio test for nested models
+- [`pb_lrt_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt_mc_error.md)
+  : Monte Carlo uncertainty for a parametric bootstrap likelihood-ratio
+  p-value
 - [`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md)
   : Plot the bootstrap null distribution of a likelihood-ratio statistic
 - [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md)

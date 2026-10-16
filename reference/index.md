@@ -44,6 +44,9 @@
 - [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   [`print(`*`<pb_lrt>`*`)`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   : Parametric bootstrap likelihood-ratio test for nested models
+- [`pb_lrt_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt_mc_error.md)
+  : Monte Carlo uncertainty for a parametric bootstrap likelihood-ratio
+  p-value
 - [`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md)
   : Plot the bootstrap null distribution of a likelihood-ratio statistic
 - [`pb_compare_models()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_compare_models.md)
