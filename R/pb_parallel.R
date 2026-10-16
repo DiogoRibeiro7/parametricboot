@@ -28,10 +28,11 @@
 #' res
 #' }
 #' @export
-pb_parallel <- function(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE) {
+pb_parallel <- function(model, n = 100, workers = 2, ..., seed = NULL,
+                        keep_fits = TRUE, statistic = NULL) {
   pb_run(
     model,
     n = n, dots = list(...), seed = seed, keep_fits = keep_fits,
-    workers = workers, call = match.call()
+    workers = workers, call = match.call(), statistic = statistic
   )
 }
