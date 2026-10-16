@@ -1,5 +1,16 @@
 # parametricboot 0.0.0.9000
 
+## Structured input validation
+
+* Shared argument guards now return native R `dataexcept` ValidationError
+  conditions with a `parametricboot_validation_error` subclass. Existing
+  input error messages are preserved, and unchanged invalid inputs are marked
+  permanent/non-retryable.
+* Numerical bootstrap procedures, failed-refit aggregation, and operational
+  errors are unchanged; add targeted regression tests for error metadata and
+  machine-readable envelopes.
+* Pin the native R dependency to an exact public GitHub source revision.
+
 ## Cox models
 
 * `coxph()` models with `strata()` are now supported, in `pb_simulate()` and
