@@ -194,6 +194,60 @@ pb_lrt <- function(null, alternative, n = 1000, ..., seed = NULL, workers = 1) {
   )
 }
 
+#' Monte Carlo uncertainty for the bootstrap likelihood-ratio p-value
+#'
+#' The existing reported p-value is (1 + k) / (1 + B), where k is the count
+#' of valid bootstrap statistics at least as large as the observed statistic,
+#' and B is the count of valid refits. This function keeps that estimate
+#' unchanged, but also reports the binomial Monte Carlo standard error
+#' sqrt((k/B) * (1-k/B) / B) and an exact Clopper-Pearson interval for the
+#' exceedance probability k/B conditional on successful, independent refits.
+#'
+#' The interval describes simulation uncertainty only, not uncertainty from
+#' estimating the null model, refit failures or model misspecification.
+#' When k is zero the standard-error plug-in estimate is zero, but the exact
+#' interval retains a positive upper limit. Failed replicates are excluded;
+#' a substantial failure fraction can bias the conditional estimate.
+#'
+#' @param test A fitted likelihood-ratio bootstrap object from [pb_lrt()].
+#' @param level Confidence level for the exact binomial interval.
+#' @return A one-row data frame with p_value, exceedance_probability,
+#'   mc_standard_error, lower, upper, exceedances, valid_replicates and
+#'   failed_replicates. p_value equals the unmodified bootstrap p-value
+#'   returned by [pb_lrt()].
+#' @examples
+#' null <- lm(mpg ~ wt, data = mtcars)
+#' alt <- lm(mpg ~ wt + hp, data = mtcars)
+#' test <- pb_lrt(null, alt, n = 30, seed = 1)
+#' pb_lrt_mc_error(test)
+#' @export
+pb_lrt_mc_error <- function(test, level = 0.95) {
+  if (!inherits(test, "pb_lrt") || !is.numeric(test$statistic) ||
+      length(test$statistic) != 1L || !is.finite(test$statistic) ||
+      !is.numeric(test$reference) || !is.logical(test$failed) ||
+      length(test$reference) != length(test$failed) ||
+      anyNA(test$failed) || any(!is.finite(test$reference[!test$failed]))) {
+    pb_abort_validation("`test` must be a valid pb_lrt object.")
+  }
+  level <- pb_check_level(level)
+  valid <- test$reference[!test$failed]
+  B <- length(valid)
+  if (!B) pb_abort_validation("The test has no valid bootstrap replicates.")
+  k <- sum(valid >= test$statistic)
+  tail_probability <- k / B
+  interval <- stats::binom.test(k, B, conf.level = level)$conf.int
+  data.frame(
+    p_value = (k + 1) / (B + 1),
+    exceedance_probability = tail_probability,
+    mc_standard_error = sqrt(tail_probability * (1 - tail_probability) / B),
+    lower = unname(interval[[1L]]),
+    upper = unname(interval[[2L]]),
+    exceedances = as.integer(k),
+    valid_replicates = as.integer(B),
+    failed_replicates = as.integer(sum(test$failed))
+  )
+}
+
 # Optimiser noise makes a statistic that should be zero come out as about
 # -1e-13; anything clearly below zero is a failed optimisation.
 pb_lrt_tol <- 1e-6

@@ -24,6 +24,7 @@ reference:
   - title: Test and compare models
     contents:
       - pb_lrt
+      - pb_lrt_mc_error
       - pb_plot_lrt
       - pb_compare_models
   - title: Predict

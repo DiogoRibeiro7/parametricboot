@@ -49,6 +49,22 @@ still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Monte Carlo precision for bootstrap tests
+
+A bootstrap p-value depends on how many successful refits were simulated.
+`pb_lrt_mc_error()` reports its binomial Monte Carlo standard error and an
+exact interval for the bootstrap exceedance probability. It retains the
+add-one corrected p-value reported by `pb_lrt()`; the interval refers
+to simulation variability, not model uncertainty. Failed refits are counted
+and excluded, so selective refit failure remains a potential source of bias.
+
+```r
+null <- lm(mpg ~ wt, data = mtcars)
+alternative <- update(null, . ~ . + hp)
+test <- pb_lrt(null, alternative, n = 199, seed = 1)
+pb_lrt_mc_error(test)
+```
+
 ## Structured input validation
 
 Shared argument checks for bootstrap counts, seeds, confidence levels, bootstrap

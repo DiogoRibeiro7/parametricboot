@@ -240,3 +240,36 @@ test_that("per-replicate messages from refits are muffled", {
   alternative <- lme4::lmer(Yield ~ 1 + (1 | Batch), data = lme4::Dyestuff, REML = FALSE)
   expect_no_message(suppressWarnings(pb_lrt(null, alternative, n = 10, seed = 1)))
 })
+
+test_that("Monte Carlo report retains the bootstrap p-value and exact binomial limits", {
+  models <- nested_lms()
+  result <- pb_lrt(models$null, models$alternative, n = 19, seed = 7)
+  mc <- pb_lrt_mc_error(result, level = 0.9)
+  k <- sum(result$reference >= result$statistic)
+  exact <- stats::binom.test(k, 19, conf.level = 0.9)$conf.int
+  expect_identical(mc$p_value, result$table$p_value[3])
+  expect_equal(mc$exceedance_probability, k / 19)
+  expect_equal(mc$mc_standard_error, sqrt((k / 19) * (1 - k / 19) / 19))
+  # binom.test() attaches conf.level; compare the numeric endpoints only.
+  expect_equal(c(mc$lower, mc$upper), as.numeric(exact))
+  expect_identical(mc$valid_replicates, 19L)
+  expect_identical(mc$failed_replicates, 0L)
+})
+
+test_that("zero exceedances and failed refits have honest Monte Carlo limits", {
+  models <- nested_lms()
+  result <- pb_lrt(models$null, models$alternative, n = 10, seed = 1)
+  result$statistic <- max(result$reference) + 1
+  result$failed[c(2L, 4L)] <- TRUE
+  result$reference[c(2L, 4L)] <- NA_real_
+  mc <- pb_lrt_mc_error(result)
+  expect_identical(mc$exceedances, 0L)
+  expect_identical(mc$valid_replicates, 8L)
+  expect_identical(mc$failed_replicates, 2L)
+  expect_equal(mc$p_value, 1 / 9)
+  expect_identical(mc$mc_standard_error, 0)
+  expect_gt(mc$upper, 0)
+  expect_equal(mc$upper, stats::binom.test(0, 8)$conf.int[2])
+  expect_error(pb_lrt_mc_error(result, level = 1), "`level`")
+  expect_error(pb_lrt_mc_error(list()), "pb_lrt")
+})
