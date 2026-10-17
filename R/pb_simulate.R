@@ -8,6 +8,15 @@
 #' Each replicate draws a response from the fitted model and refits the model
 #' to it, holding the covariates fixed.
 #'
+#' Only the canonical base-R `lm` and `glm` classes use the `lm`/GLM
+#' simulation path. Objects with additional subclasses (such as the results
+#' of `MASS::glm.nb()`, `mgcv::gam()` or `stats::aov()`) are rejected
+#' until their model-specific simulation and refitting semantics have been
+#' validated. Quasi-likelihood GLM families are also rejected: they do not
+#' define a full parametric response distribution for simulation. This
+#' fail-closed rule applies equally to serial, parallel and likelihood-ratio
+#' bootstrap workflows.
+#'
 #' * For `lm` and `glm` models the response is drawn with [stats::simulate()]
 #'   and the original call is re-evaluated on the original data, so
 #'   transformed terms (`log(x)`, `poly(x, 2)`), `offset()`, `weights`,
