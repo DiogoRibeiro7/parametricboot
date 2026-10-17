@@ -25,7 +25,8 @@ pb_model_type <- function(model) {
 }
 
 pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
-                   statistic = NULL, statistic_se = NULL) {
+                   statistic = NULL, statistic_se = NULL,
+                   newdata = NULL, predict_args = list()) {
   if (!is.null(statistic) && !is.function(statistic)) {
     pb_abort_validation("`statistic` must be NULL or a function of the fitted model.")
   }
@@ -43,6 +44,22 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
     pb_abort("`keep_fits` must be `TRUE` or `FALSE`.")
   }
 
+  if (!is.null(newdata) &&
+      (!is.data.frame(newdata) || nrow(newdata) < 1L)) {
+    pb_abort_validation("`newdata` must be a non-empty data frame or NULL.")
+  }
+  if (!is.list(predict_args) ||
+      (length(predict_args) &&
+       (is.null(names(predict_args)) || anyNA(names(predict_args)) ||
+        any(!nzchar(names(predict_args))) ||
+        anyDuplicated(names(predict_args)) ||
+        any(names(predict_args) %in% c("object", "newdata"))))) {
+    pb_abort_validation("`predict_args` must be a named list of unique predict() arguments, excluding object and newdata.")
+  }
+  if (is.null(newdata) && length(predict_args)) {
+    pb_abort_validation("`predict_args` requires `newdata`.")
+  }
+
   aux <- if (type == "merMod") NULL else pb_refit_data(model)
   responses <- pb_with_seed(seed, pb_sim_response(model, type, n))
 
@@ -50,7 +67,8 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
     responses, pb_refit_one,
     model = model, type = type, aux = aux, dots = dots, keep_fit = keep_fits,
     workers = workers, statistic = statistic, statistic_se = statistic_se,
-    expected_names = names(observed)
+    expected_names = names(observed),
+    newdata = newdata, predict_args = predict_args
   )
 
   failed <- vapply(out, function(o) !is.null(o$error), logical(1))
@@ -70,6 +88,38 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
 
   pb_warn_replicates(failed, warned, out)
 
+  # Prediction failures are kept separate from model refit failures so that
+  # a failed predict() cannot silently discard valid coefficient estimates.
+  if (!is.null(newdata)) {
+    prediction_failed <- vapply(out, function(o) {
+      !is.null(o$error) || !is.null(o$prediction_error)
+    }, logical(1))
+    if (all(prediction_failed)) {
+      first <- which(vapply(out, function(o) !is.null(o$prediction_error),
+                            logical(1)))
+      reason <- if (length(first)) out[[first[1L]]]$prediction_error else
+        out[[1L]]$error
+      pb_abort("All ", n, " bootstrap predictions failed. First error: ", reason)
+    }
+    predictions <- matrix(NA_real_, nrow = nrow(newdata), ncol = n)
+    for (i in which(!prediction_failed)) {
+      predictions[, i] <- out[[i]]$prediction
+    }
+    prediction_only_failed <- prediction_failed & !failed
+    if (any(prediction_only_failed)) {
+      first <- which(prediction_only_failed)[1L]
+      warning(sum(prediction_only_failed), " of ", n,
+              " bootstrap predictions failed, but their fitted estimates were retained. First error: ",
+              out[[first]]$prediction_error, call. = FALSE)
+    }
+    prediction_warned <- vapply(out, function(o) isTRUE(o$prediction_warned),
+                                logical(1))
+    if (any(prediction_warned)) {
+      warning(sum(prediction_warned), " of ", n,
+              " bootstrap predictions produced warnings.", call. = FALSE)
+    }
+  }
+
   boot <- list(
       original = model,
       statistic_estimate = if (is.null(statistic)) NULL else observed,
@@ -85,6 +135,12 @@ pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
   )
   # Do not modify the legacy result layout when no callback was supplied.
   if (!is.null(statistic_se)) boot$statistic_se_estimate <- observed_se
+  if (!is.null(newdata)) {
+    boot$predictions <- predictions
+    boot$prediction_data <- newdata
+    boot$prediction_args <- predict_args
+    boot$prediction_failed <- prediction_failed
+  }
   structure(boot, class = "pb_boot")
 }
 
@@ -153,7 +209,8 @@ pb_warn_replicates <- function(failed, warned, out) {
 # Refit to one simulated response and extract what the summaries need.
 pb_refit_one <- function(response, model, type, aux, dots, keep_fit,
                          statistic = NULL, statistic_se = NULL,
-                         expected_names = NULL) {
+                         expected_names = NULL, newdata = NULL,
+                         predict_args = list()) {
   out <- pb_safely(function() {
     fit <- pb_refit(model, type, response, aux, dots)
     coef <- if (is.null(statistic)) pb_coef(fit) else pb_eval_statistic(statistic, fit, expected_names)
@@ -164,14 +221,21 @@ pb_refit_one <- function(response, model, type, aux, dots, keep_fit,
     } else {
       pb_eval_statistic_se(statistic_se, fit, expected_names)
     }
-    list(coef = coef, se = se, fit = if (keep_fit) fit)
+    prediction <- if (is.null(newdata)) NULL else {
+      pb_safely(function() pb_predict_one(fit, newdata, predict_args))
+    }
+    list(coef = coef, se = se, fit = if (keep_fit) fit,
+         prediction = prediction)
   })
   list(
     coef = out$value$coef,
     se = out$value$se,
     fit = out$value$fit,
     warned = out$warned,
-    error = out$error
+    error = out$error,
+    prediction = out$value$prediction$value,
+    prediction_error = out$value$prediction$error,
+    prediction_warned = isTRUE(out$value$prediction$warned)
   )
 }
 
