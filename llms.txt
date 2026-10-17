@@ -41,9 +41,26 @@ pb_confint(boot, type = "percentile")
 pb_mc_error(boot)
 ```
 
-Studentised intervals require standard errors for the derived statistic
-and are therefore rejected rather than silently returning misleading
-results.
+Studentised intervals for a derived statistic are available when a
+`statistic_se(fit)` callback provides a matching, strictly positive,
+model-justified standard error on every refit. For example, the delta
+method supplies the standard error of a GLM odds ratio:
+
+``` r
+
+s <- function(fit) c(odds_ratio = unname(exp(coef(fit)[[2L]])))
+s_se <- function(fit) {
+  beta <- unname(coef(fit)[[2L]])
+  c(odds_ratio = exp(beta) * sqrt(unname(vcov(fit)[2, 2])))
+}
+boot <- pb_simulate(model, n = 200, seed = 1, keep_fits = FALSE,
+                    statistic = s, statistic_se = s_se)
+pb_confint(boot, type = "student")
+```
+
+Without that callback, studentised derived-statistic intervals remain
+unavailable. The package checks callback structure and positivity, not
+the mathematical correctness of a supplied standard error.
 
 ## Monte Carlo precision of bootstrap summaries
 

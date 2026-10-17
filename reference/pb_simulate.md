@@ -7,7 +7,7 @@ standard errors.
 ## Usage
 
 ``` r
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL)
+pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL)
 ```
 
 ## Arguments
@@ -41,7 +41,15 @@ pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL
   Optional function of the fitted model returning a finite, uniquely
   named numeric vector in stable order. Derived statistics replace
   coefficients in bootstrap summaries. Studentised intervals for derived
-  statistics are unavailable without analytic standard errors.
+  statistics require matching standard errors.
+
+- statistic_se:
+
+  Optional function supplying strictly positive, finite, named standard
+  errors with names and order matching `statistic`, for the original and
+  each bootstrap fit. Required for studentised intervals of derived
+  quantities; statistical validity of the errors is the caller's
+  responsibility.
 
 - keep_fits:
 

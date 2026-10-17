@@ -7,7 +7,7 @@ that distributes the model refits over a local cluster of R processes.
 ## Usage
 
 ``` r
-pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL)
+pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL)
 ```
 
 ## Arguments
@@ -44,6 +44,12 @@ pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, sta
 
   Optional function of the fitted model returning a finite, uniquely
   named numeric vector in stable order; see
+  [`pb_simulate`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
+
+- statistic_se:
+
+  Optional callback supplying strictly positive, finite standard errors
+  for the derived statistic, with matching names; see
   [`pb_simulate`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
 
 - keep_fits:
