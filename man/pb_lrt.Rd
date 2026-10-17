@@ -81,7 +81,10 @@ fit as the null and an \code{lmer()} or \code{glmer()} fit as the alternative. M
 models fitted by REML are refitted by maximum likelihood first, with a
 message. For \code{coxph} models the partial likelihood is used, the null may be
 the model without covariates, \code{Surv(time, status) ~ 1}, and both models
-must be stratified in the same way.
+must be stratified in the same way. For negative-binomial regression,
+both models must be fitted with \code{MASS::glm.nb()}; each bootstrap refit
+re-estimates dispersion. Comparisons to Poisson models are not treated
+as regular nested likelihood-ratio tests.
 
 Whether the models are nested cannot be checked in general; it is only
 verified that they were fitted to the same response, that \code{alternative}

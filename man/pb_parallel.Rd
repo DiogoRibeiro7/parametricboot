@@ -4,10 +4,22 @@
 \alias{pb_parallel}
 \title{Run parametric bootstrap replicates in parallel}
 \usage{
-pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
+pb_parallel(
+  model,
+  n = 100,
+  workers = 2,
+  ...,
+  seed = NULL,
+  keep_fits = TRUE,
+  statistic = NULL,
+  statistic_se = NULL,
+  newdata = NULL,
+  predict_args = list()
+)
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
+\code{\link[MASS:glm.nb]{MASS::glm.nb()}},
 \code{\link[lme4:lmer]{lme4::lmer()}}, \code{\link[lme4:glmer]{lme4::glmer()}} or \code{\link[survival:coxph]{survival::coxph()}}.}
 
 \item{n}{Number of bootstrap replicates.}
