@@ -13,8 +13,26 @@ pb_model_type <- function(model) {
   } else if (inherits(model, "merMod")) {
     pb_require("lme4", "bootstrap 'lmer'/'glmer' models")
     "merMod"
-  } else if (inherits(model, "lm")) {
+  } else if (identical(class(model), c("glm", "lm"))) {
+    family <- stats::family(model)$family
+    if (is.character(family) && length(family) == 1L &&
+        grepl("^quasi", family, ignore.case = TRUE)) {
+      pb_abort_validation(
+        "Quasi-likelihood family '", family,
+        "' is unsupported: no parametric response law or log-likelihood ",
+        "is defined. Use an explicitly specified sampling model."
+      )
+    }
     "lm"
+  } else if (identical(class(model), "lm")) {
+    "lm"
+  } else if (inherits(model, "lm")) {
+    pb_abort_validation(
+      "Unsupported lm/glm subclass '", class(model)[1L], "'. ",
+      "Only standard stats::lm() and stats::glm() fits are currently ",
+      "validated. Subclasses require an independently verified simulation ",
+      "and refitting method before bootstrap inference."
+    )
   } else {
     pb_abort(
       "`model` must be fitted with `lm()`, `glm()`, `lme4::lmer()`, ",

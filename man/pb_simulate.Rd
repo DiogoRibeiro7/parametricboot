@@ -59,6 +59,14 @@ errors.
 \details{
 Each replicate draws a response from the fitted model and refits the model
 to it, holding the covariates fixed.
+
+Only canonical base-R \code{lm} and \code{glm} classes use the linear-model and
+GLM simulation path. Additional subclasses, such as those returned by
+\code{MASS::glm.nb()}, \code{mgcv::gam()} or \code{stats::aov()}, are rejected
+until independently validated for simulation and refitting. Quasi-likelihood
+families are also rejected because they do not define a complete
+parametric response distribution. This policy also applies to parallel
+bootstrap and bootstrap likelihood-ratio tests.
 \itemize{
 \item For \code{lm} and \code{glm} models the response is drawn with \code{\link[stats:simulate]{stats::simulate()}}
 and the original call is re-evaluated on the original data, so
