@@ -1,5 +1,17 @@
 # parametricboot 0.0.0.9000
 
+## Validated negative-binomial regression support
+
+* Admit the exact `MASS::glm.nb()` class with its fitted negative-binomial
+  simulator, re-estimating the dispersion parameter on every bootstrap
+  refit. Validate the simulation moments against independent NB identities
+  and refitted coefficients and dispersion against direct `MASS::glm.nb()`.
+* Reject non-unit prior weights, malformed dispersion and unsupported
+  Poisson-versus-negative-binomial likelihood-ratio comparisons; keep other
+  unvalidated inherited model classes rejected.
+* Add `MASS` as an optional model package, with deterministic and
+  guarded regression tests.
+
 ## Fail-closed model-class contract
 
 * Accept the canonical base-R `lm` and `glm` S3 classes for the
@@ -17,7 +29,15 @@
 * Add optional `newdata` and `predict_args` to `pb_simulate()` and `pb_parallel()` to cache predictions as each model is refitted, independently of `keep_fits`.
 * Reuse cached predictions through `pb_predict_boot()` with strict request matching; mismatched requests require retained models. Prediction failures do not silently discard valid model parameter estimates.
 
-## Studentised intervals for custom statistics\n\n* Add an optional `statistic_se(fit)` callback with strictly positive, finite,\n  aligned standard errors for the original model and successful refits.\n* Permit bootstrap-t intervals and their Monte Carlo rank bounds for custom\n  statistics when justified standard errors are supplied. Keep the default\n  coefficient and non-studentised behaviour unchanged.\n\n## Custom bootstrap statistics
+## Studentised intervals for custom statistics
+
+* Add an optional `statistic_se(fit)` callback with strictly positive, finite,
+  aligned standard errors for the original model and successful refits.
+* Permit bootstrap-t intervals and their Monte Carlo rank bounds for custom
+  statistics when justified standard errors are supplied. Keep the default
+  coefficient and non-studentised behaviour unchanged.
+
+## Custom bootstrap statistics
 
 * Add a `statistic = function(fit)` argument to `pb_simulate()` and
   `pb_parallel()`. A stable named numeric result is tracked across refits,

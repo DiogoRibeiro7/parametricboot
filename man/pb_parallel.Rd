@@ -8,6 +8,7 @@ pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, sta
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
+\code{\link[MASS:glm.nb]{MASS::glm.nb()}},
 \code{\link[lme4:lmer]{lme4::lmer()}}, \code{\link[lme4:glmer]{lme4::glmer()}} or \code{\link[survival:coxph]{survival::coxph()}}.}
 
 \item{n}{Number of bootstrap replicates.}

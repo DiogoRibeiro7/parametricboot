@@ -34,7 +34,10 @@
 #' models fitted by REML are refitted by maximum likelihood first, with a
 #' message. For `coxph` models the partial likelihood is used, the null may be
 #' the model without covariates, `Surv(time, status) ~ 1`, and both models
-#' must be stratified in the same way.
+#' must be stratified in the same way. Negative-binomial likelihood-ratio
+#' comparisons require two `MASS::glm.nb()` models, with the dispersion
+#' parameter re-estimated for each bootstrap refit. Comparisons against
+#' Poisson models are not treated as regular nested likelihood-ratio tests.
 #'
 #' Whether the models are nested cannot be checked in general; it is only
 #' verified that they were fitted to the same response, that `alternative`
@@ -102,6 +105,12 @@ pb_lrt <- function(null, alternative, n = 1000, ..., seed = NULL, workers = 1) {
   pb_check_seed(seed)
   if (sum(types == "coxph") == 1L) {
     pb_abort("A 'coxph' model can only be compared with another 'coxph' model.")
+  }
+  if (sum(types == "negbin") == 1L) {
+    pb_abort_validation(paste0(
+      "Negative-binomial likelihood-ratio tests require two MASS::glm.nb() ",
+      "models; comparisons with Poisson/GLM models are not validated."
+    ))
   }
 
   models <- pb_as_ml(list(null, alternative))
