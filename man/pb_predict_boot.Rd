@@ -21,7 +21,7 @@ A numeric matrix with one row per observation and one column per
 successful bootstrap replicate.
 }
 \description{
-Computes predictions from every refitted bootstrap model.
+Computes predictions from every refitted bootstrap model. When predictions were cached during refitting, they remain available without stored fits. Explicit requests must match the cache dataset and prediction arguments; mismatches require retained fits.
 }
 \examples{
 fit <- glm(vs ~ mpg, data = mtcars, family = binomial())
