@@ -2,6 +2,17 @@
 
 ## parametricboot 0.0.0.9000
 
+### Fail-closed model-class contract
+
+- Accept the canonical base-R `lm` and `glm` S3 classes for the
+  linear-model bootstrap path, rather than every unvalidated subclass.
+- Reject `glm.nb`, `gam`, `aov` and other inherited, unvalidated fits
+  with a structured, non-retryable validation error until they are
+  independently tested. Reject quasi-likelihood GLM families because
+  they do not specify a parametric response distribution.
+- Preserve supported `lme4`, `coxph`, standard `lm` and `glm`
+  calculations, and apply the same guard to bootstrap LRTs.
+
 ### Memory-efficient bootstrap predictions
 
 - Add optional `newdata` and `predict_args` to

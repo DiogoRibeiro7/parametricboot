@@ -129,7 +129,14 @@ call.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Each replicate draws a response from the fitted model and refits the model
-to it, holding the covariates fixed.</p><ul><li><p>For <code>lm</code> and <code>glm</code> models the response is drawn with <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">stats::simulate()</a></code>
+to it, holding the covariates fixed.</p>
+<p>Only canonical base-R <code>lm</code> and <code>glm</code> classes use the linear-model and
+GLM simulation path. Additional subclasses, such as those returned by
+<code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>, <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> or <code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code>, are rejected
+until independently validated for simulation and refitting. Quasi-likelihood
+families are also rejected because they do not define a complete
+parametric response distribution. This policy also applies to parallel
+bootstrap and bootstrap likelihood-ratio tests.</p><ul><li><p>For <code>lm</code> and <code>glm</code> models the response is drawn with <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">stats::simulate()</a></code>
 and the original call is re-evaluated on the original data, so
 transformed terms (<code>log(x)</code>, <code>poly(x, 2)</code>), <code><a href="https://rdrr.io/r/stats/offset.html" class="external-link">offset()</a></code>, <code>weights</code>,
 <code>subset</code> and two-column binomial responses are all supported. The model

@@ -109,6 +109,16 @@ An object of class `pb_boot`: a list with elements
 Each replicate draws a response from the fitted model and refits the
 model to it, holding the covariates fixed.
 
+Only canonical base-R `lm` and `glm` classes use the linear-model and
+GLM simulation path. Additional subclasses, such as those returned by
+[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html),
+[`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) or
+[`stats::aov()`](https://rdrr.io/r/stats/aov.html), are rejected until
+independently validated for simulation and refitting. Quasi-likelihood
+families are also rejected because they do not define a complete
+parametric response distribution. This policy also applies to parallel
+bootstrap and bootstrap likelihood-ratio tests.
+
 - For `lm` and `glm` models the response is drawn with
   [`stats::simulate()`](https://rdrr.io/r/stats/simulate.html) and the
   original call is re-evaluated on the original data, so transformed

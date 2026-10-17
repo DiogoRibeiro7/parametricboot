@@ -91,6 +91,12 @@
 </tbody>
 </table>
 <div class="section level2">
+<h2 id="validated-model-classes">Validated model classes<a class="anchor" aria-label="anchor" href="#validated-model-classes"></a>
+</h2>
+<p>The base-R <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> classes use the validated linear-model/GLM bootstrap engine. Inheriting from <code>lm</code> or <code>glm</code> is not, by itself, a guarantee that simulating and refitting preserves a model’s assumptions: unvalidated subclasses such as <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>, <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> and <code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code> now fail explicitly rather than returning unverified bootstrap results. Quasi-likelihood families are also rejected because they lack a fully specified parametric sampling law.</p>
+<p>The supported <code>lme4</code> mixed models and right-censored <code>coxph</code> workflows are unaffected. Additional model classes will be admitted after separate mathematical and computational validation.</p>
+</div>
+<div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>parametricboot is a work in progress: it is not on CRAN, and the interface may still change. Install the development version from GitHub:</p>

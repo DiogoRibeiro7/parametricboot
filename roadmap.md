@@ -114,16 +114,20 @@ refits on 20 000 rows take 560 MB.
 
 ### 4. Settle which model classes are accepted
 
-Any class inheriting from `lm` or `glm` passes the input check.
-[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) and
-[`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) fits run, but
-nothing validates them. This is at odds with principle 2.
+Only the canonical base-R `lm` and `glm` S3 classes now enter the linear
+model bootstrap pathway. Unvalidated subclasses (including `glm.nb`,
+`gam`, `aov` and other `lm`/`glm` descendants) are rejected with a
+structured input error; quasi-likelihood families are explicitly
+excluded. This closes the previous accidental-acceptance gap, but
+extending the validated model portfolio remains open.
 
-- `glm.nb` is a genuine parametric model: validate it and add tests.
-- `gam` needs a decision, because refits re-estimate the smoothing
-  parameters: either validate against `mgcv`’s own intervals or reject.
-- Done when every accepted class has tests and all others are rejected
-  with an explanation.
+- `glm.nb` is a genuine parametric model: validate its fitted-parameter
+  simulation and refitting against an independent reference before
+  admitting.
+- `gam` requires deciding whether bootstrap refits re-estimate smoothing
+  parameters appropriately and validating the resulting intervals.
+- Document accepted response families and validate any additional
+  class/family combinations before exposing them as supported.
 
 ### 5. Interface review after first real use
 
