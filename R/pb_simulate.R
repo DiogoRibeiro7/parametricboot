@@ -51,8 +51,14 @@
 #' @param statistic Optional function taking one fitted model and returning a
 #'   finite named numeric vector. Its names and order must be stable across
 #'   refits. When supplied, these values replace coefficients in bootstrap
-#'   summaries. Studentised intervals are unavailable because analytic
-#'   standard errors for derived statistics are not supplied.
+#'   summaries. Studentised intervals require a matching `statistic_se`.
+#' @param statistic_se Optional function of a fitted model returning strictly
+#'   positive, finite, named standard errors, matching `statistic` names and
+#'   order for the original fit and every successful refit. Required for
+#'   studentised intervals of custom statistics. It must be a statistically
+#'   justified standard error (e.g. from the delta method); the package cannot
+#'   verify that a supplied uncertainty estimator is valid. Invalid per-refit
+#'   results are treated as failed replicates, not silently retained.
 #' @param keep_fits Should the refitted models be stored? They are needed by
 #'   [pb_predict_boot()], [pb_plot_predictions()] and [pb_compare_models()],
 #'   but can use a lot of memory for large `n`.
@@ -91,10 +97,11 @@
 #' pb_summary_table(res)
 #' @export
 pb_simulate <- function(model, n = 100, ..., seed = NULL, keep_fits = TRUE,
-                        statistic = NULL) {
+                        statistic = NULL, statistic_se = NULL) {
   pb_run(
     model,
     n = n, dots = list(...), seed = seed, keep_fits = keep_fits,
-    workers = 1L, call = match.call(), statistic = statistic
+    workers = 1L, call = match.call(), statistic = statistic,
+    statistic_se = statistic_se
   )
 }

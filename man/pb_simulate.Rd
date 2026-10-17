@@ -4,7 +4,7 @@
 \alias{pb_simulate}
 \title{Run parametric bootstrap replicates}
 \usage{
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL)
+pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL)
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
@@ -20,7 +20,9 @@ passed to \code{\link[lme4:refit]{lme4::refit()}} for mixed models.}
 reproducible and the state of the global random number generator is left
 untouched.}
 
-\item{statistic}{Optional function of the fitted model returning a finite, uniquely named numeric vector in stable order. Derived statistics replace coefficients in bootstrap summaries. Studentised intervals for derived statistics are unavailable without analytic standard errors.}
+\item{statistic}{Optional function of the fitted model returning a finite, uniquely named numeric vector in stable order. Derived statistics replace coefficients in bootstrap summaries. Studentised intervals for derived statistics require matching standard errors.}
+
+\item{statistic_se}{Optional function supplying strictly positive, finite, named standard errors with names and order matching \code{statistic}, for the original and each bootstrap fit. Required for studentised intervals of derived quantities; statistical validity of the errors is the caller's responsibility.}
 
 \item{keep_fits}{Should the refitted models be stored? They are needed by
 \code{\link[=pb_predict_boot]{pb_predict_boot()}}, \code{\link[=pb_plot_predictions]{pb_plot_predictions()}} and \code{\link[=pb_compare_models]{pb_compare_models()}},

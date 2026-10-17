@@ -1,6 +1,6 @@
 # parametricboot 0.0.0.9000
 
-## Custom bootstrap statistics
+## Studentised intervals for custom statistics\n\n* Add an optional `statistic_se(fit)` callback with strictly positive, finite,\n  aligned standard errors for the original model and successful refits.\n* Permit bootstrap-t intervals and their Monte Carlo rank bounds for custom\n  statistics when justified standard errors are supplied. Keep the default\n  coefficient and non-studentised behaviour unchanged.\n\n## Custom bootstrap statistics
 
 * Add a `statistic = function(fit)` argument to `pb_simulate()` and
   `pb_parallel()`. A stable named numeric result is tracked across refits,

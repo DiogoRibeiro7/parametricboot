@@ -29,10 +29,12 @@
 #' }
 #' @export
 pb_parallel <- function(model, n = 100, workers = 2, ..., seed = NULL,
-                        keep_fits = TRUE, statistic = NULL) {
+                        keep_fits = TRUE, statistic = NULL,
+                        statistic_se = NULL) {
   pb_run(
     model,
     n = n, dots = list(...), seed = seed, keep_fits = keep_fits,
-    workers = workers, call = match.call(), statistic = statistic
+    workers = workers, call = match.call(), statistic = statistic,
+    statistic_se = statistic_se
   )
 }
