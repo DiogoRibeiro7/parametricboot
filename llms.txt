@@ -25,6 +25,27 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Memory-efficient bootstrap predictions
+
+Supply `newdata` when bootstrapping to store one numeric prediction per
+row per successful refit, without keeping refitted model objects. Use
+`predict_args` to set prediction options explicitly. The cached request
+is checked so that a later call cannot silently return predictions for
+different inputs.
+
+``` r
+
+fit <- lm(mpg ~ wt + hp, data = mtcars)
+new_cars <- mtcars[1:3, c("wt", "hp")]
+boot <- pb_simulate(fit, n = 100, seed = 2, keep_fits = FALSE,
+                    newdata = new_cars)
+quantiles <- t(apply(pb_predict_boot(boot), 1, stats::quantile,
+                     probs = c(0.025, 0.975)))
+```
+
+This caches conditional mean predictions rather than predictive
+intervals for a new observation; the latter also require response noise.
+
 ## Derived statistics
 
 You can bootstrap a named statistic of any supported fitted model, such

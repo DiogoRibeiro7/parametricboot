@@ -7,7 +7,7 @@ that distributes the model refits over a local cluster of R processes.
 ## Usage
 
 ``` r
-pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL)
+pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
 ```
 
 ## Arguments
@@ -51,6 +51,16 @@ pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, sta
   Optional callback supplying strictly positive, finite standard errors
   for the derived statistic, with matching names; see
   [`pb_simulate`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md).
+
+- newdata:
+
+  Optional non-empty data frame used to cache predictions without
+  keeping refitted models.
+
+- predict_args:
+
+  Named list of additional arguments passed to
+  [`predict()`](https://rdrr.io/r/stats/predict.html) on every refit.
 
 - keep_fits:
 

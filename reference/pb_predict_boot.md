@@ -1,6 +1,9 @@
 # Predict with bootstrap uncertainty
 
-Computes predictions from every refitted bootstrap model.
+Computes predictions from every refitted bootstrap model. When
+predictions were cached during refitting, they remain available without
+stored fits. Explicit requests must match the cache dataset and
+prediction arguments; mismatches require retained fits.
 
 ## Usage
 

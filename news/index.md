@@ -2,6 +2,20 @@
 
 ## parametricboot 0.0.0.9000
 
+### Memory-efficient bootstrap predictions
+
+- Add optional `newdata` and `predict_args` to
+  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
+  and
+  [`pb_parallel()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_parallel.md)
+  to cache predictions as each model is refitted, independently of
+  `keep_fits`.
+- Reuse cached predictions through
+  [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
+  with strict request matching; mismatched requests require retained
+  models. Prediction failures do not silently discard valid model
+  parameter estimates.
+
 ### Studentised intervals for custom statisticsAdd an optional `statistic_se(fit)` callback with strictly positive, finite,aligned standard errors for the original model and successful refits.Permit bootstrap-t intervals and their Monte Carlo rank bounds for customstatistics when justified standard errors are supplied. Keep the defaultcoefficient and non-studentised behaviour unchanged.## Custom bootstrap statistics
 
 - Add a `statistic = function(fit)` argument to

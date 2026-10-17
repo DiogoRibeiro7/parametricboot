@@ -7,7 +7,7 @@ standard errors.
 ## Usage
 
 ``` r
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL)
+pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
 ```
 
 ## Arguments
@@ -50,6 +50,17 @@ pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL
   each bootstrap fit. Required for studentised intervals of derived
   quantities; statistical validity of the errors is the caller's
   responsibility.
+
+- newdata:
+
+  Optional non-empty data frame used to cache numeric predictions from
+  every refit, even when `keep_fits = FALSE`.
+
+- predict_args:
+
+  Named list of additional arguments passed to
+  [`predict()`](https://rdrr.io/r/stats/predict.html), such as
+  `list(type = "response")`. Requires `newdata`.
 
 - keep_fits:
 
