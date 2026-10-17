@@ -30,11 +30,13 @@
 #' @export
 pb_parallel <- function(model, n = 100, workers = 2, ..., seed = NULL,
                         keep_fits = TRUE, statistic = NULL,
-                        statistic_se = NULL) {
+                        statistic_se = NULL, newdata = NULL,
+                        predict_args = list()) {
   pb_run(
     model,
     n = n, dots = list(...), seed = seed, keep_fits = keep_fits,
     workers = workers, call = match.call(), statistic = statistic,
-    statistic_se = statistic_se
+    statistic_se = statistic_se, newdata = newdata,
+    predict_args = predict_args
   )
 }

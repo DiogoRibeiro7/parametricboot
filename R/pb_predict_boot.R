@@ -1,6 +1,13 @@
 #' Predict with bootstrap uncertainty
 #'
-#' Computes predictions from every refitted bootstrap model.
+#' Computes predictions from every refitted bootstrap model. When
+#' `pb_simulate()` or `pb_parallel()` was run with `newdata`, the stored
+#' numeric predictions are available even when `keep_fits = FALSE`.
+#' Calling without `newdata` or `...` retrieves that cache. To supply
+#' `newdata` and arguments explicitly, they must match the saved dataset
+#' and `predict_args` exactly; otherwise a cached-only result refuses to
+#' return potentially mismatched predictions. With retained fits, a
+#' nonmatching request is recomputed from those fits.
 #'
 #' @inheritParams pb_confint
 #' @param newdata Optional data frame to predict for. If `NULL`, predictions
@@ -25,11 +32,30 @@
 #' @export
 pb_predict_boot <- function(results, newdata = NULL, ...) {
   pb_check_boot(results)
-  fits <- pb_fits(results)
   if (!is.null(newdata) && !is.data.frame(newdata)) {
     pb_abort("`newdata` must be a data frame or `NULL`.")
   }
-
+  args <- list(...)
+  if (!is.null(results$predictions)) {
+    requested_cache <- is.null(newdata) && !length(args)
+    explicit_match <- identical(newdata, results$prediction_data) &&
+      identical(args, results$prediction_args)
+    if (requested_cache || explicit_match) {
+      selected <- !results$failed & !results$prediction_failed
+      if (!any(selected)) {
+        pb_abort("No successful cached predictions remain.")
+      }
+      return(results$predictions[, selected, drop = FALSE])
+    }
+    if (is.null(results$replicates)) {
+      pb_abort(paste0(
+        "Stored predictions were calculated for different `newdata` or ",
+        "prediction arguments. Repeat the bootstrap with matching ",
+        "`newdata` and `predict_args`, or set `keep_fits = TRUE`."
+      ))
+    }
+  }
+  fits <- pb_fits(results)
   preds <- lapply(fits, function(fit) {
     if (is.null(newdata)) {
       stats::predict(fit, ...)
@@ -40,4 +66,20 @@ pb_predict_boot <- function(results, newdata = NULL, ...) {
   preds <- do.call(cbind, preds)
   colnames(preds) <- NULL
   preds
+}
+
+# A single finite numeric prediction per requested row is required for the
+# lightweight cached result. Matrix/interval/survival-curve predictions are
+# intentionally not silently flattened into a different statistical object.
+pb_predict_one <- function(fit, newdata, predict_args = list()) {
+  values <- do.call(stats::predict,
+                    c(list(object = fit, newdata = newdata), predict_args))
+  if (!is.numeric(values) || !is.null(dim(values)) ||
+      length(values) != nrow(newdata) || any(!is.finite(values))) {
+    pb_abort(paste0(
+      "Cached predict() must return a finite numeric vector with ",
+      "one value per row of `newdata`."
+    ))
+  }
+  unname(as.numeric(values))
 }
