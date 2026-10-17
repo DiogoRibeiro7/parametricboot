@@ -16,7 +16,7 @@
 
 * Accept the canonical base-R `lm` and `glm` S3 classes for the
   linear-model bootstrap path, rather than every unvalidated subclass.
-* Reject `glm.nb`, `gam`, `aov` and other inherited, unvalidated fits
+* Reject `gam`, `aov` and other inherited, unvalidated fits
   with a structured, non-retryable validation error until they are
   independently tested. Reject quasi-likelihood GLM families because
   they do not specify a parametric response distribution.

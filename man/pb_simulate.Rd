@@ -4,7 +4,17 @@
 \alias{pb_simulate}
 \title{Run parametric bootstrap replicates}
 \usage{
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
+pb_simulate(
+  model,
+  n = 100,
+  ...,
+  seed = NULL,
+  keep_fits = TRUE,
+  statistic = NULL,
+  statistic_se = NULL,
+  newdata = NULL,
+  predict_args = list()
+)
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
