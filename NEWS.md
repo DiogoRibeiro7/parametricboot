@@ -1,5 +1,15 @@
 # parametricboot 0.0.0.9000
 
+## Predictive distributions for future observations
+
+* Add `pb_predict_observations()` to sample new observations using each
+  successful bootstrap refit, including residual or count-process noise.
+* Add `pb_predict_interval()` to report empirical predictive quantiles,
+  separately from existing conditional-mean confidence bands. First validated
+  models are unweighted Gaussian `lm`, Poisson `glm` and `MASS::glm.nb`.
+* Keep unsupported classes and weights fail-closed; maintain RNG isolation.
+
+
 ## Goodness-of-fit tail and uncertainty diagnostics
 
 * Add `tail = "less"` to `pb_gof()` for deficits of zeros and unusually
