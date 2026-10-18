@@ -84,6 +84,31 @@ test_that("studentised Monte Carlo limits use finite bootstrap pivots", {
 test_that("invalid levels and unsupported interval families fail explicitly", {
   res <- pb_simulate(fit_gaussian(), n = 8, seed = 20, keep_fits = FALSE)
   expect_error(pb_confint_mc_error(res, mc_level = 1), "level")
-  expect_error(pb_confint_mc_error(res, type = "normal"), "should be one of")
+  expect_no_error(pb_confint_mc_error(res, type = "normal"))
   expect_error(pb_mc_error(list()), "pb_boot")
+})
+
+test_that("normal confidence-limit MC errors retain empirical covariance", {
+  res <- pb_simulate(fit_gaussian(), n = 50, seed = 17, keep_fits = FALSE)
+  ci <- pb_confint(res, level = 0.9, type = "normal")
+  mc <- pb_confint_mc_error(res, level = 0.9, type = "normal", mc_level = 0.8)
+  expect_identical(mc[c("term", "lower", "upper")], ci[c("term", "lower", "upper")])
+  x <- res$estimates[, 2]
+  d <- x - mean(x)
+  influence_sd <- (d^2 - mean(d^2)) / (2 * stats::sd(x))
+  z_ci <- stats::qnorm(0.95)
+  z_mc <- stats::qnorm(0.9)
+  low_se <- stats::sd(-d - z_ci * influence_sd) / sqrt(length(x))
+  high_se <- stats::sd(-d + z_ci * influence_sd) / sqrt(length(x))
+  expect_equal(mc$lower_mc_low[2], ci$lower[2] - z_mc * low_se)
+  expect_equal(mc$lower_mc_high[2], ci$lower[2] + z_mc * low_se)
+  expect_equal(mc$upper_mc_low[2], ci$upper[2] - z_mc * high_se)
+  expect_equal(mc$upper_mc_high[2], ci$upper[2] + z_mc * high_se)
+})
+test_that("normal endpoint MC error is undefined for constant statistics", {
+  res <- pb_simulate(fit_gaussian(), n = 8, seed = 2, keep_fits = FALSE)
+  res$estimates[, 1] <- 1
+  mc <- pb_confint_mc_error(res, type = "normal")
+  expect_true(all(is.na(unlist(mc[1, c("lower_mc_low",
+    "lower_mc_high", "upper_mc_low", "upper_mc_high")]))))
 })
