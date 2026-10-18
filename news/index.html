@@ -36,6 +36,12 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="derived-statistic-validation-case-studies-0-0-0-9000">Derived-statistic validation case studies<a class="anchor" aria-label="anchor" href="#derived-statistic-validation-case-studies-0-0-0-9000"></a></h3>
+<ul><li>Validate sex-specific median lethal doses in the budworm logistic model using named custom-statistic callbacks and percentile intervals.</li>
+<li>Independently benchmark studentised intervals for a linear combination of Gaussian regression coefficients against the exact Student t interval.</li>
+<li>Record Monte Carlo precision separately from statistical uncertainty; update the vignette and close roadmap item 1 for supported models.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="validated-negative-binomial-regression-support-0-0-0-9000">Validated negative-binomial regression support<a class="anchor" aria-label="anchor" href="#validated-negative-binomial-regression-support-0-0-0-9000"></a></h3>
 <ul><li>Admit the exact <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> class with its fitted negative-binomial simulator, re-estimating the dispersion parameter on every bootstrap refit. Validate the simulation moments against independent NB identities and refitted coefficients and dispersion against direct <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>.</li>
 <li>Reject non-unit prior weights, malformed dispersion and unsupported Poisson-versus-negative-binomial likelihood-ratio comparisons; keep other unvalidated inherited model classes rejected.</li>

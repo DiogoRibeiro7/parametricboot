@@ -47,26 +47,20 @@ The gaps most likely to be hit in a first real analysis.
 
 ### 1. Bootstrap any function of the fitted model
 
-Initial support now accepts `statistic = function(fit)` in sequential
-and parallel bootstraps. Derived statistics retain names and support
-percentile, basic and normal intervals. Studentised intervals are now
-available when a supplied `statistic_se(fit)`mathematically justified
-standard errors on the original and refitted. Automatic standard-error
-propagation remains deferred.
+Implemented: `statistic = function(fit)` tracks a named derived quantity
+across serial and parallel refits, and optional `statistic_se(fit)`
+permits studentised intervals when the caller supplies justified
+standard errors.
 
-Only coefficients (and variance components) are tracked. The quantity of
-interest is often something else: the LD50 of a dose-response curve
-(`-b0 / b1`), an odds ratio, an intraclass correlation, a difference
-between two predictions. Today that means looping over `res$replicates`
-by hand.
+Validated applied examples in the vignette now include sex-specific LD50
+for a budworm logistic dose-response model, and a Gaussian linear
+contrast whose bootstrap-t interval is checked against the exact Student
+t interval in deterministic tests. These are conditional on the fitted
+model.
 
-- Proposal: a `statistic = function(fit)` argument in
-  [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)
-  returning a named numeric vector, tracked like a coefficient so that
-  every summary, interval and plot works unchanged.
-- Done when the LD50 of the budworm example has a bootstrap interval in
-  the vignette, and a linear combination of `lm` coefficients reproduces
-  its exact t interval.
+This first item is complete for the current supported model classes.
+Automatic differentiation and general-purpose standard-error propagation
+are not planned for the first release.
 
 ### 2. Report Monte Carlo error
 

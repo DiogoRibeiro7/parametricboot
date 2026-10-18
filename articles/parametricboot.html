@@ -170,6 +170,59 @@ are estimated reliably; for a normal linear model it reproduces the
 exact t interval, which the percentile interval does not.</p>
 </div>
 <div class="section level3">
+<h3 id="bootstrapping-a-derived-quantity-the-median-lethal-dose">Bootstrapping a derived quantity: the median lethal dose<a class="anchor" aria-label="anchor" href="#bootstrapping-a-derived-quantity-the-median-lethal-dose"></a>
+</h3>
+<p>The coefficients of a logistic dose-response model are on the
+log-odds scale, but the scientifically relevant quantity may be the dose
+at which the estimated mortality probability reaches 50%, often called
+LD50. For the female reference group in the model above,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mrow><mi mathvariant="normal">L</mi><mi mathvariant="normal">D</mi><mn mathvariant="normal">50</mn></mrow><mo accent="true">̂</mo></mover><mi mathvariant="normal">F</mi></msub><mo>=</mo><msup><mn>2</mn><mrow><mi>−</mi><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mi>/</mi><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi></mrow><mo stretchy="false" form="postfix">)</mo></mrow></msub></mrow></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat{\mathrm{LD50}}_{\mathrm F}
+= 2^{-\widehat\beta_0/\widehat\beta_{\log_2(\mathrm{dose})}}.
+</annotation></semantics></math></p>
+<p>A named statistic callback lets the bootstrap track this quantity
+directly. It also provides a separate estimate for males by including
+the fitted `sexM` coefficient. The callback calculates on the
+<em>dose</em> scale, not the log-dose scale; an interval for the
+coefficients is not interchangeable with an interval for their nonlinear
+ratio.</p>
+<p>```{r derived-ld50} ld50 &lt;- function(model) { beta &lt;-
+stats::coef(model) slope &lt;- unname(beta[[“log2(dose)”]]) c(
+female_LD50 = 2^(-unname(beta[[“(Intercept)”]]) / slope), male_LD50 =
+2^( -(unname(beta[[“(Intercept)”]]) + unname(beta[[“sexM”]])) / slope )
+) } ld50_boot &lt;- pb_simulate( fit, n = 500, seed = 2025, keep_fits =
+FALSE, statistic = ld50 ) pb_confint(ld50_boot, type = “percentile”)
+pb_mc_error(ld50_boot) ```</p>
+<p>These intervals are conditional on the fitted binomial model.
+Near-zero fitted slopes can create extreme LD50 values; diagnose the
+bootstrap distribution and the fraction of failed refits rather than
+silently discarding such observations.</p>
+</div>
+<div class="section level3">
+<h3 id="independent-benchmark-a-normal-model-linear-contrast">Independent benchmark: a normal-model linear contrast<a class="anchor" aria-label="anchor" href="#independent-benchmark-a-normal-model-linear-contrast"></a>
+</h3>
+<p>For a Gaussian linear model, the pivot formed from a coefficient
+contrast and its estimated standard error has an exact Student t
+distribution under the model assumptions. We can compare the bootstrap-t
+interval with the exact t interval for a specified contrast.</p>
+<p>```{r derived-linear-contrast} linear &lt;- stats::lm(mpg ~ wt + hp,
+data = mtcars) contrast &lt;- function(model) { c(wt_plus_hp =
+unname(sum(stats::coef(model)[c(“wt”, “hp”)]))) } contrast_se &lt;-
+function(model) { weight &lt;- c(0, 1, 1) V &lt;- stats::vcov(model)
+c(wt_plus_hp = sqrt(unname(drop(crossprod(weight, V %<em>% weight))))) }
+contrast_boot &lt;- pb_simulate( linear, n = 1000, seed = 2025,
+keep_fits = FALSE, statistic = contrast, statistic_se = contrast_se )
+observed &lt;- unname(contrast(linear)) half_width &lt;-
+stats::qt(0.975, stats::df.residual(linear)) </em>
+unname(contrast_se(linear)) exact_interval &lt;- c(lower = observed -
+half_width, upper = observed + half_width) exact_interval
+pb_confint(contrast_boot, type = “student”) ```</p>
+<p>The bootstrap estimate is subject to Monte Carlo error, unlike the
+exact normal-model pivot. Quantify simulation precision separately with
+`pb_confint_mc_error()` and avoid interpreting numerical agreement as
+independent evidence that the fitted model is correctly specified.</p>
+</div>
+<div class="section level3">
 <h3 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
 </h3>
 <p><code><a href="../reference/pb_plot_estimates.html">pb_plot_estimates()</a></code> shows the bootstrap
@@ -426,8 +479,6 @@ can simply be the model without the random effect:</p>
 <span></span>
 <span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pb_lrt.html">pb_lrt</a></span><span class="op">(</span><span class="va">no_batch</span>, <span class="va">batch</span>, n <span class="op">=</span> <span class="fl">500</span>, seed <span class="op">=</span> <span class="fl">2025</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Refitting REML fits by maximum likelihood, as likelihood-ratio tests require.</span></span>
-<span><span class="co">#&gt; Warning: 1 of 500 bootstrap refits produced warnings (for example convergence</span></span>
-<span><span class="co">#&gt; problems).</span></span>
 <span><span class="va">test</span></span>
 <span><span class="co">#&gt; &lt;pb_lrt&gt; Parametric bootstrap likelihood-ratio test</span></span>
 <span><span class="co">#&gt;   Null:        Yield ~ 1</span></span>

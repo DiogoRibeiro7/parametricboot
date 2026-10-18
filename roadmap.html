@@ -97,11 +97,10 @@
 <p>The gaps most likely to be hit in a first real analysis.</p>
 <div class="section level3">
 <h3 id="id_1-bootstrap-any-function-of-the-fitted-model">1. Bootstrap any function of the fitted model<a class="anchor" aria-label="anchor" href="#id_1-bootstrap-any-function-of-the-fitted-model"></a></h3>
-<p>Initial support now accepts <code>statistic = function(fit)</code> in sequential and parallel bootstraps. Derived statistics retain names and support percentile, basic and normal intervals. Studentised intervals are now available when a supplied <code>statistic_se(fit)</code>mathematically justified standard errors on the original and refitted. Automatic standard-error propagation remains deferred.</p>
-<p>Only coefficients (and variance components) are tracked. The quantity of interest is often something else: the LD50 of a dose-response curve (<code>-b0 / b1</code>), an odds ratio, an intraclass correlation, a difference between two predictions. Today that means looping over <code>res$replicates</code> by hand.</p>
-<ul><li>Proposal: a <code>statistic = function(fit)</code> argument in <code><a href="reference/pb_simulate.html">pb_simulate()</a></code> returning a named numeric vector, tracked like a coefficient so that every summary, interval and plot works unchanged.</li>
-<li>Done when the LD50 of the budworm example has a bootstrap interval in the vignette, and a linear combination of <code>lm</code> coefficients reproduces its exact t interval.</li>
-</ul></div>
+<p>Implemented: <code>statistic = function(fit)</code> tracks a named derived quantity across serial and parallel refits, and optional <code>statistic_se(fit)</code> permits studentised intervals when the caller supplies justified standard errors.</p>
+<p>Validated applied examples in the vignette now include sex-specific LD50 for a budworm logistic dose-response model, and a Gaussian linear contrast whose bootstrap-t interval is checked against the exact Student t interval in deterministic tests. These are conditional on the fitted model.</p>
+<p>This first item is complete for the current supported model classes. Automatic differentiation and general-purpose standard-error propagation are not planned for the first release.</p>
+</div>
 <div class="section level3">
 <h3 id="id_2-report-monte-carlo-error">2. Report Monte Carlo error<a class="anchor" aria-label="anchor" href="#id_2-report-monte-carlo-error"></a></h3>
 <p>The first component, <code><a href="reference/pb_lrt_mc_error.html">pb_lrt_mc_error()</a></code>, now reports conditional Monte Carlo uncertainty for the bootstrap likelihood-ratio p-value. <code><a href="reference/pb_mc_error.html">pb_mc_error()</a></code> now estimates Monte Carlo precision of bias and bootstrap standard errors, while <code><a href="reference/pb_confint_mc_error.html">pb_confint_mc_error()</a></code> gives exact rank-based bounds for percentile, basic and studentised confidence limits. Normal-approximation interval endpoint precision and broader diagnostics remain future work.</p>

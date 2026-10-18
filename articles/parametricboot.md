@@ -124,6 +124,61 @@ when standard errors are estimated reliably; for a normal linear model
 it reproduces the exact t interval, which the percentile interval does
 not.
 
+### Bootstrapping a derived quantity: the median lethal dose
+
+The coefficients of a logistic dose-response model are on the log-odds
+scale, but the scientifically relevant quantity may be the dose at which
+the estimated mortality probability reaches 50%, often called LD50. For
+the female reference group in the model above,
+
+``` math
+\widehat{\mathrm{LD50}}_{\mathrm F}
+= 2^{-\widehat\beta_0/\widehat\beta_{\log_2(\mathrm{dose})}}.
+```
+
+A named statistic callback lets the bootstrap track this quantity
+directly. It also provides a separate estimate for males by including
+the fitted \`sexM\` coefficient. The callback calculates on the *dose*
+scale, not the log-dose scale; an interval for the coefficients is not
+interchangeable with an interval for their nonlinear ratio.
+
+\`\`\`{r derived-ld50} ld50 \<- function(model) { beta \<-
+stats::coef(model) slope \<- unname(beta\[\[“log2(dose)”\]\]) c(
+female_LD50 = 2^(-unname(beta\[\[“(Intercept)”\]\]) / slope), male_LD50
+= 2^( -(unname(beta\[\[“(Intercept)”\]\]) + unname(beta\[\[“sexM”\]\]))
+/ slope ) ) } ld50_boot \<- pb_simulate( fit, n = 500, seed = 2025,
+keep_fits = FALSE, statistic = ld50 ) pb_confint(ld50_boot, type =
+“percentile”) pb_mc_error(ld50_boot) \`\`\`
+
+These intervals are conditional on the fitted binomial model. Near-zero
+fitted slopes can create extreme LD50 values; diagnose the bootstrap
+distribution and the fraction of failed refits rather than silently
+discarding such observations.
+
+### Independent benchmark: a normal-model linear contrast
+
+For a Gaussian linear model, the pivot formed from a coefficient
+contrast and its estimated standard error has an exact Student t
+distribution under the model assumptions. We can compare the bootstrap-t
+interval with the exact t interval for a specified contrast.
+
+\`\`\`{r derived-linear-contrast} linear \<- stats::lm(mpg ~ wt + hp,
+data = mtcars) contrast \<- function(model) { c(wt_plus_hp =
+unname(sum(stats::coef(model)\[c(“wt”, “hp”)\]))) } contrast_se \<-
+function(model) { weight \<- c(0, 1, 1) V \<- stats::vcov(model)
+c(wt_plus_hp = sqrt(unname(drop(crossprod(weight, V %*% weight))))) }
+contrast_boot \<- pb_simulate( linear, n = 1000, seed = 2025, keep_fits
+= FALSE, statistic = contrast, statistic_se = contrast_se ) observed \<-
+unname(contrast(linear)) half_width \<- stats::qt(0.975,
+stats::df.residual(linear))* unname(contrast_se(linear)) exact_interval
+\<- c(lower = observed - half_width, upper = observed + half_width)
+exact_interval pb_confint(contrast_boot, type = “student”) \`\`\`
+
+The bootstrap estimate is subject to Monte Carlo error, unlike the exact
+normal-model pivot. Quantify simulation precision separately with
+\`pb_confint_mc_error()\` and avoid interpreting numerical agreement as
+independent evidence that the fitted model is correctly specified.
+
 ### Plots
 
 [`pb_plot_estimates()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_estimates.md)
@@ -452,8 +507,6 @@ batch <- lme4::lmer(Yield ~ 1 + (1 | Batch), data = dye)
 
 test <- pb_lrt(no_batch, batch, n = 500, seed = 2025)
 #> Refitting REML fits by maximum likelihood, as likelihood-ratio tests require.
-#> Warning: 1 of 500 bootstrap refits produced warnings (for example convergence
-#> problems).
 test
 #> <pb_lrt> Parametric bootstrap likelihood-ratio test
 #>   Null:        Yield ~ 1
