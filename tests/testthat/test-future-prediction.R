@@ -56,8 +56,29 @@ test_that("Poisson future observation mixture has appropriate process variance",
   draws <- pb_predict_observations(boot, newdata, seed = 29)
   expect_equal(dim(draws), c(1L, 350L))
   expect_true(all(draws >= 0 & draws == floor(draws)))
-  mu <- as.numeric(pb_predict_boot(boot, newdata))
-  variance_mixture <- mean(mu) + stats::var(mu)
+  # The Poisson mixture identity is on the response (count) scale.
+  # predict.glm() defaults to the link scale, so type = "response" matters.
+  mu <- as.numeric(pb_predict_boot(boot, newdata, type = "response"))
+  direct_mu <- vapply(boot$replicates[!boot$failed], function(refit) {
+    as.numeric(stats::predict(refit, newdata = newdata, type = "response"))
+  }, numeric(1))
+  expect_equal(mu, unname(direct_mu))
+
+  # Independently reproduce the one-new-observation-per-refit simulation
+  # with the same RNG seed, not just its aggregate empirical moments.
+  direct_draws <- withr::with_seed(29, vapply(
+    boot$replicates[!boot$failed], function(refit) {
+      lambda <- as.numeric(stats::predict(
+        refit, newdata = newdata, type = "response"
+      ))
+      stats::rpois(1L, lambda = lambda)
+    }, numeric(1)
+  ))
+  expect_equal(as.numeric(draws), unname(direct_draws))
+
+  # The total-variance identity uses E[mu] + Var(mu) for a Poisson mixture,
+  # with a population variance over the finite collection of refits.
+  variance_mixture <- mean(mu) + mean((mu - mean(mu))^2)
   expect_lt(abs(stats::var(as.numeric(draws)) - variance_mixture) /
               variance_mixture, 0.25)
 })
