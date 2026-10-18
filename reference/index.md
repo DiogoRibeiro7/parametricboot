@@ -47,6 +47,8 @@
 
 ## Test and compare models
 
+- [`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
+  : Parametric-bootstrap goodness-of-fit test
 - [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   [`print(`*`<pb_lrt>`*`)`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   : Parametric bootstrap likelihood-ratio test for nested models

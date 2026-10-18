@@ -151,6 +151,7 @@
 </div>
 <div class="section level3">
 <h3 id="id_8-goodness-of-fit-by-simulation">8. Goodness of fit by simulation<a class="anchor" aria-label="anchor" href="#id_8-goodness-of-fit-by-simulation"></a></h3>
+<p>Initial implementation: <code><a href="reference/pb_gof.html">pb_gof()</a></code> simulates and refits validated binomial and count GLMs to estimate the null reference distribution of deviance, Pearson and (for unweighted count models) zero counts. Further model classes and calibration remain future work.</p>
 <p>The bootstrap null distribution of the deviance, the Pearson statistic, the dispersion or the number of zeros, from the engine that <code><a href="reference/pb_lrt.html">pb_lrt()</a></code> already uses. This matters most for sparse binomial and count data, where the chi-squared approximation to the deviance fails.</p>
 </div>
 <div class="section level3">

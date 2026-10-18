@@ -2,6 +2,15 @@
 
 ## parametricboot 0.0.0.9000
 
+### Simulation-based goodness of fit
+
+- Add
+  [`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
+  for deviance, Pearson and count-zero statistics using simulated
+  responses, model refitting, and a finite-sample add-one p-value.
+- Expose failed and warned refits, require validated model classes, and
+  cover reference calculations with deterministic regression tests.
+
 ### Normal-interval Monte Carlo precision
 
 - Support `pb_confint_mc_error(type = "normal")` via first-order

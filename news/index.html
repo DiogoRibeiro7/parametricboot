@@ -36,6 +36,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="simulation-based-goodness-of-fit-0-0-0-9000">Simulation-based goodness of fit<a class="anchor" aria-label="anchor" href="#simulation-based-goodness-of-fit-0-0-0-9000"></a></h3>
+<ul><li>Add <code><a href="../reference/pb_gof.html">pb_gof()</a></code> for deviance, Pearson and count-zero statistics using simulated responses, model refitting, and a finite-sample add-one p-value.</li>
+<li>Expose failed and warned refits, require validated model classes, and cover reference calculations with deterministic regression tests.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="normal-interval-monte-carlo-precision-0-0-0-9000">Normal-interval Monte Carlo precision<a class="anchor" aria-label="anchor" href="#normal-interval-monte-carlo-precision-0-0-0-9000"></a></h3>
 <ul><li>Support <code>pb_confint_mc_error(type = "normal")</code> via first-order influence functions for the sample mean and standard deviation, preserving covariance.</li>
 <li>Keep existing confidence interval endpoints unchanged. Return NA precision bounds when fewer than four finite estimates or zero spread prevent the approximation, and distinguish these limits from exact quantile rank bounds.</li>

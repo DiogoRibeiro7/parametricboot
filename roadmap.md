@@ -168,6 +168,13 @@ observation* must add the response noise, by simulating from each refit.
 
 ### 8. Goodness of fit by simulation
 
+Initial implementation:
+[`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
+simulates and refits validated binomial and count GLMs to estimate the
+null reference distribution of deviance, Pearson and (for unweighted
+count models) zero counts. Further model classes and calibration remain
+future work.
+
 The bootstrap null distribution of the deviance, the Pearson statistic,
 the dispersion or the number of zeros, from the engine that
 [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
