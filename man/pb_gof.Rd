@@ -7,7 +7,8 @@ pb_gof(
   n = 1000,
   statistic = c("deviance", "pearson", "zeros"),
   seed = NULL,
-  workers = 1L
+  workers = 1L,
+  tail = c("greater", "less")
 )
 }
 \arguments{
@@ -16,20 +17,24 @@ pb_gof(
 \item{statistic}{Deviance, Pearson residual sum of squares, or zero count.}
 \item{seed}{Optional reproducibility seed.}
 \item{workers}{Number of processes for refitting.}
+\item{tail}{Bootstrap reference-distribution tail, \"greater\" (default,
+including large statistics or excess zeros) or \"less\" (including
+small statistics or a zero-count deficit). Both include ties.}
 }
 \description{
 Simulates and refits responses under a fitted count or binomial regression
 model to approximate the goodness-of-fit statistic's reference distribution.
 }
 \details{
-The upper-tail p-value uses (1 + exceedances) / (1 + valid replicates).
+The selected-tail p-value uses (1 + tail exceedances) /
+(1 + valid replicates), with equal values counted as exceedances.
 Failed refits are excluded. This procedure is conditional on the fitted
 sampling model and does not prove model correctness. The zero-count
 statistic is supported only for unweighted count data.
 }
 \value{
 A \code{pb_gof} object with fields \code{statistic}, \code{observed},
-\code{reference}, \code{p_value}, \code{n}, \code{failed},
+\code{reference}, \code{p_value}, \code{tail}, \code{n}, \code{failed},
 \code{warned}, \code{model}, \code{seed}, and \code{call}.
 }
 \examples{
