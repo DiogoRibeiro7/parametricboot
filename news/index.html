@@ -36,6 +36,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="predictive-variance-decomposition-0-0-0-9000">Predictive variance decomposition<a class="anchor" aria-label="anchor" href="#predictive-variance-decomposition-0-0-0-9000"></a></h3>
+<ul><li>Add <code><a href="../reference/pb_predict_variance.html">pb_predict_variance()</a></code> to separate bootstrap parameter uncertainty from conditional outcome variance for Gaussian, Poisson, and negative- binomial prediction, using the law of total variance without extra draws.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="predictive-distributions-for-future-observations-0-0-0-9000">Predictive distributions for future observations<a class="anchor" aria-label="anchor" href="#predictive-distributions-for-future-observations-0-0-0-9000"></a></h3>
 <ul><li>Add <code><a href="../reference/pb_predict_observations.html">pb_predict_observations()</a></code> to sample new observations using each successful bootstrap refit, including residual or count-process noise.</li>
 <li>Add <code><a href="../reference/pb_predict_interval.html">pb_predict_interval()</a></code> to report empirical predictive quantiles, separately from existing conditional-mean confidence bands. First validated models are unweighted Gaussian <code>lm</code>, Poisson <code>glm</code> and <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb</a></code>.</li>

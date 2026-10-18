@@ -72,6 +72,8 @@
   : Prediction intervals for new observations
 - [`pb_predict_observations()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_observations.md)
   : Simulate future observations from parametric bootstrap refits
+- [`pb_predict_variance()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_variance.md)
+  : Decompose model-conditional predictive variance
 
 ## Helpers
 
