@@ -1,5 +1,11 @@
 # parametricboot 0.0.0.9000
 
+## Predictive variance decomposition
+
+* Add `pb_predict_variance()` to separate bootstrap parameter uncertainty
+  from conditional outcome variance for Gaussian, Poisson, and negative-
+  binomial prediction, using the law of total variance without extra draws.
+
 ## Predictive distributions for future observations
 
 * Add `pb_predict_observations()` to sample new observations using each

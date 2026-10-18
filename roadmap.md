@@ -141,7 +141,7 @@ noise to bootstrap parameter variation, explicitly separated from conditional
 mean confidence bands. Supported so far: unweighted Gaussian `lm`, Poisson
 `glm`, and negative-binomial `MASS::glm.nb`; other model families and
 weights remain deferred pending proper response-level validation.
-The new path requires retained refits and an independent outcome-draw seed.
+The new predictive-draw path requires retained refits and an independent outcome-draw seed. `pb_predict_variance()` additionally decomposes the mixture variance analytically into between-refit conditional-mean variation and average conditional observation variance, without further random draws.
 
 ### 8. Goodness of fit by simulation
 
