@@ -143,6 +143,10 @@ refit.
 Initial implementation: `pb_gof()` simulates and refits validated
 binomial and count GLMs to estimate the null reference distribution of
 deviance, Pearson and (for unweighted count models) zero counts.
+Upper-tail and lower-tail alternatives distinguish unusually large
+discrepancies from unusually small ones (including zero-count deficits).
+`pb_gof_mc_error()` quantifies conditional simulation precision with exact
+binomial limits, and `pb_plot_gof()` visualises the reference distribution.
 Further model classes and calibration remain future work.
 
 

@@ -26,6 +26,8 @@ reference:
   - title: Test and compare models
     contents:
       - pb_gof
+      - pb_gof_mc_error
+      - pb_plot_gof
       - pb_lrt
       - pb_lrt_mc_error
       - pb_plot_lrt

@@ -1,5 +1,15 @@
 # parametricboot 0.0.0.9000
 
+## Goodness-of-fit tail and uncertainty diagnostics
+
+* Add `tail = "less"` to `pb_gof()` for deficits of zeros and unusually
+  small discrepancy statistics; retain the default `"greater"` behaviour.
+* Add `pb_gof_mc_error()` with exact binomial confidence limits for the
+  raw Monte Carlo tail probability, separate from the add-one p-value.
+* Add `pb_plot_gof()` to inspect the empirical reference distribution.
+  Validate zero-count tails against the exact Poisson-to-binomial identity.
+
+
 ## Simulation-based goodness of fit
 
 * Add `pb_gof()` for deviance, Pearson and count-zero statistics using
