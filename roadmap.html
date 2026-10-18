@@ -110,7 +110,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="id_3-make-predictions-affordable-in-memory">3. Make predictions affordable in memory<a class="anchor" aria-label="anchor" href="#id_3-make-predictions-affordable-in-memory"></a></h3>
-<p>Initial support now computes numeric predictions per refit for a fixed <code>newdata</code> using <code>predict_args</code>, storing only a matrix when <code>keep_fits = FALSE</code>. The original full-model path remains available. Benchmarking memory usage and extending to other prediction shapes remain outstanding.</p>
+<p>Initial support now computes numeric predictions per refit for a fixed <code>newdata</code> using <code>predict_args</code>, storing only a matrix when <code>keep_fits = FALSE</code>. The original full-model path remains available. A reproducible retained-object memory benchmark is now available under <code>inst/benchmarks/</code>; peak-memory profiling and extending to other prediction shapes remain outstanding.</p>
 <p><code>keep_fits = TRUE</code> is the default and is needed for predictions, but refits are heavy: 200 refits of a <code>glm</code> on 32 rows take 42 MB, and 50 refits on 20 000 rows take 560 MB.</p>
 <ul><li>Proposal: compute predictions while simulating (a <code>newdata</code> argument), or store stripped-down refits, and then reconsider the default.</li>
 <li>Done when predictions are available without keeping the refits and the memory cost is documented.</li>

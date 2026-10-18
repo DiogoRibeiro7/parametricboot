@@ -36,6 +36,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="prediction-memory-benchmark-0-0-0-9000">Prediction memory benchmark<a class="anchor" aria-label="anchor" href="#prediction-memory-benchmark-0-0-0-9000"></a></h3>
+<ul><li>Add a reproducible comparison of retained bootstrap refits versus cached-only fixed-newdata predictions, checking numerical equality before measuring object size and runtime. Document limits of object-size measurements.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="predictive-variance-decomposition-0-0-0-9000">Predictive variance decomposition<a class="anchor" aria-label="anchor" href="#predictive-variance-decomposition-0-0-0-9000"></a></h3>
 <ul><li>Add <code><a href="../reference/pb_predict_variance.html">pb_predict_variance()</a></code> to separate bootstrap parameter uncertainty from conditional outcome variance for Gaussian, Poisson, and negative- binomial prediction, using the law of total variance without extra draws.</li>
 </ul></div>

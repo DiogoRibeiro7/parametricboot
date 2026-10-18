@@ -95,9 +95,10 @@ is a rule of thumb in the vignette and the running-mean plot.
 
 Initial support now computes numeric predictions per refit for a fixed
 `newdata` using `predict_args`, storing only a matrix when
-`keep_fits = FALSE`. The original full-model path remains available.
-Benchmarking memory usage and extending to other prediction shapes
-remain outstanding.
+`keep_fits = FALSE`. The original full-model path remains available. A
+reproducible retained-object memory benchmark is now available under
+`inst/benchmarks/`; peak-memory profiling and extending to other
+prediction shapes remain outstanding.
 
 `keep_fits = TRUE` is the default and is needed for predictions, but
 refits are heavy: 200 refits of a `glm` on 32 rows take 42 MB, and 50
