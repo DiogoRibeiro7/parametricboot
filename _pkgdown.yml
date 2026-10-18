@@ -35,6 +35,8 @@ reference:
   - title: Predict
     contents:
       - pb_predict_boot
+      - pb_predict_interval
+      - pb_predict_observations
   - title: Helpers
     contents:
       - pb_resample
