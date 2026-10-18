@@ -13,6 +13,10 @@ pb_model_type <- function(model) {
   } else if (inherits(model, "merMod")) {
     pb_require("lme4", "bootstrap 'lmer'/'glmer' models")
     "merMod"
+  } else if (identical(class(model), c("negbin", "glm", "lm"))) {
+    pb_require("MASS", "bootstrap negative-binomial regression models")
+    pb_check_negbin(model)
+    "negbin"
   } else if (identical(class(model), c("glm", "lm"))) {
     family <- stats::family(model)$family
     if (is.character(family) && length(family) == 1L &&
@@ -40,6 +44,37 @@ pb_model_type <- function(model) {
       class(model)[1], "'."
     )
   }
+}
+
+# MASS::simulate.negbin() draws from NB(mu, theta) but does not incorporate
+# prior/case weights. Repeated refitting estimates theta anew; weights beyond
+# one would make the simulated sampling model inconsistent with the fitted fit.
+pb_check_negbin <- function(model) {
+  theta <- model$theta
+  if (!is.numeric(theta) || length(theta) != 1L ||
+      !is.finite(theta) || theta <= 0) {
+    pb_abort_validation("MASS::glm.nb() must have a finite positive theta.")
+  }
+  family <- stats::family(model)$family
+  if (!is.character(family) || length(family) != 1L ||
+      !startsWith(family, "Negative Binomial(")) {
+    pb_abort_validation("MASS::glm.nb() requires a negative-binomial sampling family.")
+  }
+  weights <- model$prior.weights
+  if (!is.null(weights) &&
+      (!is.numeric(weights) || anyNA(weights) ||
+       any(!is.finite(weights)) || any(weights != 1))) {
+    pb_abort_validation(paste0(
+      "Weighted MASS::glm.nb() models are unsupported: ",
+      "simulate.negbin() does not model non-unit prior weights."
+    ))
+  }
+  mu <- stats::fitted(model)
+  if (!is.numeric(mu) || !length(mu) ||
+      any(!is.finite(mu)) || any(mu <= 0)) {
+    pb_abort_validation("MASS::glm.nb() must have strictly positive finite fitted means.")
+  }
+  invisible(model)
 }
 
 pb_run <- function(model, n, dots, seed, keep_fits, workers, call,
@@ -435,6 +470,11 @@ pb_refit <- function(model, type, response, aux, dots) {
   } else {
     data[[".pb_y"]] <- pb_fill(response, aux$rows, nrow(data))
     new_formula <- .pb_y ~ .
+    if (type == "negbin") {
+      # Saved calls may use an unqualified glm.nb() even when MASS is not
+      # attached in the calling session. Always dispatch to its namespace.
+      call[[1L]] <- quote(MASS::glm.nb)
+    }
   }
 
   # Refit by re-evaluating the original call with the simulated response in

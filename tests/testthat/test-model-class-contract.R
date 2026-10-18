@@ -11,7 +11,7 @@ test_that("canonical base-R lm and glm fits retain their bootstrap support", {
 
 test_that("unvalidated lm and glm subclasses refuse bootstrap inference", {
   fit <- fit_binomial()
-  for (subclass in c("negbin", "gam", "svyglm")) {
+  for (subclass in c("gam", "svyglm")) {
     unvalidated <- fit
     class(unvalidated) <- c(subclass, "glm", "lm")
     err <- tryCatch(pb_simulate(unvalidated, n = 2), error = identity)
@@ -21,6 +21,16 @@ test_that("unvalidated lm and glm subclasses refuse bootstrap inference", {
     expect_match(conditionMessage(err), subclass, fixed = TRUE)
     expect_false(dataexcept::is_retryable(err))
   }
+
+  # A forged negbin class is still rejected because the required sampling
+  # parameters are absent. Real MASS::glm.nb() fits have separate tests.
+  malformed_negbin <- fit
+  class(malformed_negbin) <- c("negbin", "glm", "lm")
+  err <- tryCatch(pb_simulate(malformed_negbin, n = 2), error = identity)
+  expect_s3_class(err, "parametricboot_validation_error")
+  expect_s3_class(err, "dataexcept_validation_error")
+  expect_match(conditionMessage(err), "finite positive theta", fixed = TRUE)
+  expect_false(dataexcept::is_retryable(err))
 
   analysis_of_variance <- stats::aov(mpg ~ wt, data = mtcars)
   expect_error(pb_simulate(analysis_of_variance, n = 2),

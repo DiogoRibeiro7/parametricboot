@@ -10,9 +10,13 @@
 #'
 #' Only the canonical base-R `lm` and `glm` classes use the `lm`/GLM
 #' simulation path. Objects with additional subclasses (such as the results
-#' of `MASS::glm.nb()`, `mgcv::gam()` or `stats::aov()`) are rejected
-#' until their model-specific simulation and refitting semantics have been
-#' validated. Quasi-likelihood GLM families are also rejected: they do not
+#' of `mgcv::gam()` or `stats::aov()`) are rejected until their
+#' model-specific simulation and refitting semantics have been validated.
+#' The exact `MASS::glm.nb()` class has a separately validated path.
+#' Its simulation draws negative-binomial counts with the fitted mean
+#' and dispersion `theta`; every refit re-estimates `theta`, rather than
+#' treating it as known. Non-unit prior weights are not supported, because
+#' `MASS::simulate.negbin()` does not simulate their sampling effect. Quasi-likelihood GLM families are also rejected: they do not
 #' define a full parametric response distribution for simulation. This
 #' fail-closed rule applies equally to serial, parallel and likelihood-ratio
 #' bootstrap workflows.
@@ -49,7 +53,8 @@
 #' kept; see [pb_drop_warned()] for when and how to remove them.
 #'
 #' @param model A fitted model from [stats::lm()], [stats::glm()],
-#'   [lme4::lmer()], [lme4::glmer()] or [survival::coxph()].
+#'   [MASS::glm.nb()], [lme4::lmer()], [lme4::glmer()] or
+#'   [survival::coxph()].
 #' @param n Number of bootstrap replicates.
 #' @param ... Additional arguments used when refitting: they override
 #'   arguments of the original call for `lm`, `glm` and `coxph` models, and are

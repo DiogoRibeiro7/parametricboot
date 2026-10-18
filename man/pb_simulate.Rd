@@ -4,10 +4,21 @@
 \alias{pb_simulate}
 \title{Run parametric bootstrap replicates}
 \usage{
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
+pb_simulate(
+  model,
+  n = 100,
+  ...,
+  seed = NULL,
+  keep_fits = TRUE,
+  statistic = NULL,
+  statistic_se = NULL,
+  newdata = NULL,
+  predict_args = list()
+)
 }
 \arguments{
 \item{model}{A fitted model from \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:glm]{stats::glm()}},
+\code{\link[MASS:glm.nb]{MASS::glm.nb()}},
 \code{\link[lme4:lmer]{lme4::lmer()}}, \code{\link[lme4:glmer]{lme4::glmer()}} or \code{\link[survival:coxph]{survival::coxph()}}.}
 
 \item{n}{Number of bootstrap replicates.}
@@ -61,9 +72,13 @@ Each replicate draws a response from the fitted model and refits the model
 to it, holding the covariates fixed.
 
 Only canonical base-R \code{lm} and \code{glm} classes use the linear-model and
-GLM simulation path. Additional subclasses, such as those returned by
-\code{MASS::glm.nb()}, \code{mgcv::gam()} or \code{stats::aov()}, are rejected
-until independently validated for simulation and refitting. Quasi-likelihood
+GLM simulation path. Other inherited subclasses, such as \code{mgcv::gam()} or
+\code{stats::aov()}, are rejected until independently validated for
+simulation and refitting. The exact \code{MASS::glm.nb()} class follows a
+separately validated negative-binomial path: counts are simulated using
+the fitted mean and dispersion, and dispersion is re-estimated on every
+refit. Non-unit prior weights are unsupported because the simulator
+does not incorporate their sampling effect. Quasi-likelihood
 families are also rejected because they do not define a complete
 parametric response distribution. This policy also applies to parallel
 bootstrap and bootstrap likelihood-ratio tests.
