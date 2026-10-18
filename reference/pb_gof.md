@@ -12,7 +12,8 @@ pb_gof(
   n = 1000,
   statistic = c("deviance", "pearson", "zeros"),
   seed = NULL,
-  workers = 1L
+  workers = 1L,
+  tail = c("greater", "less")
 )
 ```
 
@@ -38,17 +39,24 @@ pb_gof(
 
   Number of processes for refitting.
 
+- tail:
+
+  Bootstrap reference-distribution tail, \\greater\\ (default, including
+  large statistics or excess zeros) or \\less\\ (including small
+  statistics or a zero-count deficit). Both include ties.
+
 ## Details
 
-The upper-tail p-value uses (1 + exceedances) / (1 + valid replicates).
-Failed refits are excluded. This procedure is conditional on the fitted
-sampling model and does not prove model correctness. The zero-count
-statistic is supported only for unweighted count data.
+The selected-tail p-value uses (1 + tail exceedances) / (1 + valid
+replicates), with equal values counted as exceedances. Failed refits are
+excluded. This procedure is conditional on the fitted sampling model and
+does not prove model correctness. The zero-count statistic is supported
+only for unweighted count data.
 
 ## Value
 
 A `pb_gof` object with fields `statistic`, `observed`, `reference`,
-`p_value`, `n`, `failed`, `warned`, `model`, `seed`, and `call`.
+`p_value`, `tail`, `n`, `failed`, `warned`, `model`, `seed`, and `call`.
 
 ## Examples
 
@@ -71,6 +79,9 @@ pb_gof(fit, n = 30, seed = 1)
 #> 
 #> $p_value
 #> [1] 0.483871
+#> 
+#> $tail
+#> [1] "greater"
 #> 
 #> $n
 #> [1] 30

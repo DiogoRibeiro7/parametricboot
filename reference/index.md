@@ -49,6 +49,10 @@
 
 - [`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
   : Parametric-bootstrap goodness-of-fit test
+- [`pb_gof_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof_mc_error.md)
+  : Monte Carlo uncertainty of a bootstrap goodness-of-fit p-value
+- [`pb_plot_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_gof.md)
+  : Plot a simulated goodness-of-fit reference distribution
 - [`pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   [`print(`*`<pb_lrt>`*`)`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   : Parametric bootstrap likelihood-ratio test for nested models

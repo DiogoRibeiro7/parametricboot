@@ -172,8 +172,15 @@ Initial implementation:
 [`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
 simulates and refits validated binomial and count GLMs to estimate the
 null reference distribution of deviance, Pearson and (for unweighted
-count models) zero counts. Further model classes and calibration remain
-future work.
+count models) zero counts. Upper-tail and lower-tail alternatives
+distinguish unusually large discrepancies from unusually small ones
+(including zero-count deficits).
+[`pb_gof_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof_mc_error.md)
+quantifies conditional simulation precision with exact binomial limits,
+and
+[`pb_plot_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_gof.md)
+visualises the reference distribution. Further model classes and
+calibration remain future work.
 
 The bootstrap null distribution of the deviance, the Pearson statistic,
 the dispersion or the number of zeros, from the engine that

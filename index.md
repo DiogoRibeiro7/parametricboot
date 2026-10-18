@@ -106,6 +106,29 @@ Without that callback, studentised derived-statistic intervals remain
 unavailable. The package checks callback structure and positivity, not
 the mathematical correctness of a supplied standard error.
 
+## Goodness-of-fit checks
+
+[`pb_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof.md)
+compares a deviance, Pearson statistic or count of zeros with the
+simulated, refitted reference distribution of a supported binomial or
+count regression model. The default `tail = "greater"` identifies
+unusually large discrepancies or excess zeros; `tail = "less"` tests for
+unusually few zeros or small discrepancy values.
+
+``` r
+
+counts <- data.frame(y = c(0, 0, 1, 1, 2, 2, 0, 1, 1, 2))
+model <- glm(y ~ 1, data = counts, family = poisson())
+check <- pb_gof(model, n = 200, statistic = "zeros",
+                tail = "less", seed = 1)
+pb_gof_mc_error(check)
+pb_plot_gof(check)
+```
+
+The Monte Carlo limits describe simulation uncertainty in the tail
+probability, conditional on the fitted model and successful refits; they
+do not establish whether the model is correctly specified.
+
 ## Monte Carlo precision of bootstrap summaries
 
 The functions
