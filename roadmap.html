@@ -147,7 +147,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="id_7-prediction-intervals-for-new-observations">7. Prediction intervals for new observations<a class="anchor" aria-label="anchor" href="#id_7-prediction-intervals-for-new-observations"></a></h3>
-<p><code><a href="reference/pb_plot_predictions.html">pb_plot_predictions()</a></code> gives intervals for the <em>expected</em> response. Intervals for a <em>new observation</em> must add the response noise, by simulating from each refit.</p>
+<p>Initial support now provides <code><a href="reference/pb_predict_observations.html">pb_predict_observations()</a></code> for simulation of individual future outcomes from each successful refit and <code><a href="reference/pb_predict_interval.html">pb_predict_interval()</a></code> for predictive quantiles. This adds residual/process noise to bootstrap parameter variation, explicitly separated from conditional mean confidence bands. Supported so far: unweighted Gaussian <code>lm</code>, Poisson <code>glm</code>, and negative-binomial <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb</a></code>; other model families and weights remain deferred pending proper response-level validation. The new path requires retained refits and an independent outcome-draw seed.</p>
 </div>
 <div class="section level3">
 <h3 id="id_8-goodness-of-fit-by-simulation">8. Goodness of fit by simulation<a class="anchor" aria-label="anchor" href="#id_8-goodness-of-fit-by-simulation"></a></h3>

@@ -48,6 +48,32 @@ interface may still change. Install the development version from GitHub:
 pak::pak("DiogoRibeiro7/parametricboot")
 ```
 
+## Predicting new observations
+
+The existing
+[`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
+describes uncertainty in conditional mean predictions. Prediction
+intervals for an *individual future observation* must also account for
+response noise. Use
+[`pb_predict_interval()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_interval.md)
+to simulate a new outcome from each refitted sampling distribution:
+
+``` r
+
+fit <- lm(mpg ~ wt + hp, data = mtcars)
+boot <- pb_simulate(fit, n = 300, seed = 42, keep_fits = TRUE)
+new_cars <- mtcars[1:3, c("wt", "hp")]
+pb_predict_interval(boot, new_cars, level = 0.95, seed = 17)
+```
+
+For further analysis,
+[`pb_predict_observations()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_observations.md)
+returns the individual simulated outcomes. This first version supports
+unweighted Gaussian linear, Poisson and negative-binomial regression
+models; it does not yet support binomial, Cox or mixed models. These are
+approximate model-conditional predictive intervals, not guaranteed exact
+frequentist intervals.
+
 ## Memory-efficient bootstrap predictions
 
 Supply `newdata` when bootstrapping to store one numeric prediction per

@@ -68,6 +68,10 @@
 
 - [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
   : Predict with bootstrap uncertainty
+- [`pb_predict_interval()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_interval.md)
+  : Prediction intervals for new observations
+- [`pb_predict_observations()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_observations.md)
+  : Simulate future observations from parametric bootstrap refits
 
 ## Helpers
 
