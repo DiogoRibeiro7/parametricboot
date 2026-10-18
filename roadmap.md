@@ -134,9 +134,14 @@ it. Intended first clients:
 
 ### 7. Prediction intervals for new observations
 
-`pb_plot_predictions()` gives intervals for the *expected* response. Intervals
-for a *new observation* must add the response noise, by simulating from each
-refit.
+Initial support now provides `pb_predict_observations()` for simulation of
+individual future outcomes from each successful refit and
+`pb_predict_interval()` for predictive quantiles. This adds residual/process
+noise to bootstrap parameter variation, explicitly separated from conditional
+mean confidence bands. Supported so far: unweighted Gaussian `lm`, Poisson
+`glm`, and negative-binomial `MASS::glm.nb`; other model families and
+weights remain deferred pending proper response-level validation.
+The new path requires retained refits and an independent outcome-draw seed.
 
 ### 8. Goodness of fit by simulation
 
