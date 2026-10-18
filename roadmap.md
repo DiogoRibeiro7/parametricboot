@@ -114,16 +114,18 @@ refits on 20 000 rows take 560 MB.
 
 ### 4. Settle which model classes are accepted
 
-Only the canonical base-R `lm` and `glm` S3 classes now enter the linear
-model bootstrap pathway. Unvalidated subclasses (including `glm.nb`,
-`gam`, `aov` and other `lm`/`glm` descendants) are rejected with a
-structured input error; quasi-likelihood families are explicitly
-excluded. This closes the previous accidental-acceptance gap, but
-extending the validated model portfolio remains open.
+Only canonical base-R `lm` and `glm` S3 classes enter the standard
+linear-model bootstrap pathway. The exact
+[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) subclass
+has a separately validated path: `MASS::simulate.negbin()` uses the
+fitted negative-binomial mean and dispersion, then each refit
+re-estimates dispersion. Non-unit prior weights remain unsupported
+because the simulator ignores their sampling effect. Unvalidated
+subclasses including `gam` and `aov` are rejected with structured
+errors, as are quasi-likelihood families.
 
-- `glm.nb` is a genuine parametric model: validate its fitted-parameter
-  simulation and refitting against an independent reference before
-  admitting.
+- Continue validation of accepted count-model family and weighting
+  restrictions, including independent tests of dispersion estimates.
 - `gam` requires deciding whether bootstrap refits re-estimate smoothing
   parameters appropriately and validating the resulting intervals.
 - Document accepted response families and validate any additional

@@ -7,7 +7,17 @@ standard errors.
 ## Usage
 
 ``` r
-pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
+pb_simulate(
+  model,
+  n = 100,
+  ...,
+  seed = NULL,
+  keep_fits = TRUE,
+  statistic = NULL,
+  statistic_se = NULL,
+  newdata = NULL,
+  predict_args = list()
+)
 ```
 
 ## Arguments
@@ -16,6 +26,7 @@ pb_simulate(model, n = 100, ..., seed = NULL, keep_fits = TRUE, statistic = NULL
 
   A fitted model from [`stats::lm()`](https://rdrr.io/r/stats/lm.html),
   [`stats::glm()`](https://rdrr.io/r/stats/glm.html),
+  [`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html),
   [`lme4::lmer()`](https://rdrr.io/pkg/lme4/man/lmer.html),
   [`lme4::glmer()`](https://rdrr.io/pkg/lme4/man/glmer.html) or
   [`survival::coxph()`](https://rdrr.io/pkg/survival/man/coxph.html).
@@ -110,14 +121,18 @@ Each replicate draws a response from the fitted model and refits the
 model to it, holding the covariates fixed.
 
 Only canonical base-R `lm` and `glm` classes use the linear-model and
-GLM simulation path. Additional subclasses, such as those returned by
-[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html),
+GLM simulation path. Other inherited subclasses, such as
 [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) or
 [`stats::aov()`](https://rdrr.io/r/stats/aov.html), are rejected until
-independently validated for simulation and refitting. Quasi-likelihood
-families are also rejected because they do not define a complete
-parametric response distribution. This policy also applies to parallel
-bootstrap and bootstrap likelihood-ratio tests.
+independently validated for simulation and refitting. The exact
+[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) class
+follows a separately validated negative-binomial path: counts are
+simulated using the fitted mean and dispersion, and dispersion is
+re-estimated on every refit. Non-unit prior weights are unsupported
+because the simulator does not incorporate their sampling effect.
+Quasi-likelihood families are also rejected because they do not define a
+complete parametric response distribution. This policy also applies to
+parallel bootstrap and bootstrap likelihood-ratio tests.
 
 - For `lm` and `glm` models the response is drawn with
   [`stats::simulate()`](https://rdrr.io/r/stats/simulate.html) and the

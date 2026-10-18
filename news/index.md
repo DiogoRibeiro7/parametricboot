@@ -2,12 +2,27 @@
 
 ## parametricboot 0.0.0.9000
 
+### Validated negative-binomial regression support
+
+- Admit the exact
+  [`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) class
+  with its fitted negative-binomial simulator, re-estimating the
+  dispersion parameter on every bootstrap refit. Validate the simulation
+  moments against independent NB identities and refitted coefficients
+  and dispersion against direct
+  [`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html).
+- Reject non-unit prior weights, malformed dispersion and unsupported
+  Poisson-versus-negative-binomial likelihood-ratio comparisons; keep
+  other unvalidated inherited model classes rejected.
+- Add `MASS` as an optional model package, with deterministic and
+  guarded regression tests.
+
 ### Fail-closed model-class contract
 
 - Accept the canonical base-R `lm` and `glm` S3 classes for the
   linear-model bootstrap path, rather than every unvalidated subclass.
-- Reject `glm.nb`, `gam`, `aov` and other inherited, unvalidated fits
-  with a structured, non-retryable validation error until they are
+- Reject `gam`, `aov` and other inherited, unvalidated fits with a
+  structured, non-retryable validation error until they are
   independently tested. Reject quasi-likelihood GLM families because
   they do not specify a parametric response distribution.
 - Preserve supported `lme4`, `coxph`, standard `lm` and `glm`
@@ -27,7 +42,16 @@
   models. Prediction failures do not silently discard valid model
   parameter estimates.
 
-### Studentised intervals for custom statisticsAdd an optional `statistic_se(fit)` callback with strictly positive, finite,aligned standard errors for the original model and successful refits.Permit bootstrap-t intervals and their Monte Carlo rank bounds for customstatistics when justified standard errors are supplied. Keep the defaultcoefficient and non-studentised behaviour unchanged.## Custom bootstrap statistics
+### Studentised intervals for custom statistics
+
+- Add an optional `statistic_se(fit)` callback with strictly positive,
+  finite, aligned standard errors for the original model and successful
+  refits.
+- Permit bootstrap-t intervals and their Monte Carlo rank bounds for
+  custom statistics when justified standard errors are supplied. Keep
+  the default coefficient and non-studentised behaviour unchanged.
+
+### Custom bootstrap statistics
 
 - Add a `statistic = function(fit)` argument to
   [`pb_simulate()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_simulate.md)

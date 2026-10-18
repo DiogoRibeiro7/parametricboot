@@ -117,7 +117,11 @@ are comparable, so a random intercept can be tested with an
 REML are refitted by maximum likelihood first, with a message. For
 `coxph` models the partial likelihood is used, the null may be the model
 without covariates, `Surv(time, status) ~ 1`, and both models must be
-stratified in the same way.
+stratified in the same way. For negative-binomial regression, both
+models must be fitted with
+[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html); each
+bootstrap refit re-estimates dispersion. Comparisons to Poisson models
+are not treated as regular nested likelihood-ratio tests.
 
 Whether the models are nested cannot be checked in general; it is only
 verified that they were fitted to the same response, that `alternative`

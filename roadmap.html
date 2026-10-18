@@ -118,9 +118,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="id_4-settle-which-model-classes-are-accepted">4. Settle which model classes are accepted<a class="anchor" aria-label="anchor" href="#id_4-settle-which-model-classes-are-accepted"></a></h3>
-<p>Only the canonical base-R <code>lm</code> and <code>glm</code> S3 classes now enter the linear model bootstrap pathway. Unvalidated subclasses (including <code>glm.nb</code>, <code>gam</code>, <code>aov</code> and other <code>lm</code>/<code>glm</code> descendants) are rejected with a structured input error; quasi-likelihood families are explicitly excluded. This closes the previous accidental-acceptance gap, but extending the validated model portfolio remains open.</p>
-<ul><li>
-<code>glm.nb</code> is a genuine parametric model: validate its fitted-parameter simulation and refitting against an independent reference before admitting.</li>
+<p>Only canonical base-R <code>lm</code> and <code>glm</code> S3 classes enter the standard linear-model bootstrap pathway. The exact <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> subclass has a separately validated path: <code>MASS::simulate.negbin()</code> uses the fitted negative-binomial mean and dispersion, then each refit re-estimates dispersion. Non-unit prior weights remain unsupported because the simulator ignores their sampling effect. Unvalidated subclasses including <code>gam</code> and <code>aov</code> are rejected with structured errors, as are quasi-likelihood families.</p>
+<ul><li>Continue validation of accepted count-model family and weighting restrictions, including independent tests of dispersion estimates.</li>
 <li>
 <code>gam</code> requires deciding whether bootstrap refits re-estimate smoothing parameters appropriately and validating the resulting intervals.</li>
 <li>Document accepted response families and validate any additional class/family combinations before exposing them as supported.</li>

@@ -36,9 +36,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="validated-negative-binomial-regression-support-0-0-0-9000">Validated negative-binomial regression support<a class="anchor" aria-label="anchor" href="#validated-negative-binomial-regression-support-0-0-0-9000"></a></h3>
+<ul><li>Admit the exact <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> class with its fitted negative-binomial simulator, re-estimating the dispersion parameter on every bootstrap refit. Validate the simulation moments against independent NB identities and refitted coefficients and dispersion against direct <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>.</li>
+<li>Reject non-unit prior weights, malformed dispersion and unsupported Poisson-versus-negative-binomial likelihood-ratio comparisons; keep other unvalidated inherited model classes rejected.</li>
+<li>Add <code>MASS</code> as an optional model package, with deterministic and guarded regression tests.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fail-closed-model-class-contract-0-0-0-9000">Fail-closed model-class contract<a class="anchor" aria-label="anchor" href="#fail-closed-model-class-contract-0-0-0-9000"></a></h3>
 <ul><li>Accept the canonical base-R <code>lm</code> and <code>glm</code> S3 classes for the linear-model bootstrap path, rather than every unvalidated subclass.</li>
-<li>Reject <code>glm.nb</code>, <code>gam</code>, <code>aov</code> and other inherited, unvalidated fits with a structured, non-retryable validation error until they are independently tested. Reject quasi-likelihood GLM families because they do not specify a parametric response distribution.</li>
+<li>Reject <code>gam</code>, <code>aov</code> and other inherited, unvalidated fits with a structured, non-retryable validation error until they are independently tested. Reject quasi-likelihood GLM families because they do not specify a parametric response distribution.</li>
 <li>Preserve supported <code>lme4</code>, <code>coxph</code>, standard <code>lm</code> and <code>glm</code> calculations, and apply the same guard to bootstrap LRTs.</li>
 </ul></div>
 <div class="section level3">
@@ -47,7 +53,12 @@
 <li>Reuse cached predictions through <code><a href="../reference/pb_predict_boot.html">pb_predict_boot()</a></code> with strict request matching; mismatched requests require retained models. Prediction failures do not silently discard valid model parameter estimates.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="studentised-intervals-for-custom-statisticsadd-an-optional-statistic_sefit-callback-with-strictly-positive-finitealigned-standard-errors-for-the-original-model-and-successful-refitspermit-bootstrap-t-intervals-and-their-monte-carlo-rank-bounds-for-customstatistics-when-justified-standard-errors-are-supplied-keep-the-defaultcoefficient-and-non-studentised-behaviour-unchanged-custom-bootstrap-statistics-0-0-0-9000">Studentised intervals for custom statisticsAdd an optional <code>statistic_se(fit)</code> callback with strictly positive, finite,aligned standard errors for the original model and successful refits.Permit bootstrap-t intervals and their Monte Carlo rank bounds for customstatistics when justified standard errors are supplied. Keep the defaultcoefficient and non-studentised behaviour unchanged.## Custom bootstrap statistics<a class="anchor" aria-label="anchor" href="#studentised-intervals-for-custom-statisticsadd-an-optional-statistic_sefit-callback-with-strictly-positive-finitealigned-standard-errors-for-the-original-model-and-successful-refitspermit-bootstrap-t-intervals-and-their-monte-carlo-rank-bounds-for-customstatistics-when-justified-standard-errors-are-supplied-keep-the-defaultcoefficient-and-non-studentised-behaviour-unchanged-custom-bootstrap-statistics-0-0-0-9000"></a></h3>
+<h3 id="studentised-intervals-for-custom-statistics-0-0-0-9000">Studentised intervals for custom statistics<a class="anchor" aria-label="anchor" href="#studentised-intervals-for-custom-statistics-0-0-0-9000"></a></h3>
+<ul><li>Add an optional <code>statistic_se(fit)</code> callback with strictly positive, finite, aligned standard errors for the original model and successful refits.</li>
+<li>Permit bootstrap-t intervals and their Monte Carlo rank bounds for custom statistics when justified standard errors are supplied. Keep the default coefficient and non-studentised behaviour unchanged.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="custom-bootstrap-statistics-0-0-0-9000">Custom bootstrap statistics<a class="anchor" aria-label="anchor" href="#custom-bootstrap-statistics-0-0-0-9000"></a></h3>
 <ul><li>Add a <code>statistic = function(fit)</code> argument to <code><a href="../reference/pb_simulate.html">pb_simulate()</a></code> and <code><a href="../reference/pb_parallel.html">pb_parallel()</a></code>. A stable named numeric result is tracked across refits, allowing inference for derived effects without storing fitted models.</li>
 <li>Preserve default coefficient behaviour and existing summaries, plots and Monte Carlo diagnostics. Studentised derived-statistic intervals are explicitly unsupported until analytic standard errors can be supplied.</li>
 </ul></div>

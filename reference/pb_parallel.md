@@ -7,7 +7,18 @@ that distributes the model refits over a local cluster of R processes.
 ## Usage
 
 ``` r
-pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, statistic = NULL, statistic_se = NULL, newdata = NULL, predict_args = list())
+pb_parallel(
+  model,
+  n = 100,
+  workers = 2,
+  ...,
+  seed = NULL,
+  keep_fits = TRUE,
+  statistic = NULL,
+  statistic_se = NULL,
+  newdata = NULL,
+  predict_args = list()
+)
 ```
 
 ## Arguments
@@ -16,6 +27,7 @@ pb_parallel(model, n = 100, workers = 2, ..., seed = NULL, keep_fits = TRUE, sta
 
   A fitted model from [`stats::lm()`](https://rdrr.io/r/stats/lm.html),
   [`stats::glm()`](https://rdrr.io/r/stats/glm.html),
+  [`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html),
   [`lme4::lmer()`](https://rdrr.io/pkg/lme4/man/lmer.html),
   [`lme4::glmer()`](https://rdrr.io/pkg/lme4/man/glmer.html) or
   [`survival::coxph()`](https://rdrr.io/pkg/survival/man/coxph.html).

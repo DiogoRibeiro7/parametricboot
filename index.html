@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Parametric Bootstrap for Fitted Regression Models">
-<meta name="description" content="Automates the parametric bootstrap for models fitted with lm(), glm(), lme4::lmer(), lme4::glmer() and survival::coxph(). New responses are simulated from the fitted model, the model is refitted to each of them, and the replicates are summarised as bias, standard error, mean squared error, coverage and confidence intervals, propagated to predictions, and visualised with ggplot2. Cox models use the model-based resampling algorithm of Davison and Hinkley (1997, ISBN:9780521574716).">
-<meta property="og:description" content="Automates the parametric bootstrap for models fitted with lm(), glm(), lme4::lmer(), lme4::glmer() and survival::coxph(). New responses are simulated from the fitted model, the model is refitted to each of them, and the replicates are summarised as bias, standard error, mean squared error, coverage and confidence intervals, propagated to predictions, and visualised with ggplot2. Cox models use the model-based resampling algorithm of Davison and Hinkley (1997, ISBN:9780521574716).">
+<meta name="description" content="Automates the parametric bootstrap for models fitted with lm(), glm(), MASS::glm.nb(), lme4::lmer(), lme4::glmer() and survival::coxph(). New responses are simulated from the fitted model, the model is refitted to each of them, and the replicates are summarised as bias, standard error, mean squared error, coverage and confidence intervals, propagated to predictions, and visualised with ggplot2. Cox models use the model-based resampling algorithm of Davison and Hinkley (1997, ISBN:9780521574716).">
+<meta property="og:description" content="Automates the parametric bootstrap for models fitted with lm(), glm(), MASS::glm.nb(), lme4::lmer(), lme4::glmer() and survival::coxph(). New responses are simulated from the fitted model, the model is refitted to each of them, and the replicates are summarised as bias, standard error, mean squared error, coverage and confidence intervals, propagated to predictions, and visualised with ggplot2. Cox models use the model-based resampling algorithm of Davison and Hinkley (1997, ISBN:9780521574716).">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -75,6 +75,12 @@
 <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate()</a></code>, then the original call is re-evaluated</td>
 </tr>
 <tr>
+<td>Negative-binomial regression</td>
+<td><code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code></td>
+<td>
+<code>MASS::simulate.negbin()</code> with fitted theta; re-estimate theta on each refit</td>
+</tr>
+<tr>
 <td>Linear and generalised linear mixed models</td>
 <td>
 <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">lme4::glmer()</a></code>
@@ -93,7 +99,7 @@
 <div class="section level2">
 <h2 id="validated-model-classes">Validated model classes<a class="anchor" aria-label="anchor" href="#validated-model-classes"></a>
 </h2>
-<p>The base-R <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> classes use the validated linear-model/GLM bootstrap engine. Inheriting from <code>lm</code> or <code>glm</code> is not, by itself, a guarantee that simulating and refitting preserves a model’s assumptions: unvalidated subclasses such as <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>, <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> and <code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code> now fail explicitly rather than returning unverified bootstrap results. Quasi-likelihood families are also rejected because they lack a fully specified parametric sampling law.</p>
+<p>The base-R <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> classes use the validated linear-model/GLM bootstrap engine. Inheriting from <code>lm</code> or <code>glm</code> is not, by itself, a guarantee that simulating and refitting preserves a model’s assumptions: unvalidated subclasses such as <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> and <code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code> fail explicitly rather than returning unverified bootstrap results. The exact <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> class is now separately supported: response simulation uses the fitted negative-binomial mean and dispersion, and refitting re-estimates dispersion in each replicate. Non-unit prior weights remain unsupported because <code>simulate.negbin()</code> ignores them. Quasi-likelihood families are also rejected because they lack a fully specified parametric sampling law.</p>
 <p>The supported <code>lme4</code> mixed models and right-censored <code>coxph</code> workflows are unaffected. Additional model classes will be admitted after separate mathematical and computational validation.</p>
 </div>
 <div class="section level2">

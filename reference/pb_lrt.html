@@ -141,7 +141,10 @@ fit as the null and an <code>lmer()</code> or <code>glmer()</code> fit as the al
 models fitted by REML are refitted by maximum likelihood first, with a
 message. For <code>coxph</code> models the partial likelihood is used, the null may be
 the model without covariates, <code>Surv(time, status) ~ 1</code>, and both models
-must be stratified in the same way.</p>
+must be stratified in the same way. For negative-binomial regression,
+both models must be fitted with <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>; each bootstrap refit
+re-estimates dispersion. Comparisons to Poisson models are not treated
+as regular nested likelihood-ratio tests.</p>
 <p>Whether the models are nested cannot be checked in general; it is only
 verified that they were fitted to the same response, that <code>alternative</code>
 has more parameters and that the observed statistic is not negative.

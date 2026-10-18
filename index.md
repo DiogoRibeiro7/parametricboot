@@ -11,6 +11,7 @@ Supported models:
 | Model | Fitted with | How replicates are generated |
 |----|----|----|
 | Linear and generalised linear models | [`lm()`](https://rdrr.io/r/stats/lm.html), [`glm()`](https://rdrr.io/r/stats/glm.html) | [`simulate()`](https://rdrr.io/r/stats/simulate.html), then the original call is re-evaluated |
+| Negative-binomial regression | [`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) | `MASS::simulate.negbin()` with fitted theta; re-estimate theta on each refit |
 | Linear and generalised linear mixed models | [`lme4::lmer()`](https://rdrr.io/pkg/lme4/man/lmer.html), [`lme4::glmer()`](https://rdrr.io/pkg/lme4/man/glmer.html) | [`simulate()`](https://rdrr.io/r/stats/simulate.html), then [`lme4::refit()`](https://rdrr.io/pkg/lme4/man/refit.html) |
 | Cox proportional hazards models | [`survival::coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) | model-based resampling (Davison & Hinkley, 1997, Algorithm 7.3) |
 
@@ -21,12 +22,16 @@ The base-R [`lm()`](https://rdrr.io/r/stats/lm.html) and
 linear-model/GLM bootstrap engine. Inheriting from `lm` or `glm` is not,
 by itself, a guarantee that simulating and refitting preserves a model’s
 assumptions: unvalidated subclasses such as
-[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html),
 [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) and
-[`stats::aov()`](https://rdrr.io/r/stats/aov.html) now fail explicitly
-rather than returning unverified bootstrap results. Quasi-likelihood
-families are also rejected because they lack a fully specified
-parametric sampling law.
+[`stats::aov()`](https://rdrr.io/r/stats/aov.html) fail explicitly
+rather than returning unverified bootstrap results. The exact
+[`MASS::glm.nb()`](https://rdrr.io/pkg/MASS/man/glm.nb.html) class is
+now separately supported: response simulation uses the fitted
+negative-binomial mean and dispersion, and refitting re-estimates
+dispersion in each replicate. Non-unit prior weights remain unsupported
+because `simulate.negbin()` ignores them. Quasi-likelihood families are
+also rejected because they lack a fully specified parametric sampling
+law.
 
 The supported `lme4` mixed models and right-censored `coxph` workflows
 are unaffected. Additional model classes will be admitted after separate

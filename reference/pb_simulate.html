@@ -46,7 +46,17 @@ errors.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pb_simulate</span><span class="op">(</span><span class="va">model</span>, n <span class="op">=</span> <span class="fl">100</span>, <span class="va">...</span>, seed <span class="op">=</span> <span class="cn">NULL</span>, keep_fits <span class="op">=</span> <span class="cn">TRUE</span>, statistic <span class="op">=</span> <span class="cn">NULL</span>, statistic_se <span class="op">=</span> <span class="cn">NULL</span>, newdata <span class="op">=</span> <span class="cn">NULL</span>, predict_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pb_simulate</span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  keep_fits <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  statistic <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  statistic_se <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  newdata <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  predict_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,6 +65,7 @@ errors.</p>
 
 <dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
 <dd><p>A fitted model from <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm()</a></code>,
+<code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>,
 <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer()</a></code>, <code><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">lme4::glmer()</a></code> or <code><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">survival::coxph()</a></code>.</p></dd>
 
 
@@ -131,9 +142,13 @@ call.</p></dd>
     <p>Each replicate draws a response from the fitted model and refits the model
 to it, holding the covariates fixed.</p>
 <p>Only canonical base-R <code>lm</code> and <code>glm</code> classes use the linear-model and
-GLM simulation path. Additional subclasses, such as those returned by
-<code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code>, <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> or <code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code>, are rejected
-until independently validated for simulation and refitting. Quasi-likelihood
+GLM simulation path. Other inherited subclasses, such as <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> or
+<code><a href="https://rdrr.io/r/stats/aov.html" class="external-link">stats::aov()</a></code>, are rejected until independently validated for
+simulation and refitting. The exact <code><a href="https://rdrr.io/pkg/MASS/man/glm.nb.html" class="external-link">MASS::glm.nb()</a></code> class follows a
+separately validated negative-binomial path: counts are simulated using
+the fitted mean and dispersion, and dispersion is re-estimated on every
+refit. Non-unit prior weights are unsupported because the simulator
+does not incorporate their sampling effect. Quasi-likelihood
 families are also rejected because they do not define a complete
 parametric response distribution. This policy also applies to parallel
 bootstrap and bootstrap likelihood-ratio tests.</p><ul><li><p>For <code>lm</code> and <code>glm</code> models the response is drawn with <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">stats::simulate()</a></code>
