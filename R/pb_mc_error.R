@@ -100,6 +100,20 @@ pb_mc_error <- function(results) {
   )
 }
 
+# Joint first-order Monte Carlo standard errors for normal-bootstrap endpoints.
+.pb_normal_endpoint_mc_se <- function(values, z) {
+  values <- values[is.finite(values)]
+  B <- length(values)
+  if (B < 4L) return(c(NA_real_, NA_real_))
+  m <- mean(values)
+  sd_value <- stats::sd(values)
+  if (!is.finite(sd_value) || sd_value <= 0) return(c(NA_real_, NA_real_))
+  dev <- values - m
+  sd_influence <- (dev^2 - mean(dev^2)) / (2 * sd_value)
+  c(stats::sd(-dev - z * sd_influence) / sqrt(B),
+    stats::sd(-dev + z * sd_influence) / sqrt(B))
+}
+
 #' Monte Carlo precision of bootstrap confidence interval limits
 #'
 #' For percentile, basic and studentised confidence intervals, calculate
@@ -115,13 +129,14 @@ pb_mc_error <- function(results) {
 #' For studentised intervals the rank bounds apply to the finite bootstrap
 #' pivot and are mapped into coefficient units using the original model
 #' standard error. Parameters lacking a usable studentised interval retain
-#' NA bounds. Normal-approximation intervals have a different joint
-#' uncertainty structure and are not supported by this rank-based function.
+#' NA bounds. Normal-approximation endpoints instead use the joint delta method,
+#' including covariance between the simulated mean and SD. The Monte Carlo
+#' bounds are approximate rather than exact binomial rank bounds.
 #'
 #' @param results A pb_boot object from [pb_simulate()] or [pb_parallel()].
 #' @param level Coverage level of the existing bootstrap confidence interval.
-#' @param type One of "percentile", "basic", or "student". Unlike
-#'   [pb_confint()], the "normal" interval is not supported.
+#' @param type One of "percentile", "basic", "normal", or "student".
+#'   Normal intervals use an approximate joint delta-method calculation.
 #' @param mc_level Per-endpoint Monte Carlo confidence level for the rank
 #'   bounds, distinct from the statistical confidence interval level.
 #' @return A data frame with term, lower, upper, lower_mc_low,
@@ -135,7 +150,7 @@ pb_mc_error <- function(results) {
 #' pb_confint_mc_error(result, level = 0.8, mc_level = 0.9)
 #' @export
 pb_confint_mc_error <- function(
-    results, level = 0.95, type = c("percentile", "basic", "student"),
+    results, level = 0.95, type = c("percentile", "basic", "normal", "student"),
     mc_level = 0.95) {
   x <- .pb_mc_estimates(results)
   level <- pb_check_level(level)
@@ -178,6 +193,19 @@ pb_confint_mc_error <- function(
     values <- x[, j]
     out$replicates[j] <- sum(is.finite(values))
     if (!out$replicates[j] || anyNA(c(ci$lower[j], ci$upper[j]))) next
+    if (type == "normal") {
+      endpoint_se <- .pb_normal_endpoint_mc_se(
+        values, stats::qnorm((1 + level) / 2)
+      )
+      if (anyNA(endpoint_se)) next
+      mc_z <- stats::qnorm((1 + mc_level) / 2)
+      out[j, c("lower_mc_low", "lower_mc_high",
+               "upper_mc_low", "upper_mc_high")] <- c(
+        ci$lower[j] + c(-1, 1) * mc_z * endpoint_se[1L],
+        ci$upper[j] + c(-1, 1) * mc_z * endpoint_se[2L]
+      )
+      next
+    }
     low_quantile <- .pb_mc_rank_bounds(values, probability, mc_level)
     high_quantile <- .pb_mc_rank_bounds(values, 1 - probability, mc_level)
     if (type == "percentile") {
