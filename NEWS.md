@@ -1,5 +1,12 @@
 # parametricboot 0.0.0.9000
 
+## Prediction memory benchmark
+
+* Add a reproducible comparison of retained bootstrap refits versus cached-only
+  fixed-newdata predictions, checking numerical equality before measuring
+  object size and runtime. Document limits of object-size measurements.
+
+
 ## Predictive variance decomposition
 
 * Add `pb_predict_variance()` to separate bootstrap parameter uncertainty
