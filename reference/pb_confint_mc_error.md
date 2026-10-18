@@ -9,7 +9,7 @@ bootstrap confidence intervals.
 pb_confint_mc_error(
   results,
   level = 0.95,
-  type = c("percentile", "basic", "student"),
+  type = c("percentile", "basic", "normal", "student"),
   mc_level = 0.95
 )
 ```
@@ -29,8 +29,9 @@ pb_confint_mc_error(
 
 - type:
 
-  One of `"percentile"`, `"basic"`, or `"student"`. Rank bounds are not
-  provided for normal-approximation intervals.
+  One of `"percentile"`, `"basic"`, or `"student"`. Normal limits use
+  approximate joint delta-method Monte Carlo bounds, including mean/SD
+  covariance.
 
 - mc_level:
 
@@ -43,10 +44,13 @@ quantile are derived using binomial ranks, then mapped into percentile,
 basic or studentised confidence interval units. The Monte Carlo bounds
 apply separately to the lower and upper endpoint; they are not a joint
 region. Unbounded bounds signal too few bootstrap replicates to provide
-a finite rank guarantee for a tail quantile. The method conditions on
-independently simulated, successful finite refits and does not measure
-statistical sampling or model uncertainty. Parameters without usable
-studentised confidence intervals have missing Monte Carlo bounds.
+a finite rank guarantee for a tail quantile. For normal confidence
+intervals, joint delta-method bounds use empirical mean/SD covariance
+and are approximate, not distribution-free rank bounds. These require at
+least four finite estimates and positive spread. The method conditions
+on independently simulated, successful finite refits and does not
+measure statistical sampling or model uncertainty. Parameters without
+usable studentised confidence intervals have missing Monte Carlo bounds.
 
 ## Value
 

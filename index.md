@@ -118,7 +118,9 @@ percentile, basic or studentised confidence intervals. Interval limit
 diagnostics use conservative binomial order-statistic ranks; they may be
 unbounded when the number of simulations is too small. These are
 per-endpoint Monte Carlo bounds, not confidence intervals for the
-unknown model parameter.
+unknown model parameter. For normal-approximation intervals, Monte Carlo
+precision uses a joint delta method retaining covariance between the
+simulated mean and standard deviation; those bounds are approximate.
 
 ``` r
 

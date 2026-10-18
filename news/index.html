@@ -36,6 +36,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="normal-interval-monte-carlo-precision-0-0-0-9000">Normal-interval Monte Carlo precision<a class="anchor" aria-label="anchor" href="#normal-interval-monte-carlo-precision-0-0-0-9000"></a></h3>
+<ul><li>Support <code>pb_confint_mc_error(type = "normal")</code> via first-order influence functions for the sample mean and standard deviation, preserving covariance.</li>
+<li>Keep existing confidence interval endpoints unchanged. Return NA precision bounds when fewer than four finite estimates or zero spread prevent the approximation, and distinguish these limits from exact quantile rank bounds.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="derived-statistic-validation-case-studies-0-0-0-9000">Derived-statistic validation case studies<a class="anchor" aria-label="anchor" href="#derived-statistic-validation-case-studies-0-0-0-9000"></a></h3>
 <ul><li>Validate sex-specific median lethal doses in the budworm logistic model using named custom-statistic callbacks and percentile intervals.</li>
 <li>Independently benchmark studentised intervals for a linear combination of Gaussian regression coefficients against the exact Student t interval.</li>
