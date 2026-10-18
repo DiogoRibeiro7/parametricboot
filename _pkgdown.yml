@@ -25,6 +25,7 @@ reference:
       - pb_plot_predictions
   - title: Test and compare models
     contents:
+      - pb_gof
       - pb_lrt
       - pb_lrt_mc_error
       - pb_plot_lrt
