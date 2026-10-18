@@ -1,5 +1,14 @@
 # parametricboot 0.0.0.9000
 
+## Normal-interval Monte Carlo precision
+
+* Support `pb_confint_mc_error(type = "normal")` via first-order influence
+  functions for the sample mean and standard deviation, preserving covariance.
+* Keep existing confidence interval endpoints unchanged. Return NA precision
+  bounds when fewer than four finite estimates or zero spread prevent the
+  approximation, and distinguish these limits from exact quantile rank bounds.
+
+
 ## Derived-statistic validation case studies
 
 * Validate sex-specific median lethal doses in the budworm logistic model
