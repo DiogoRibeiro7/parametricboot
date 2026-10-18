@@ -1,5 +1,15 @@
 # parametricboot 0.0.0.9000
 
+## Derived-statistic validation case studies
+
+* Validate sex-specific median lethal doses in the budworm logistic model
+  using named custom-statistic callbacks and percentile intervals.
+* Independently benchmark studentised intervals for a linear combination
+  of Gaussian regression coefficients against the exact Student t interval.
+* Record Monte Carlo precision separately from statistical uncertainty;
+  update the vignette and close roadmap item 1 for supported models.
+
+
 ## Validated negative-binomial regression support
 
 * Admit the exact `MASS::glm.nb()` class with its fitted negative-binomial
