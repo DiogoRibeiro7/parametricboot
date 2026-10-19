@@ -1,5 +1,12 @@
 # parametricboot 0.0.0.9000
 
+## Statistical validation guide
+
+* Add a vignette separating simulator correctness, analytical benchmarks,
+  Monte Carlo precision, repeated-sampling coverage and model adequacy.
+  Include executable Gaussian uncertainty and predictive-variance examples.
+
+
 ## Prediction memory benchmark
 
 * Add a reproducible comparison of retained bootstrap refits versus cached-only
