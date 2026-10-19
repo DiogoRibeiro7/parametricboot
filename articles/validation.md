@@ -1,0 +1,140 @@
+# How parametricboot is validated
+
+## Scope of the claims
+
+The parametric bootstrap samples from an *assumed, fitted model*.
+Reproducing that model’s known distribution, refitting it correctly, and
+computing summaries correctly are distinct validation obligations.
+Passing these checks does not establish model adequacy for a new
+dataset, nor does it give universal finite-sample coverage guarantees.
+
+Four kinds of evidence are useful:
+
+1.  **Simulation identity:** compare simulated outcomes or refitted
+    statistics against calculations made independently of the package
+    implementation.
+2.  **Analytical benchmark:** compare a procedure with a known exact
+    result under stated conditions.
+3.  **Reproducibility:** fixed seeds and consistent serial/parallel
+    results ensure that a change does not silently alter the experiment.
+4.  **Coverage experiments:** repeat the *entire* data-generating
+    experiment and measure the frequency with which intervals contain
+    the true parameter. This is a separate outer simulation, not one
+    fitted-model bootstrap run.
+
+The tests in `tests/testthat/` contain numerical checks. This vignette
+illustrates the reasoning, with deliberately small, reproducible
+examples.
+
+## Gaussian linear model: theoretical coefficient uncertainty
+
+For `y = X beta + epsilon`, with independent Gaussian residuals of
+variance `sigma^2` and full-column-rank fixed `X`, the sampling
+covariance of ordinary least-squares coefficients is
+`sigma^2 (X'X)^{-1}` when `sigma` is the *true* residual scale.
+
+``` r
+
+library(parametricboot)
+data(mtcars)
+model <- stats::lm(mpg ~ wt + hp, data = mtcars)
+boot <- pb_simulate(model, n = 300, seed = 102)
+coefs <- boot$estimates[!boot$failed, , drop = FALSE]
+empirical_sd <- apply(coefs, 2L, stats::sd)
+reference_sd <- sqrt(diag(stats::vcov(model)))
+data.frame(
+  term = names(empirical_sd),
+  bootstrap_sd = unname(empirical_sd),
+  plug_in_reference_sd = unname(reference_sd)
+)
+#>          term bootstrap_sd plug_in_reference_sd
+#> 1 (Intercept)  1.625133217           1.59878754
+#> 2          wt  0.632272912           0.63273349
+#> 3          hp  0.008840726           0.00902971
+```
+
+The analytical calculation uses the fitted variance as a *plug-in*
+approximation to the unknown generating variance. At finite bootstrap
+replicate counts, empirical and analytical standard errors are not
+expected to match exactly. They should be evaluated with Monte Carlo
+uncertainty in mind. A normal regression coefficient has an exact
+Student `t` confidence interval under the classical regression
+assumptions; this is a useful benchmark for studentisation, not a
+guarantee about arbitrary models.
+
+## Prediction uncertainty: a variance identity
+
+For a new Gaussian observation, the law of total variance separates the
+spread of conditional means across bootstrap refits from the expected
+residual variance. The latter is nonzero even if every bootstrap refit
+has identical coefficients.
+
+``` r
+
+newdata <- mtcars[1:2, c("wt", "hp")]
+variance <- pb_predict_variance(boot, newdata)
+stopifnot(isTRUE(all.equal(
+  variance$total_variance,
+  variance$parameter_variance + variance$observation_variance
+)))
+variance
+#>   prediction parameter_variance observation_variance total_variance
+#> 1   23.57233          0.3006903             6.712599       7.013289
+#> 2   22.58348          0.2771760             6.712599       6.989775
+#>   successful_replicates
+#> 1                   300
+#> 2                   300
+```
+
+For Poisson regression the conditional observation variance is the
+fitted mean; for negative-binomial regression it is `mu + mu^2/theta`,
+with `theta` re-estimated by each refit. The test suite independently
+evaluates these identities. Prediction *intervals* additionally depend
+on quantiles and cannot be validated by a variance identity alone.
+
+## Goodness of fit: distinguish simulation precision from model validity
+
+A bootstrap goodness-of-fit p-value compares the observed statistic
+against statistics simulated under the fitted null model. For `B`
+successful replicates and `k` simulated values at least as extreme as
+the observed, the add-one tail estimate is `(k + 1)/(B + 1)`. This is
+not a statement that the null model has a particular posterior
+probability of being true.
+
+The Monte Carlo uncertainty of the simulated tail count is distinct from
+uncertainty about the statistical model.
+[`pb_gof_mc_error()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_gof_mc_error.md)
+provides diagnostics for the former. The same distinction applies to
+confidence interval endpoints: more replicates reduce Monte Carlo error,
+but cannot repair systematic model misspecification.
+
+## What to verify before extending model support
+
+A new model class requires an independently checked response simulator,
+correct handling of weights and offsets, preservation of model structure
+under refitting, and tests of dispersion or nuisance-parameter
+re-estimation. Unsupported class/family combinations are intentionally
+rejected rather than treated as ordinary GLMs.
+
+Further useful validation includes nested-model likelihood-ratio
+comparisons against exact F tests when applicable, mixed-model
+replicates compared with
+[`lme4::bootMer()`](https://rdrr.io/pkg/lme4/man/bootMer.html), and
+survival-model baseline-hazard checks against
+[`survival::survfit()`](https://rdrr.io/pkg/survival/man/survfit.html).
+Existing dedicated regression tests are the appropriate source for those
+model-specific numerical identities.
+
+## Limits and references
+
+No finite list of tests can prove a statistical procedure reliable under
+arbitrary data-generating mechanisms. Conditional simulation checks,
+independent mathematical benchmarks, model criticism, and
+repeated-sampling coverage studies answer different questions and should
+be reported separately.
+
+- Davison, A. C. and Hinkley, D. V. (1997). *Bootstrap Methods and Their
+  Application*. Cambridge University Press.
+- Efron, B. and Tibshirani, R. J. (1993). *An Introduction to the
+  Bootstrap*. Chapman & Hall.
+- Hall, P. (1992). *The Bootstrap and Edgeworth Expansion*. Springer.
