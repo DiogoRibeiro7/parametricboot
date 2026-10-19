@@ -193,9 +193,10 @@ Worth doing, but each needs a design decision or is expensive.
 
 ## Documentation
 
-- An article, "How the package is validated", collecting the exact benchmarks
-  that are currently scattered over the tests: the F test, the t interval,
-  `bootMer()` and the cumulative-hazard identity.
+- Added a "How the package is validated" vignette explaining analytical
+  benchmarks, simulation identities, Monte Carlo precision and coverage;
+  further executable comparisons for F tests, `bootMer()` and cumulative
+  hazards remain represented by dedicated regression tests.
 - Case studies: a small-sample logistic regression, a mixed model with few
   groups, a survival analysis.
 - Snapshot tests for the `print()` methods and visual tests for the plots.
