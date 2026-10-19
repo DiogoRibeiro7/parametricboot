@@ -1,5 +1,12 @@
 # parametricboot 0.0.0.9000
 
+## Repeated-sampling validation
+
+* Add a reproducible fixed-design Gaussian coverage experiment comparing the
+  exact t interval with percentile and studentised bootstrap intervals across
+  independent simulated datasets. Report outer Monte Carlo uncertainty.
+
+
 ## Statistical validation guide
 
 * Add a vignette separating simulator correctness, analytical benchmarks,
