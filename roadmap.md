@@ -199,8 +199,9 @@ Worth doing, but each needs a design decision or is expensive.
   hazards remain represented by dedicated regression tests.
 - A reproducible Gaussian repeated-sampling coverage experiment now lives in
   `inst/validation/`, comparing exact t, percentile and studentised intervals.
-  Additional case studies remain: a small-sample logistic regression, a mixed
-  model with few groups, and a survival analysis.
+  An opt-in small-sample logistic coverage study is now available with explicit
+  separation and evaluability diagnostics. Additional case studies remain:
+  a mixed model with few groups and a survival analysis.
 - Snapshot tests for the `print()` methods and visual tests for the plots.
 
 ## Known limitations
