@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Small-sample logistic validation
+
+- Add an opt-in repeated-sampling study of Wald, percentile and
+  studentised logistic slope intervals, recording original-fit warnings,
+  warned/failed bootstrap refits and method-specific evaluability
+  denominators.
+
 ### Repeated-sampling validation
 
 - Add a reproducible fixed-design Gaussian coverage experiment comparing
