@@ -244,8 +244,11 @@ Worth doing, but each needs a design decision or is expensive.
   benchmarks, simulation identities, Monte Carlo precision and coverage;
   further executable comparisons for F tests, `bootMer()` and cumulative
   hazards remain represented by dedicated regression tests.
-- Case studies: a small-sample logistic regression, a mixed model with
-  few groups, a survival analysis.
+- A reproducible Gaussian repeated-sampling coverage experiment now
+  lives in `inst/validation/`, comparing exact t, percentile and
+  studentised intervals. Additional case studies remain: a small-sample
+  logistic regression, a mixed model with few groups, and a survival
+  analysis.
 - Snapshot tests for the [`print()`](https://rdrr.io/r/base/print.html)
   methods and visual tests for the plots.
 
