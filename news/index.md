@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Few-group mixed-model validation
+
+- Add an opt-in repeated-sampling random-intercept experiment for small
+  group counts. Compare fixed-slope Wald and parametric-bootstrap
+  percentile intervals, recording singular fits, refit failures and
+  evaluability.
+
 ### Small-sample logistic validation
 
 - Add an opt-in repeated-sampling study of Wald, percentile and
