@@ -249,8 +249,10 @@ Worth doing, but each needs a design decision or is expensive.
   studentised intervals. An opt-in small-sample logistic coverage study
   is now available with explicit separation and evaluability
   diagnostics. An opt-in random-intercept case study now examines
-  interval coverage with few groups, singular fits and refit failures. A
-  survival analysis case study remains outstanding.
+  interval coverage with few groups, singular fits and refit failures.
+  An opt-in survival coverage case study now examines Cox inference
+  under independent censoring. Additional censoring mechanisms need
+  separate study.
 - Snapshot tests for the [`print()`](https://rdrr.io/r/base/print.html)
   methods and visual tests for the plots.
 

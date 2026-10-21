@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Survival coverage validation
+
+- Add an opt-in independent-censoring Cox survival coverage experiment,
+  comparing Wald and parametric-bootstrap percentile confidence
+  intervals. Report censoring, fit failures and conditional coverage
+  evaluability.
+
 ### Few-group mixed-model validation
 
 - Add an opt-in repeated-sampling random-intercept experiment for small
