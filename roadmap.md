@@ -203,7 +203,8 @@ Worth doing, but each needs a design decision or is expensive.
   separation and evaluability diagnostics. An opt-in random-intercept case study now examines interval coverage with
   few groups, singular fits and refit failures. An opt-in survival coverage case study now examines Cox inference under
   independent censoring. Additional censoring mechanisms need separate study.
-- Snapshot tests for the `print()` methods and visual tests for the plots.
+- Deterministic exact-output contract tests now cover `print.pb_boot()`;
+  other print methods and visual tests for plots remain future work.
 
 ## Known limitations
 
