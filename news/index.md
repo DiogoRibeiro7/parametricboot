@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Print output regression coverage
+
+- Add deterministic exact-output tests for
+  [`print.pb_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_boot-methods.md),
+  including kept/discarded refits, warning and drop counts, and
+  invisible return values.
+
 ### Survival coverage validation
 
 - Add an opt-in independent-censoring Cox survival coverage experiment,
