@@ -204,7 +204,8 @@ Worth doing, but each needs a design decision or is expensive.
   few groups, singular fits and refit failures. An opt-in survival coverage case study now examines Cox inference under
   independent censoring. Additional censoring mechanisms need separate study.
 - Deterministic exact-output contract tests now cover `print.pb_boot()`;
-  other print methods and visual tests for plots remain future work.
+  `print.pb_lrt()` now has corresponding output contract tests; visual tests
+  for plots remain future work.
 
 ## Known limitations
 

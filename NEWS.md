@@ -1,5 +1,11 @@
 # parametricboot 0.0.0.9000
 
+## LRT print regression coverage
+
+* Add deterministic print contract tests for likelihood-ratio test models,
+  replicate counts, dropped-refit reporting and bootstrap p-value formatting.
+
+
 ## Print output regression coverage
 
 * Add deterministic exact-output tests for `print.pb_boot()`, including
