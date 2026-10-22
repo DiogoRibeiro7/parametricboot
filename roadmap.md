@@ -255,7 +255,9 @@ Worth doing, but each needs a design decision or is expensive.
   separate study.
 - Deterministic exact-output contract tests now cover
   [`print.pb_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_boot-methods.md);
-  other print methods and visual tests for plots remain future work.
+  [`print.pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
+  now has corresponding output contract tests; visual tests for plots
+  remain future work.
 
 ## Known limitations
 
