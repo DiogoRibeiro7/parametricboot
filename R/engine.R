@@ -345,7 +345,7 @@ pb_sim_coxph <- function(model, nsim) {
   time <- as.numeric(y[, 1])
   status <- as.numeric(y[, 2])
   risk <- exp(model$linear.predictors)
-  base <- survival::basehaz(model, centered = TRUE)
+  base <- pb_coxph_basehaz(model)
 
   strata <- pb_coxph_strata(model)
   if (is.null(strata)) {
@@ -370,6 +370,28 @@ pb_sim_coxph <- function(model, nsim) {
     }
     out
   })
+}
+
+# Work around an R-devel stats::delete.response() regression affecting
+# survival::basehaz() for Cox fits with no actual special terms. Do not
+# change terms with strata or other specials: their semantics are essential.
+pb_coxph_basehaz <- function(model) {
+  tryCatch(
+    survival::basehaz(model, centered = TRUE),
+    error = function(e) {
+      special <- attr(model$terms, "specials")
+      empty_specials <- is.null(special) ||
+        (is.list(special) && all(lengths(special) == 0L))
+      if (!identical(conditionMessage(e), "subscript out of bounds") ||
+          !empty_specials) {
+        stop(e)
+      }
+      # An unstratified model has no meaningful specials to delete.
+      clean <- model
+      attr(clean$terms, "specials") <- NULL
+      survival::basehaz(clean, centered = TRUE)
+    }
+  )
 }
 
 # The stratum of each observation used in the fit, recovered from the model
