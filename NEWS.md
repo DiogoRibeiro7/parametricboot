@@ -1,5 +1,11 @@
 # parametricboot 0.0.0.9000
 
+## Plot semantic regression tests
+
+* Add deterministic checks of histogram counts, original estimate markers,
+  likelihood-ratio reference frequencies and chi-squared expected counts.
+
+
 ## LRT print regression coverage
 
 * Add deterministic print contract tests for likelihood-ratio test models,
