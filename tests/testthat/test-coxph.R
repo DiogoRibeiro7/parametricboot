@@ -186,3 +186,20 @@ test_that("a robust variance without clustering is still accepted", {
   )
   expect_s3_class(pb_simulate(fit, n = 2, seed = 1), "pb_boot")
 })
+
+test_that("Cox baseline hazard helper preserves the reference baseline", {
+  skip_if_not_installed("survival")
+  model <- survival::coxph(
+    survival::Surv(time, status) ~ age + sex,
+    data = survival::lung
+  )
+  expect_equal(pb_coxph_basehaz(model),
+               survival::basehaz(model, centered = TRUE))
+})
+
+test_that("Cox baseline helper does not change strata semantics", {
+  skip_if_not_installed("survival")
+  model <- fit_cox_strata()
+  expect_equal(pb_coxph_basehaz(model),
+               survival::basehaz(model, centered = TRUE))
+})
