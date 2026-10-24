@@ -371,17 +371,17 @@ takes the same arguments as <code><a href="../reference/pb_simulate.html">pb_sim
 <span></span>
 <span><span class="fu"><a href="../reference/pb_summary_table.html">pb_summary_table</a></span><span class="op">(</span><span class="va">res_gm</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  term   estimate  boot_mean          bias std_error        mse</span></span>
-<span><span class="co">#&gt; 1         (Intercept) -1.3983429 -1.4082260 -0.0098830876 0.2281372 0.05162379</span></span>
-<span><span class="co">#&gt; 2             period2 -0.9919250 -0.9926646 -0.0007395901 0.2867139 0.08138338</span></span>
-<span><span class="co">#&gt; 3             period3 -1.1282162 -1.1266335  0.0015827549 0.3720195 0.13701701</span></span>
-<span><span class="co">#&gt; 4             period4 -1.5797454 -1.6396247 -0.0598793034 0.4260859 0.18331925</span></span>
-<span><span class="co">#&gt; 5 sd_(Intercept)|herd  0.6420699  0.6107782 -0.0312917202 0.2034181 0.04194432</span></span>
-<span><span class="co">#&gt;   coverage     lower      upper</span></span>
-<span><span class="co">#&gt; 1     0.96 -1.831125 -0.9797858</span></span>
-<span><span class="co">#&gt; 2     0.97 -1.612817 -0.5969268</span></span>
-<span><span class="co">#&gt; 3     0.94 -1.920486 -0.5743643</span></span>
-<span><span class="co">#&gt; 4     0.96 -2.608564 -0.9305711</span></span>
-<span><span class="co">#&gt; 5       NA  0.303524  1.1167249</span></span></code></pre></div>
+<span><span class="co">#&gt; 1         (Intercept) -1.3985320 -1.4081986 -0.0096665249 0.2280669 0.05158781</span></span>
+<span><span class="co">#&gt; 2             period2 -0.9923159 -0.9928451 -0.0005291850 0.2871669 0.08164045</span></span>
+<span><span class="co">#&gt; 3             period3 -1.1286641 -1.1292877 -0.0006235466 0.3755843 0.13965333</span></span>
+<span><span class="co">#&gt; 4             period4 -1.5803156 -1.6409177 -0.0606020843 0.4255578 0.18296107</span></span>
+<span><span class="co">#&gt; 5 sd_(Intercept)|herd  0.6422699  0.6110284 -0.0312414893 0.2036642 0.04204036</span></span>
+<span><span class="co">#&gt;   coverage      lower      upper</span></span>
+<span><span class="co">#&gt; 1     0.96 -1.8311402 -0.9797893</span></span>
+<span><span class="co">#&gt; 2     0.97 -1.6128478 -0.5969282</span></span>
+<span><span class="co">#&gt; 3     0.94 -1.9736559 -0.5743688</span></span>
+<span><span class="co">#&gt; 4     0.96 -2.6169924 -0.9305668</span></span>
+<span><span class="co">#&gt; 5       NA  0.3035236  1.1167354</span></span></code></pre></div>
 <p>The last row is the standard deviation of the herd effects, named as
 ‘lme4’ names it in <code>confint(gm, oldNames = FALSE)</code>;
 correlations appear as <code>cor_...</code> and the residual standard

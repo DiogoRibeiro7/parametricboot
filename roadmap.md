@@ -256,7 +256,8 @@ Worth doing, but each needs a design decision or is expensive.
 - Deterministic exact-output contract tests now cover
   [`print.pb_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_boot-methods.md);
   [`print.pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
-  now has corresponding output contract tests; visual tests for plots
+  now has corresponding output contract tests; semantic plot-data tests
+  now cover estimate and LRT plots; pixel-level visual regression tests
   remain future work.
 
 ## Known limitations
