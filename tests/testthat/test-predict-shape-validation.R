@@ -17,3 +17,12 @@ test_that("matrix-valued predictions fail instead of being flattened", {
   expect_error(pb_predict_boot(boot, dat, type = "terms"),
                "finite numeric vector")
 })
+
+test_that("retained predictions preserve row names returned by predict", {
+  boot <- pb_simulate(fit_gaussian(), n = 5, seed = 12)
+  newdata <- mtcars[1:2, c("wt", "hp")]
+  expected <- do.call(cbind, lapply(boot$replicates[!boot$failed],
+    function(refit) stats::predict(refit, newdata = newdata)))
+  colnames(expected) <- NULL
+  expect_identical(dimnames(pb_predict(boot, newdata)), dimnames(expected))
+})
