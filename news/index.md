@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Choosing a bootstrap replicate budget
+
+- Document practical use of Monte Carlo precision diagnostics for bias,
+  standard errors, interval endpoints and bootstrap tail probabilities.
+  Distinguish simulation error, failure selection and statistical
+  uncertainty.
+
 ### Summary interface regression tests
 
 - Add equivalence checks for

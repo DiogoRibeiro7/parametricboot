@@ -78,8 +78,11 @@ joint delta-method Monte Carlo estimate retaining covariance between the
 simulated mean and SD. Broader diagnostics and calibration remain future
 work.
 
-Nothing tells the user whether `n` was large enough. The only guidance
-is a rule of thumb in the vignette and the running-mean plot.
+A worked replicate-budget guide now lives in
+`inst/validation/monte-carlo-budget.md`, applying existing Monte Carlo
+precision diagnostics to bias, standard errors, interval limits and
+p-values. A universally valid automatic stopping rule remains future
+work.
 
 - Proposal: Monte Carlo standard errors for the bias, the standard error
   and the interval limits in
