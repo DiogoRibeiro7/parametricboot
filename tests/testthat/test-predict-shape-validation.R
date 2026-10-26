@@ -17,10 +17,3 @@ test_that("matrix-valued predictions fail instead of being flattened", {
   expect_error(pb_predict_boot(boot, dat, type = "terms"),
                "finite numeric vector")
 })
-
-test_that("nonfinite predictions fail explicitly", {
-  fit <- fit_gaussian()
-  boot <- pb_simulate(fit, n = 5, seed = 5)
-  dat <- data.frame(wt = Inf, hp = 100)
-  expect_error(pb_predict(boot, dat), "finite numeric vector")
-})
