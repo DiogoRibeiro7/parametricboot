@@ -380,8 +380,11 @@ pb_coxph_basehaz <- function(model) {
     survival::basehaz(model, centered = TRUE),
     error = function(e) {
       special <- attr(model$terms, "specials")
-      empty_specials <- is.null(special) ||
-        (is.list(special) && all(lengths(special) == 0L))
+      # R-devel can represent the specials attribute as a pairlist.
+      # Only strip it when every recorded special is empty.
+      entries <- if (is.pairlist(special)) as.list(special) else special
+      empty_specials <- is.null(entries) ||
+        (is.list(entries) && all(lengths(entries) == 0L))
       if (!identical(conditionMessage(e), "subscript out of bounds") ||
           !empty_specials) {
         stop(e)
