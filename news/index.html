@@ -40,6 +40,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="parametricboot-0009000">parametricboot 0.0.0.9000<a class="anchor" aria-label="anchor" href="#parametricboot-0009000"></a></h2>
 <div class="section level3">
+<h3 id="prediction-shape-validation-0-0-0-9000">Prediction shape validation<a class="anchor" aria-label="anchor" href="#prediction-shape-validation-0-0-0-9000"></a></h3>
+<ul><li>Reject matrix-valued, non-finite, or inconsistent retained-refit predictions rather than silently flattening or recycling them into bootstrap matrices.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="prediction-api-naming-0-0-0-9000">Prediction API naming<a class="anchor" aria-label="anchor" href="#prediction-api-naming-0-0-0-9000"></a></h3>
 <ul><li>Add <code><a href="../reference/pb_predict.html">pb_predict()</a></code> as a backwards-compatible alias for <code><a href="../reference/pb_predict_boot.html">pb_predict_boot()</a></code>. Both preserve identical prediction and cache-validation behaviour.</li>
 </ul></div>

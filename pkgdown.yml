@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   parametricboot: parametricboot.html
   validation: validation.html
-last_built: 2026-10-26T13:30Z
+last_built: 2026-10-26T18:06Z
 urls:
   reference: https://diogoribeiro7.github.io/parametricboot/reference
   article: https://diogoribeiro7.github.io/parametricboot/articles

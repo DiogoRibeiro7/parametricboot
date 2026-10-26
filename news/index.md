@@ -2,6 +2,12 @@
 
 ## parametricboot 0.0.0.9000
 
+### Prediction shape validation
+
+- Reject matrix-valued, non-finite, or inconsistent retained-refit
+  predictions rather than silently flattening or recycling them into
+  bootstrap matrices.
+
 ### Prediction API naming
 
 - Add
