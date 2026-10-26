@@ -133,7 +133,7 @@
 <ul><li>
 <code><a href="reference/pb_predict.html">pb_predict()</a></code> is now available as a concise alternative to <code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code>, with the longer name retained for compatibility.</li>
 <li>
-<code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code> overlap; one may be enough.</li>
+<code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code> overlap. Both are retained pending real-world interface review; regression tests protect their compositional equivalence.</li>
 <li>The first argument is <code>results</code> in most functions but <code>test</code> in <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code>; coefficients are selected with <code>parameter</code>, where <code>terms</code> would match the <code>term</code> column of the outputs.</li>
 <li>
 <code>n = 100</code> is a low default for confidence limits.</li>

@@ -2,6 +2,17 @@
 
 ## parametricboot 0.0.0.9000
 
+### Summary interface regression tests
+
+- Add equivalence checks for
+  [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md),
+  [`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md),
+  [`pb_confint()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_confint.md)
+  and
+  [`summary.pb_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_boot-methods.md)
+  across interval methods and failed-refit exclusions. Keep both
+  existing public summary functions.
+
 ### Prediction shape validation
 
 - Reject matrix-valued, non-finite, or inconsistent retained-refit

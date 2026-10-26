@@ -140,7 +140,8 @@ Known candidates for change:
 - [`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md)
   and
   [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md)
-  overlap; one may be enough.
+  overlap. Both are retained pending real-world interface review;
+  regression tests protect their compositional equivalence.
 - The first argument is `results` in most functions but `test` in
   [`pb_plot_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_lrt.md);
   coefficients are selected with `parameter`, where `terms` would match
