@@ -113,7 +113,9 @@ candidates for change:
 
 - `pb_predict()` is now available as a concise alternative to
   `pb_predict_boot()`, with the longer name retained for compatibility.
-- `pb_key_stats()` and `pb_summary_table()` overlap; one may be enough.
+- `pb_key_stats()` and `pb_summary_table()` overlap. Both are retained
+  pending real-world interface review; regression tests protect their
+  compositional equivalence.
 - The first argument is `results` in most functions but `test` in
   `pb_plot_lrt()`; coefficients are selected with `parameter`, where `terms`
   would match the `term` column of the outputs.
