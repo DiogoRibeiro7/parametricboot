@@ -3,7 +3,7 @@ test_that("retained-refit predictions remain identical to independent predict ca
   boot <- pb_simulate(fit, n = 8, seed = 41)
   dat <- mtcars[1:3, c("wt", "hp")]
   expected <- do.call(cbind, lapply(boot$replicates[!boot$failed],
-    function(refit) unname(stats::predict(refit, newdata = dat))))
+    function(refit) stats::predict(refit, newdata = dat)))
   colnames(expected) <- NULL
   expect_equal(pb_predict(boot, dat), expected)
 })
