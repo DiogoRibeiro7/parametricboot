@@ -1,5 +1,11 @@
 # parametricboot 0.0.0.9000
 
+## Prediction API naming
+
+* Add `pb_predict()` as a backwards-compatible alias for `pb_predict_boot()`.
+  Both preserve identical prediction and cache-validation behaviour.
+
+
 ## Diagnostic and prediction plot validation
 
 * Test diagnostic running means and reference estimate markers against
