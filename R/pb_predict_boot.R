@@ -81,6 +81,10 @@ pb_predict_boot <- function(results, newdata = NULL, ...) {
     unlist(preds, use.names = FALSE),
     nrow = expected_rows, ncol = length(preds)
   )
+  # Preserve names supplied by predict(), as the old cbind path did.
+  if (!is.null(names(preds[[1L]]))) {
+    rownames(matrix_values) <- names(preds[[1L]])
+  }
   matrix_values
 }
 
