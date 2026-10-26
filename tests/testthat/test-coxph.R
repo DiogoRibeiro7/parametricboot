@@ -211,3 +211,19 @@ test_that("Cox baseline helper does not change strata semantics", {
   expect_true(all(is.finite(output$hazard) & output$hazard >= 0))
   if (!is.null(reference)) expect_equal(output, reference)
 })
+
+test_that("Cox baseline hazard supports R-devel specials representation", {
+  skip_if_not_installed("survival")
+  fit <- survival::coxph(
+    survival::Surv(time, status) ~ age + sex,
+    data = survival::lung
+  )
+  # R-devel may encode empty specials as a pairlist rather than a list.
+  special <- attr(fit$terms, "specials")
+  entries <- if (is.pairlist(special)) as.list(special) else special
+  expect_true(is.null(entries) ||
+                (is.list(entries) && all(lengths(entries) == 0L)))
+  baseline <- pb_coxph_basehaz(fit)
+  expect_true(is.data.frame(baseline))
+  expect_true(all(is.finite(baseline$hazard)))
+})
