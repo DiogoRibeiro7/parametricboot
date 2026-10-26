@@ -131,7 +131,7 @@
 <h3 id="id_5-interface-review-after-first-real-use">5. Interface review after first real use<a class="anchor" aria-label="anchor" href="#id_5-interface-review-after-first-real-use"></a></h3>
 <p>Before anything is frozen, the package should be run on real analyses. Known candidates for change:</p>
 <ul><li>
-<code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code> has a redundant suffix; <code>pb_predict()</code> would match the other names.</li>
+<code><a href="reference/pb_predict.html">pb_predict()</a></code> is now available as a concise alternative to <code><a href="reference/pb_predict_boot.html">pb_predict_boot()</a></code>, with the longer name retained for compatibility.</li>
 <li>
 <code><a href="reference/pb_key_stats.html">pb_key_stats()</a></code> and <code><a href="reference/pb_summary_table.html">pb_summary_table()</a></code> overlap; one may be enough.</li>
 <li>The first argument is <code>results</code> in most functions but <code>test</code> in <code><a href="reference/pb_plot_lrt.html">pb_plot_lrt()</a></code>; coefficients are selected with <code>parameter</code>, where <code>terms</code> would match the <code>term</code> column of the outputs.</li>

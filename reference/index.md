@@ -66,6 +66,8 @@
 
 ## Predict
 
+- [`pb_predict()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict.md)
+  : Predict using retained bootstrap refits or cached predictions
 - [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
   : Predict with bootstrap uncertainty
 - [`pb_predict_interval()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_interval.md)

@@ -133,8 +133,10 @@ errors, as are quasi-likelihood families.
 Before anything is frozen, the package should be run on real analyses.
 Known candidates for change:
 
-- [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md)
-  has a redundant suffix; `pb_predict()` would match the other names.
+- [`pb_predict()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict.md)
+  is now available as a concise alternative to
+  [`pb_predict_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_predict_boot.md),
+  with the longer name retained for compatibility.
 - [`pb_key_stats()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_key_stats.md)
   and
   [`pb_summary_table()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_summary_table.md)
