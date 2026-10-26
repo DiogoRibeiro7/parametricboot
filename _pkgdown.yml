@@ -34,6 +34,7 @@ reference:
       - pb_compare_models
   - title: Predict
     contents:
+      - pb_predict
       - pb_predict_boot
       - pb_predict_interval
       - pb_predict_observations
