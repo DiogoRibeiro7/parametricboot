@@ -2,6 +2,12 @@
 
 ## parametricboot 0.0.0.9000
 
+### Diagnostic and prediction plot validation
+
+- Test diagnostic running means and reference estimate markers against
+  independent coefficient calculations. Verify prediction intervals and
+  original predictions in numeric and categorical plot layouts.
+
 ### Plot semantic regression tests
 
 - Add deterministic checks of histogram counts, original estimate

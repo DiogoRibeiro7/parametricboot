@@ -257,7 +257,8 @@ Worth doing, but each needs a design decision or is expensive.
   [`print.pb_boot()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_boot-methods.md);
   [`print.pb_lrt()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_lrt.md)
   now has corresponding output contract tests; semantic plot-data tests
-  now cover estimate and LRT plots; pixel-level visual regression tests
+  now cover estimate and LRT plots; numeric diagnostic and prediction
+  plot contracts are also covered; pixel-level visual regression tests
   remain future work.
 
 ## Known limitations
