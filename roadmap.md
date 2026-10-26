@@ -111,8 +111,8 @@ quasi-likelihood families.
 Before anything is frozen, the package should be run on real analyses. Known
 candidates for change:
 
-- `pb_predict_boot()` has a redundant suffix; `pb_predict()` would match the
-  other names.
+- `pb_predict()` is now available as a concise alternative to
+  `pb_predict_boot()`, with the longer name retained for compatibility.
 - `pb_key_stats()` and `pb_summary_table()` overlap; one may be enough.
 - The first argument is `results` in most functions but `test` in
   `pb_plot_lrt()`; coefficients are selected with `parameter`, where `terms`
