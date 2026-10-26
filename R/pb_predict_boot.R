@@ -63,9 +63,29 @@ pb_predict_boot <- function(results, newdata = NULL, ...) {
       stats::predict(fit, newdata = newdata, ...)
     }
   })
-  preds <- do.call(cbind, preds)
-  colnames(preds) <- NULL
-  preds
+  # Do not silently flatten interval/matrix predictions or recycle vectors
+  # whose lengths differ across refits. The public API returns one numeric
+  # scalar per observation and per successful bootstrap replicate.
+  expected_rows <- if (!is.null(newdata)) nrow(newdata) else length(preds[[1L]])
+  valid <- vapply(preds, function(value) {
+    is.numeric(value) && is.null(dim(value)) &&
+      length(value) == expected_rows && all(is.finite(value))
+  }, logical(1))
+  if (!all(valid)) {
+    pb_abort(paste0(
+      "Each bootstrap prediction must be a finite numeric vector with ",
+      "one value per observation and identical length across refits."
+    ))
+  }
+  matrix_values <- matrix(
+    unlist(preds, use.names = FALSE),
+    nrow = expected_rows, ncol = length(preds)
+  )
+  # Preserve names supplied by predict(), as the old cbind path did.
+  if (!is.null(names(preds[[1L]]))) {
+    rownames(matrix_values) <- names(preds[[1L]])
+  }
+  matrix_values
 }
 
 # A single finite numeric prediction per requested row is required for the
