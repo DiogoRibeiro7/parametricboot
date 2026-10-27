@@ -200,8 +200,10 @@ distinguish unusually large discrepancies from unusually small ones
 quantifies conditional simulation precision with exact binomial limits,
 and
 [`pb_plot_gof()`](https://diogoribeiro7.github.io/parametricboot/reference/pb_plot_gof.md)
-visualises the reference distribution. Further model classes and
-calibration remain future work.
+visualises the reference distribution. A reproducible Poisson
+excess-zero calibration experiment now examines null rejection rates and
+power against one zero-inflated alternative. Broader model classes and
+calibration designs remain future work.
 
 The bootstrap null distribution of the deviance, the Pearson statistic,
 the dispersion or the number of zeros, from the engine that

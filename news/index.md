@@ -2,6 +2,13 @@
 
 ## parametricboot 0.0.0.9000
 
+### Goodness-of-fit calibration experiment
+
+- Add an opt-in simulation comparing excess-zero bootstrap rejection
+  rates under correctly specified Poisson sampling and structural zero
+  inflation. Report evaluability and outer Monte Carlo precision
+  separately.
+
 ### Choosing a bootstrap replicate budget
 
 - Document practical use of Monte Carlo precision diagnostics for bias,
