@@ -2,6 +2,11 @@
 
 ## parametricboot 0.0.0.9000
 
+### Lower-tail goodness-of-fit calibration
+
+- Add an opt-in Poisson zero-deficit calibration experiment contrasting
+  the null rejection rate with power under positive-count truncation.
+
 ### Goodness-of-fit calibration experiment
 
 - Add an opt-in simulation comparing excess-zero bootstrap rejection
