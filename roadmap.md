@@ -158,7 +158,9 @@ discrepancies from unusually small ones (including zero-count deficits).
 binomial limits, and `pb_plot_gof()` visualises the reference distribution.
 A reproducible Poisson excess-zero calibration experiment now examines
 null rejection rates and power against one zero-inflated alternative.
-Broader model classes and calibration designs remain future work.
+A complementary lower-tail zero-deficit experiment now studies type-I error
+and power against zero-truncated counts. Broader model classes and calibration
+designs remain future work.
 
 
 The bootstrap null distribution of the deviance, the Pearson statistic, the
